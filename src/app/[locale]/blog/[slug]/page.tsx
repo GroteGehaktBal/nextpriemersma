@@ -1,3 +1,4 @@
+import { use } from "react";
 import ScrollToHash from '@/components/ScrollToHash';
 import { notFound } from 'next/navigation'
 import { CustomMDX } from '@/components/mdx'
@@ -11,10 +12,10 @@ import { useTranslations } from 'next-intl';
 import { formatDate } from '@/app/utils/formatDate'
 
 interface BlogParams {
-    params: { 
+    params: Promise<{ 
         slug: string;
 		locale: string;
-    };
+    }>;
 }
 
 export async function generateStaticParams() {
@@ -35,24 +36,31 @@ export async function generateStaticParams() {
     return allPosts;
 }
 
-export function generateMetadata({ params: { slug, locale } }: BlogParams) {
-	let post = getPosts(['src', 'app', '[locale]', 'blog', 'posts', locale]).find((post) => post.slug === slug)
+export async function generateMetadata(props: BlogParams) {
+    const params = await props.params;
 
-	if (!post) {
+    const {
+        slug,
+        locale
+    } = params;
+
+    let post = getPosts(['src', 'app', '[locale]', 'blog', 'posts', locale]).find((post) => post.slug === slug)
+
+    if (!post) {
 		return
 	}
 
-	let {
+    let {
 		title,
 		publishedAt: publishedTime,
 		summary: description,
 		image,
 	} = post.metadata;
-	let ogImage = image
+    let ogImage = image
 		? `https://${baseURL}${image}`
 		: `https://${baseURL}/og?title=${title}`;
 
-	return {
+    return {
 		title,
 		description,
 		openGraph: {
@@ -76,18 +84,19 @@ export function generateMetadata({ params: { slug, locale } }: BlogParams) {
 	}
 }
 
-export default function Blog({ params }: BlogParams) {
-	unstable_setRequestLocale(params.locale);
-	let post = getPosts(['src', 'app', '[locale]', 'blog', 'posts', params.locale]).find((post) => post.slug === params.slug)
+export default function Blog(props: BlogParams) {
+    const params = use(props.params);
+    unstable_setRequestLocale(params.locale);
+    let post = getPosts(['src', 'app', '[locale]', 'blog', 'posts', params.locale]).find((post) => post.slug === params.slug)
 
-	if (!post) {
+    if (!post) {
 		notFound()
 	}
 
-	const t = useTranslations();
-	const { person } = renderContent(t);
+    const t = useTranslations();
+    const { person } = renderContent(t);
 
-	return (
+    return (
 		<Flex as="section"
 			fillWidth maxWidth="xs"
 			direction="column"

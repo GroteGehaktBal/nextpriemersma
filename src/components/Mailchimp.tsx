@@ -2,7 +2,7 @@
 
 import { mailchimp } from '@/app/resources'
 import { Button, Flex, Heading, Input, Text, Background } from '@/once-ui/components';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { useTranslations } from 'next-intl';
 
 

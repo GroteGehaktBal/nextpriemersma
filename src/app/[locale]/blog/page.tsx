@@ -1,3 +1,4 @@
+import { use } from "react";
 import { Flex, Heading } from '@/once-ui/components';
 import { Mailchimp } from '@/components';
 import { Posts } from '@/components/blog/Posts';
@@ -5,18 +6,21 @@ import { baseURL, renderContent } from '@/app/resources'
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
-export async function generateMetadata(
-	{params: {locale}}: { params: { locale: string }}
-) {
+export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
+    const params = await props.params;
 
-	const t = await getTranslations();
-	const { blog } = renderContent(t);
+    const {
+        locale
+    } = params;
 
-	const title = blog.title;
-	const description = blog.description;
-	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+    const t = await getTranslations();
+    const { blog } = renderContent(t);
 
-	return {
+    const title = blog.title;
+    const description = blog.description;
+    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+
+    return {
 		title,
 		description,
 		openGraph: {
@@ -40,13 +44,17 @@ export async function generateMetadata(
 	};
 }
 
-export default function Blog(
-	{ params: {locale}}: { params: { locale: string }}
-) {
-	unstable_setRequestLocale(locale);
+export default function Blog(props: { params: Promise<{ locale: string }>}) {
+    const params = use(props.params);
 
-	const t = useTranslations();
-	const { person, blog, newsletter } = renderContent(t);
+    const {
+        locale
+    } = params;
+
+    unstable_setRequestLocale(locale);
+
+    const t = useTranslations();
+    const { person, blog, newsletter } = renderContent(t);
     return (
         <Flex
 			fillWidth maxWidth="s"

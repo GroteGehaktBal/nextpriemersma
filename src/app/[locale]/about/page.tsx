@@ -1,3 +1,4 @@
+import { use } from "react";
 import { Avatar, Button, Flex, Heading, Icon, IconButton, SmartImage, Tag, Text } from '@/once-ui/components';
 import { baseURL, renderContent } from '@/app/resources';
 import TableOfContents from '@/components/about/TableOfContents';
@@ -5,16 +6,20 @@ import styles from '@/components/about/about.module.scss'
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
-export async function generateMetadata(
-    {params: {locale}}: { params: { locale: string }}
-) {
+export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
+    const params = await props.params;
+
+    const {
+        locale
+    } = params;
+
     const t = await getTranslations();
     const {person, about, social } = renderContent(t);
-	const title = about.title;
-	const description = about.description;
-	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+    const title = about.title;
+    const description = about.description;
+    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
 
-	return {
+    return {
 		title,
 		description,
 		openGraph: {
@@ -38,9 +43,13 @@ export async function generateMetadata(
 	};
 }
 
-export default function About(
-    { params: {locale}}: { params: { locale: string }}
-) {
+export default function About(props: { params: Promise<{ locale: string }>}) {
+    const params = use(props.params);
+
+    const {
+        locale
+    } = params;
+
     unstable_setRequestLocale(locale);
     const t = useTranslations();
     const {person, about, social } = renderContent(t);

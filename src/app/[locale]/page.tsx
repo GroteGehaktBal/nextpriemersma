@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 
 import { Heading, Flex, Text, Button,  Avatar, RevealFx, Arrow } from '@/once-ui/components';
 import { Projects } from '@/components/work/Projects';
@@ -9,16 +9,20 @@ import { Posts } from '@/components/blog/Posts';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
-export async function generateMetadata(
-	{params: {locale}}: { params: { locale: string }}
-) {
-	const t = await getTranslations();
-    const { home } = renderContent(t);
-	const title = home.title;
-	const description = home.description;
-	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
+    const params = await props.params;
 
-	return {
+    const {
+        locale
+    } = params;
+
+    const t = await getTranslations();
+    const { home } = renderContent(t);
+    const title = home.title;
+    const description = home.description;
+    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+
+    return {
 		title,
 		description,
 		openGraph: {
@@ -42,13 +46,17 @@ export async function generateMetadata(
 	};
 }
 
-export default function Home(
-	{ params: {locale}}: { params: { locale: string }}
-) {
-	unstable_setRequestLocale(locale);
-	const t = useTranslations();
-	const { home, about, person, newsletter } = renderContent(t);
-	return (
+export default function Home(props: { params: Promise<{ locale: string }>}) {
+    const params = use(props.params);
+
+    const {
+        locale
+    } = params;
+
+    unstable_setRequestLocale(locale);
+    const t = useTranslations();
+    const { home, about, person, newsletter } = renderContent(t);
+    return (
 		<Flex
 			maxWidth="m" fillWidth gap="xl"
 			direction="column" alignItems="center">

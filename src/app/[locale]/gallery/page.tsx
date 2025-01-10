@@ -1,21 +1,25 @@
+import { use } from "react";
 import { Flex } from "@/once-ui/components";
 import MasonryGrid from "@/components/gallery/MasonryGrid";
 import { baseURL, renderContent } from "@/app/resources";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 
-export async function generateMetadata(
-	{params: {locale}}: { params: { locale: string }}
-) {
+export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
+    const params = await props.params;
 
-	const t = await getTranslations();
-	const { gallery } = renderContent(t);
+    const {
+        locale
+    } = params;
 
-	const title = gallery.title;
-	const description = gallery.description;
-	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+    const t = await getTranslations();
+    const { gallery } = renderContent(t);
 
-	return {
+    const title = gallery.title;
+    const description = gallery.description;
+    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+
+    return {
 		title,
 		description,
 		openGraph: {
@@ -39,12 +43,16 @@ export async function generateMetadata(
 	};
 }
 
-export default function Gallery(
-	{ params: {locale}}: { params: { locale: string }}
-) {
-	unstable_setRequestLocale(locale);
-	const t = useTranslations();
-	const { gallery, person } = renderContent(t);
+export default function Gallery(props: { params: Promise<{ locale: string }>}) {
+    const params = use(props.params);
+
+    const {
+        locale
+    } = params;
+
+    unstable_setRequestLocale(locale);
+    const t = useTranslations();
+    const { gallery, person } = renderContent(t);
     return (
         <Flex fillWidth>
             <script
