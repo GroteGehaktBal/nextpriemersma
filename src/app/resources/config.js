@@ -1,11 +1,11 @@
 const baseURL = 'priemersma.nl'
 
 // Enable localization
-const i18n = false;
+const i18n = true;
 
 // Manage localized content in the messages folder
 const i18nOptions = {
-    locales: ['en','id'],            // A list of all locales that are supported, e.g. ['en','id']
+    locales: ['en'],            // A list of all locales that are supported, e.g. ['en','id']
     defaultLocale: 'en'         // Locale used by default and as a fallback
 }
 
@@ -35,7 +35,7 @@ const effects = {
         size: '24'              // 2 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 634
     },
     lines: {
-        display: false,
+        display: true,
     },
 }
 
@@ -65,10 +65,10 @@ const mailchimp = {
             opacity: 0.6            // 0 - 1
         },
         dots: {
-            display: false,
+            display: true,
         },
         lines: {
-            display: false,
+            display: true,
         },
     }
 }

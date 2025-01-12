@@ -14,7 +14,7 @@ const createI18nContent = (t) => {
     }
 
     const newsletter = {
-        display: true,
+        display: false,
         title: <>{t("newsletter.title", {firstName: person.firstName})}</>,
         description: <>{t("newsletter.description")}</>
     }
@@ -61,7 +61,7 @@ const createI18nContent = (t) => {
             subItems: true
         },
         avatar: {
-            display: false
+            display: true
         },
         calendar: {
             display: false,
@@ -78,23 +78,17 @@ const createI18nContent = (t) => {
             experiences: [
                 {
                     company: 'pyxels',
-                    timeframe: t("about.work.experiences.FLY.timeframe"),
-                    role: t("about.work.experiences.FLY.role"),
-                    achievements: t("about.work.experiences.FLY.achievements").split(";"),
+                    timeframe: t("about.work.experiences.pyxels.timeframe"),
+                    role: t("about.work.experiences.pyxels.role"),
+                    achievements: t("about.work.experiences.pyxels.achievements").split(";"),
                     images: [ // optional: leave the array empty if you don't want to display images
-                        {
-                            src: '/images/projects/project-01/cover-01.jpg',
-                            alt: 'Once UI Project',
-                            width: 16,
-                            height: 9
-                        }
                     ]
                 },
                 {
                     company: 'Riemersma ICT',
-                    timeframe: t("about.work.experiences.Creativ3.timeframe"),
-                    role: t("about.work.experiences.Creativ3.role"),
-                    achievements: t("about.work.experiences.Creativ3.achievements").split(";"),
+                    timeframe: t("about.work.experiences.Riemersma ICT.timeframe"),
+                    role: t("about.work.experiences.Riemersma ICT.role"),
+                    achievements: t("about.work.experiences.Riemersma ICT.achievements").split(";"),
                     images: [ ]
                 }
             ]
@@ -104,12 +98,12 @@ const createI18nContent = (t) => {
             title: 'Studies',
             institutions: [
                 {
-                    name: 'Hanzehogeschool Groningen',
-                    description: <>{t(`about.studies.institutions.University of Jakarta.description`)}</>,
+                    name: <>{t(`about.studies.institutions.Hanzehogeschool Groningen.naamhanze`)}</>,
+                    description: <>{t(`about.studies.institutions.Hanzehogeschool Groningen.description`)}</>,
                 },
                 {
-                    name: 'Noorderpoort College',
-                    description: <>{t("about.studies.institutions.Build the Future.description")}</>,
+                    name: <>{t(`about.studies.institutions.Noorderpoort College.naamnoorderpoort`)}</>,
+                    description: <>{t("about.studies.institutions.Noorderpoort College.description")}</>,
                 }
             ]
         },
@@ -118,34 +112,26 @@ const createI18nContent = (t) => {
             title: t("about.technical.title"),
             skills: [
                 {
-                    title: 'Figma',
-                    description: <>{t("about.technical.skills.Figma.description")}</>,
+                    title: 'Cisco Networking',
+                    description: <>{t("about.technical.skills.Cisco Networking.description")}</>,
                     images: [
-                        {
-                            src: '/images/projects/project-01/cover-02.jpg',
-                            alt: 'Project image',
-                            width: 16,
-                            height: 9
-                        },
-                        {
-                            src: '/images/projects/project-01/cover-03.jpg',
-                            alt: 'Project image',
-                            width: 16,
-                            height: 9
-                        },
                     ]
                 },
                 {
+                    title: 'Home Assistant',
+                    description: <>{t("about.technical.skills.Home Assistant.description")}</>
+                },
+                {
                     title: 'Next.js',
-                    description: <>{t("about.technical.skills.Nextjs.description")}</>, // "." not accepted in next-intl namespace
-                    images: [
-                        {
-                            src: '/images/projects/project-01/cover-04.jpg',
-                            alt: 'Project image',
-                            width: 16,
-                            height: 9
-                        },
-                    ]
+                    description: <>{t("about.technical.skills.Nextjs.description")}</> // "." not accepted in next-intl namespace
+                    // images: [
+                    //     {
+                    //         src: '/images/projects/project-01/cover-04.jpg',
+                    //         alt: 'Project image',
+                    //         width: 16,
+                    //         height: 9
+                    //     },
+                    // ]
                 }
             ]
         }

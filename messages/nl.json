@@ -1,6 +1,6 @@
 {
     "person": {
-        "role": "IT & Home Automation Expert"
+        "role": "IT & Huis Automatisering Expert"
     },
     "newsletter": {
         "title": "Subscribe to {firstName}'s Newsletter",
@@ -10,14 +10,14 @@
     "home": {
         "label": "Home",
         "title": "{name}'s Portfolio",
-        "description": "Portfolio website showcasing my work as a {role}",
-        "headline": "IT & Home Automation Expert",
-        "subline": "I'm Peter, a network security engineering student currently providing IT and Smart Home solutions at pyxels."
+        "description": "Portfolio website voor meer informatie over mij als {role}",
+        "headline": "IT & Huis Automatisering Expert",
+        "subline": "Ik ben Peter, een network security engineering student die op het moment werkt met IT en Huis automatisering oplossingen bij pyxels"
     },
     "about": {
-        "label": "About",
-        "title": "About me",
-        "description": "Meet {name}, {role} from {location}",
+        "label": "Info",
+        "title": "Over mij",
+        "description": "Mijn naam is {name}, {role} uit {location}",
         "intro": {
             "title": "Introduction",
             "description": "Peter is a network security engineering student with a passion for high-tech home automation solutions."
@@ -41,12 +41,12 @@
             "title": "Studies",
             "institutions": {
                 "Hanzehogeschool Groningen": {
-                    "naamhanze": "Hanze University Groningen",
-                    "description": "Studied network security engineering."
+                    "naamhanze": "Hanzehogeschool Groningen",
+                    "description": "Studie network security engineering."
                 },
                 "Noorderpoort College": {
-                    "naamnoorderpoort": "Noorderpoort",
-                    "description": "Studied network management."
+                    "naamnoorderpoort": "Noorderpoort College",
+                    "description": "Studie netwerk beheer."
                 }
             }
         },
@@ -71,9 +71,9 @@
         "description": "Read what {name} has been up to recently"
     },
     "work": {
-        "label": "Work",
-        "title": "My projects",
-        "description": "Design and dev projects by {name}"
+        "label": "Werk",
+        "title": "Mijn werk",
+        "description": "Projecten van {name}"
     },
     "gallery": {
         "label": "Gallery",
@@ -81,6 +81,6 @@
         "description": "A photo collection by {name}"
     },
     "projectCard": {
-        "label": "Read More"
+        "label": "Lees Meer"
     }
 }

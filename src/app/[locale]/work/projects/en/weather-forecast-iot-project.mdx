@@ -1,0 +1,32 @@
+---
+title: "Weather Forecast IoT Project"
+publishedAt: "2025-01-11"
+summary: "Development of a weather forecasting system that is focused on a specific location with high accuracy."
+images:
+---
+
+## Overview
+
+For this project at Hanze University we built a smart weather forecasting system that provides a better local prediction for the temperature and humidity.
+This prediction is made with an ai model that compares locally placed sensors to weather data of the KNMI. This accurate prediction can be used to efficiently automate the temperature of a heat pump.
+
+## Key Features
+
+- **High Precision**: With multiple sensors in optimal locations it is possible to collect accurate and precise data that can be used for making the best forecasts.
+- **Stability**: All calculations can be made offline and locally, this is secure and stable.
+- **AI model**: By training an AI model with data going back to 1950 we have made a good foundation by learning from the past.
+- **Smart Home Integration**: This system can be completely integrated into Home Assistant for building weather based automations.
+
+## Technologies Used
+
+- **Python**: For building the forecasting app.
+- **Tensorflow**: For training the AI model.
+- **KNMI Public API**: For gathering the weather data history from 1950 - present.
+
+## Challenges and Learnings
+
+One key challenge was picking the right weather api to use. We ended up going with the KNMI api as it had a weather station close to our location. We also compared the KNMI estimated temperature with the actual temperature at our location.
+
+## Outcome
+
+The system works excellent for our location and it is effective at making an accurate weather prediction for each hour up to 48 hours ahead.

@@ -1,0 +1,22 @@
+---
+title: "Teradruk BV Project Noorderpoort"
+publishedAt: "2021-07-13"
+summary: "Project at Noorderpoort for a fictional company Teradruk BV"
+images:
+---
+
+## Overview
+I made a security focused network that connects multiple company locations to each other with a redundant server setup for DHCP, DNS, NTP, NFS, AD and permissions for group policies.
+
+## Key Features
+
+- **Scalable Design System**: Leveraged a design system that remains the single source of truth for both designers and developers, making it easy to maintain consistency even as the product evolves.
+
+## Technologies Used
+
+- **Microsoft Active Directory**: For managing the users, groups and permissions.
+- **IPsec VPN**: For making a secure connection between site locations.
+
+## Challenges and Learnings
+
+IPsec VPN not working when public ip changes. The solution involved setting up DDNS to reach each site even when the public ip changes.
