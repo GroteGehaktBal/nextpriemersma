@@ -12,10 +12,9 @@ export async function GET(request: Request) {
 
     // Dynamically import getTranslations and renderContent
     const { getTranslations } = await import('next-intl/server');
-    const { renderContent } = await import('@/app/resources');
+    const { renderContent, baseURL } = await import('@/app/resources');
 
     const t = await getTranslations();
-    //const baseURL = ''; // Define the baseURL variable
     const { person } = renderContent(t);
 
     return new ImageResponse(
