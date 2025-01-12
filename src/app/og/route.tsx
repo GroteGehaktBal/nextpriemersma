@@ -1,18 +1,21 @@
-import { ImageResponse } from 'next/og'
-import { baseURL, renderContent } from '@/app/resources';
-import { getTranslations } from 'next-intl/server';
-
+import { ImageResponse } from 'next/og';
+import { baseURL } from '@/app/resources'; 
 export const runtime = 'edge';
 
 export async function GET(request: Request) {
-    let url = new URL(request.url)
-    let title = url.searchParams.get('title') || 'Portfolio'
+    let url = new URL(request.url);
+    let title = url.searchParams.get('title') || 'Portfolio';
     const font = fetch(
         new URL('../../../public/fonts/Inter.ttf', import.meta.url)
     ).then((res) => res.arrayBuffer());
     const fontData = await font;
 
+    // Dynamically import getTranslations and renderContent
+    const { getTranslations } = await import('next-intl/server');
+    const { renderContent } = await import('@/app/resources');
+
     const t = await getTranslations();
+    //const baseURL = ''; // Define the baseURL variable
     const { person } = renderContent(t);
 
     return new ImageResponse(
@@ -97,7 +100,7 @@ export async function GET(request: Request) {
                     data: fontData,
                     style: 'normal',
                 },
-              ],
+            ],
         }
-    )
+    );
 }
