@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     const t = await getTranslations();
     const { person } = renderContent(t);
 
-    return new ImageResponse(
+    const imageResponse = new ImageResponse(
         (
             <div
                 style={{
@@ -102,4 +102,13 @@ export async function GET(request: Request) {
             ],
         }
     );
+
+    // Add Cache-Control headers
+    const headers = new Headers();
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+
+    return new Response(imageResponse.body, {
+        status: 200,
+        headers,
+    });
 }
