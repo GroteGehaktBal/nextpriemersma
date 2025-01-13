@@ -21,6 +21,7 @@
     "postcss": "^8.4.39",
     "postcss-preset-env": "^9.5.15",
     "prismjs": "^1.29.0",
+    "punycode": "^2.3.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-icons": "^5.2.1",
@@ -39,5 +40,11 @@
     "postcss-custom-media": "^10.0.7",
     "postcss-flexbugs-fixes": "^5.0.2",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.0.4",
+      "@types/react-dom": "19.0.2"
+    }
   }
 }
