@@ -20,31 +20,31 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
 
     return {
-        title,
-        description,
-        openGraph: {
-            title,
-            description,
-            type: 'website',
-            url: `https://${baseURL}/${locale}/about`,
-            images: [
-                {
-                    url: ogImage,
-                    alt: title,
-                },
-            ],
-        },
-        twitter: {
-            card: 'summary_large_image',
-            title,
-            description,
-            images: [ogImage],
-        },
-    };
+		title,
+		description,
+		openGraph: {
+			title,
+			description,
+			type: 'website',
+			url: `https://${baseURL}/${locale}/about`,
+			images: [
+				{
+					url: ogImage,
+					alt: title,
+				},
+			],
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title,
+			description,
+			images: [ogImage],
+		},
+	};
 }
 
-export default async function About(props: { params: Promise<{ locale: string }>}) {
-    const params = await props.params;
+export default function About(props: { params: Promise<{ locale: string }>}) {
+    const params = use(props.params);
 
     const {
         locale
