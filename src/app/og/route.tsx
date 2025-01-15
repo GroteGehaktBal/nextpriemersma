@@ -1,23 +1,21 @@
-import { ImageResponse } from 'next/og';
-import { baseURL } from '@/app/resources'; 
+import { ImageResponse } from 'next/og'
+import { baseURL, renderContent } from '@/app/resources';
+import { getTranslations } from 'next-intl/server';
+
 export const runtime = 'edge';
 
 export async function GET(request: Request) {
-    let url = new URL(request.url);
-    let title = url.searchParams.get('title') || 'Portfolio';
+    let url = new URL(request.url)
+    let title = url.searchParams.get('title') || 'Portfolio'
     const font = fetch(
         new URL('../../../public/fonts/Inter.ttf', import.meta.url)
     ).then((res) => res.arrayBuffer());
     const fontData = await font;
 
-    // Dynamically import getTranslations and renderContent
-    const { getTranslations } = await import('next-intl/server');
-    const { renderContent, baseURL } = await import('@/app/resources');
-
     const t = await getTranslations();
     const { person } = renderContent(t);
 
-    const imageResponse = new ImageResponse(
+    return new ImageResponse(
         (
             <div
                 style={{
@@ -99,16 +97,7 @@ export async function GET(request: Request) {
                     data: fontData,
                     style: 'normal',
                 },
-            ],
+              ],
         }
-    );
-
-    // Add Cache-Control headers
-    const headers = new Headers();
-    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-
-    return new Response(imageResponse.body, {
-        status: 200,
-        headers,
-    });
+    )
 }
