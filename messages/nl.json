@@ -3,72 +3,72 @@
         "role": "IT & Huis Automatisering Expert"
     },
     "newsletter": {
-        "title": "Subscribe to {firstName}'s Newsletter",
-        "description": "I occasionally write about design, technology, and share thoughts on the intersection of creativity and engineering",
-        "button": "Sign up"
+        "title": "Abonneer je op {firstName}'s Nieuwsbrief",
+        "description": "Ik schrijf af en toe over design, technologie en deel gedachten over de kruising van creativiteit en techniek",
+        "button": "Aanmelden"
     },
     "home": {
         "label": "Home",
         "title": "{name}'s Portfolio",
         "description": "Portfolio website voor meer informatie over mij als {role}",
         "headline": "IT & Huis Automatisering Expert",
-        "subline": "Ik ben Peter, een network security engineering student die op het moment werkt met IT en Huis automatisering oplossingen bij pyxels"
+        "subline": "Ik ben Peter, een netwerkbeveiligingsstudent die momenteel werkt met IT en huisautomatiseringsoplossingen bij pyxels"
     },
     "about": {
         "label": "Info",
         "title": "Over mij",
         "description": "Mijn naam is {name}, {role} uit {location}",
         "intro": {
-            "title": "Introduction",
-            "description": "Peter is a network security engineering student with a passion for high-tech home automation solutions."
+            "title": "Introductie",
+            "description": "Peter is een netwerkbeveiligingsstudent met een passie voor high-tech huisautomatiseringsoplossingen."
         },
         "work": {
-            "title": "Work Experience",
+            "title": "Werkervaring",
             "experiences": {
                 "pyxels": {
-                    "timeframe": "2024 - Present",
-                    "role": "Co-Owner",
-                    "achievements": "Installed a secure network with 2.5GbE ethernet and Wi-Fi 6E access points.;Smart home installations, including smart lighting, curtains, underfloor heating, HVAC, Camera's and much more."
+                    "timeframe": "2024 - Heden",
+                    "role": "Mede-eigenaar",
+                    "achievements": "Een veilig netwerk geïnstalleerd met 2.5GbE ethernet en Wi-Fi 6E toegangspunten.;Slimme huisinstallaties, waaronder slimme verlichting, gordijnen, vloerverwarming, HVAC, camera's en nog veel meer."
                 },
                 "Riemersma ICT": {
-                    "timeframe": "2023 - Present",
+                    "timeframe": "2023 - Heden",
                     "role": "Freelance",
-                    "achievements": "Providing tech support to clients.;Worked with Microsoft Azure for network management."
+                    "achievements": "Technische ondersteuning aan klanten.;Gewerkt met Microsoft Azure voor netwerkbeheer."
                 }
             }
         },
         "studies": {
-            "title": "Studies",
+            "title": "Opleidingen",
             "institutions": {
                 "Hanzehogeschool Groningen": {
                     "naamhanze": "Hanzehogeschool Groningen",
-                    "description": "Studie network security engineering."
+                    "description": "HBO-ICT met richting network security engineering"
                 },
                 "Noorderpoort College": {
                     "naamnoorderpoort": "Noorderpoort College",
-                    "description": "Studie netwerk beheer."
+                    "description": "Netwerkbeheer."
                 }
             }
         },
         "technical": {
-            "title": "Technical skills",
+            "title": "Technische vaardigheden",
             "skills": {
                 "Cisco Networking": {
-                    "description": "Able to securely setup complex networks with proper security and good understanding of network protocols."
+                    "description": "In staat om complexe netwerken veilig op te zetten met de juiste beveiliging en een goed begrip van netwerkprotocollen."
                 },
                 "Home Assistant": {
-                    "description": "Experienced with Home Assistant for building complex automations and designing modern dashboards."
+                    "description": "Ervaren met Home Assistant voor het bouwen van complexe automatiseringen en het ontwerpen van moderne dashboards."
                 },
                 "Nextjs": {
-                    "description": "Building next gen web-apps with Next.js"
+                    "description": "Bouwen van next-gen web-apps met Next.js"
                 }
             }
         }
     },
     "blog": {
         "label": "Blog",
-        "title": "Writing about design and tech...",
-        "description": "Read what {name} has been up to recently"
+        "title": "Schrijven over design en technologie...",
+        "description": "Lees wat {name} recent heeft gedaan"
     },
     "work": {
         "label": "Werk",
@@ -76,9 +76,9 @@
         "description": "Projecten van {name}"
     },
     "gallery": {
-        "label": "Gallery",
-        "title": "My photo gallery",
-        "description": "A photo collection by {name}"
+        "label": "Galerij",
+        "title": "Mijn fotogalerij",
+        "description": "Een fotocollectie van {name}"
     },
     "projectCard": {
         "label": "Lees Meer"

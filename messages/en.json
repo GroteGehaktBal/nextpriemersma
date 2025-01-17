@@ -4,7 +4,7 @@
     },
     "newsletter": {
         "title": "Subscribe to {firstName}'s Newsletter",
-        "description": "I occasionally write about design, technology, and share thoughts on the intersection of creativity and engineering",
+        "description": "I occasionally write about technology, and share thoughts on the intersection of creativity and engineering",
         "button": "Sign up"
     },
     "home": {
@@ -42,11 +42,11 @@
             "institutions": {
                 "Hanzehogeschool Groningen": {
                     "naamhanze": "Hanze University Groningen",
-                    "description": "Studied network security engineering."
+                    "description": "ICT; network security engineering."
                 },
                 "Noorderpoort College": {
                     "naamnoorderpoort": "Noorderpoort",
-                    "description": "Studied network management."
+                    "description": "Network management."
                 }
             }
         },
