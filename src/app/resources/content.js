@@ -1,19 +1,19 @@
 import { InlineCode } from "@/once-ui/components";
 
 const person = {
-    firstName: 'Selene',
-    lastName:  'Yu',
+    firstName: 'Peter',
+    lastName:  'Riemersma',
     get name() {
         return `${this.firstName} ${this.lastName}`;
     },
-    role:      'Design Engineer',
+    role:      'ICT',
     avatar:    '/images/avatar.jpg',
-    location:  'Asia/Jakarta',        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
-    languages: ['English', 'Bahasa']  // optional: Leave the array empty if you don't want to display languages
+    location:  'Europe/Amsterdam',        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
+    languages: ['English', 'Nederlands']  // optional: Leave the array empty if you don't want to display languages
 }
 
 const newsletter = {
-    display: true,
+    display: false,
     title: <>Subscribe to {person.firstName}'s Newsletter</>,
     description: <>I occasionally write about design, technology, and share thoughts on the intersection of creativity and engineering.</>
 }
@@ -24,12 +24,12 @@ const social = [
     {
         name: 'GitHub',
         icon: 'github',
-        link: 'https://github.com/once-ui-system/nextjs-starter',
+        link: 'https://github.com/grotegehaktbal',
     },
     {
         name: 'LinkedIn',
         icon: 'linkedin',
-        link: 'https://www.linkedin.com/company/once-ui/',
+        link: 'https://www.linkedin.com/in/peter-riemersma/',
     },
     {
         name: 'X',
@@ -39,7 +39,7 @@ const social = [
     {
         name: 'Email',
         icon: 'email',
-        link: 'mailto:example@gmail.com',
+        link: 'mailto:peter@riemersmaict.nl',
     },
 ]
 
@@ -47,8 +47,8 @@ const home = {
     label: 'Home',
     title: `${person.name}'s Portfolio`,
     description: `Portfolio website showcasing my work as a ${person.role}`,
-    headline: <>Design engineer and builder</>,
-    subline: <>I'm Selene, a design engineer at <InlineCode>FLY</InlineCode>, where I craft intuitive<br/> user experiences. After hours, I build my own projects.</>
+    headline: <>ICT & Home Automation Professional</>,
+    subline: <>I'm Peter, an IT Expert currently providing IT and Smart Home solutions at <InlineCode>pyxels</InlineCode>, where I <br/> After hours, I build my own projects.</>
 }
 
 const about = {
@@ -60,10 +60,10 @@ const about = {
         subItems: false
     },
     avatar: {
-        display: true
+        display: false
     },
     calendar: {
-        display: true,
+        display: false,
         link: 'https://cal.com'
     },
     intro: {

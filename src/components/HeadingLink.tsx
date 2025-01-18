@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, type JSX } from 'react';
 import { Heading, Flex, IconButton, Toaster } from '@/once-ui/components';
 
 import styles from '@/components/HeadingLink.module.scss';

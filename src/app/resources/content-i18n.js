@@ -2,19 +2,19 @@ import { InlineCode } from "@/once-ui/components";
 
 const createI18nContent = (t) => {
     const person = {
-        firstName: 'Selene',
-        lastName:  'Yu',
+        firstName: 'Peter',
+        lastName:  'Riemersma',
         get name() {
             return `${this.firstName} ${this.lastName}`;
         },
         role:      t("person.role"),
         avatar:    '/images/avatar.jpg',
-        location:  'Asia/Jakarta',        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
-        languages: ['English', 'Bahasa']  // optional: Leave the array empty if you don't want to display languages
+        location:  'Europe/Amsterdam',        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
+        languages: ['English', 'Nederlands']  // optional: Leave the array empty if you don't want to display languages
     }
 
     const newsletter = {
-        display: true,
+        display: false,
         title: <>{t("newsletter.title", {firstName: person.firstName})}</>,
         description: <>{t("newsletter.description")}</>
     }
@@ -25,12 +25,12 @@ const createI18nContent = (t) => {
         {
             name: 'GitHub',
             icon: 'github',
-            link: 'https://github.com/once-ui-system/nextjs-starter',
+            link: 'https://github.com/grotegehaktbal',
         },
         {
             name: 'LinkedIn',
             icon: 'linkedin',
-            link: 'https://www.linkedin.com/company/once-ui/',
+            link: 'https://www.linkedin.com/in/peter-riemersma',
         },
         {
             name: 'X',
@@ -40,7 +40,7 @@ const createI18nContent = (t) => {
         {
             name: 'Email',
             icon: 'email',
-            link: 'mailto:example@gmail.com',
+            link: 'mailto:peter@riemersmaict.nl',
         },
     ]
 
@@ -64,7 +64,7 @@ const createI18nContent = (t) => {
             display: true
         },
         calendar: {
-            display: true,
+            display: false,
             link: 'https://cal.com'
         },
         intro: {
@@ -77,24 +77,18 @@ const createI18nContent = (t) => {
             title: t("about.work.title"),
             experiences: [
                 {
-                    company: 'FLY',
-                    timeframe: t("about.work.experiences.FLY.timeframe"),
-                    role: t("about.work.experiences.FLY.role"),
-                    achievements: t("about.work.experiences.FLY.achievements").split(";"),
+                    company: 'pyxels',
+                    timeframe: t("about.work.experiences.pyxels.timeframe"),
+                    role: t("about.work.experiences.pyxels.role"),
+                    achievements: t("about.work.experiences.pyxels.achievements").split(";"),
                     images: [ // optional: leave the array empty if you don't want to display images
-                        {
-                            src: '/images/projects/project-01/cover-01.jpg',
-                            alt: 'Once UI Project',
-                            width: 16,
-                            height: 9
-                        }
                     ]
                 },
                 {
-                    company: 'Creativ3',
-                    timeframe: t("about.work.experiences.Creativ3.timeframe"),
-                    role: t("about.work.experiences.Creativ3.role"),
-                    achievements: t("about.work.experiences.Creativ3.achievements").split(";"),
+                    company: 'Riemersma ICT',
+                    timeframe: t("about.work.experiences.Riemersma ICT.timeframe"),
+                    role: t("about.work.experiences.Riemersma ICT.role"),
+                    achievements: t("about.work.experiences.Riemersma ICT.achievements").split(";"),
                     images: [ ]
                 }
             ]
@@ -104,12 +98,12 @@ const createI18nContent = (t) => {
             title: 'Studies',
             institutions: [
                 {
-                    name: 'University of Jakarta',
-                    description: <>{t(`about.studies.institutions.University of Jakarta.description`)}</>,
+                    name: <>{t(`about.studies.institutions.Hanzehogeschool Groningen.naamhanze`)}</>,
+                    description: <>{t(`about.studies.institutions.Hanzehogeschool Groningen.description`)}</>,
                 },
                 {
-                    name: 'Build the Future',
-                    description: <>{t("about.studies.institutions.Build the Future.description")}</>,
+                    name: <>{t(`about.studies.institutions.Noorderpoort College.naamnoorderpoort`)}</>,
+                    description: <>{t("about.studies.institutions.Noorderpoort College.description")}</>,
                 }
             ]
         },
@@ -118,34 +112,26 @@ const createI18nContent = (t) => {
             title: t("about.technical.title"),
             skills: [
                 {
-                    title: 'Figma',
-                    description: <>{t("about.technical.skills.Figma.description")}</>,
+                    title: 'Cisco Networking',
+                    description: <>{t("about.technical.skills.Cisco Networking.description")}</>,
                     images: [
-                        {
-                            src: '/images/projects/project-01/cover-02.jpg',
-                            alt: 'Project image',
-                            width: 16,
-                            height: 9
-                        },
-                        {
-                            src: '/images/projects/project-01/cover-03.jpg',
-                            alt: 'Project image',
-                            width: 16,
-                            height: 9
-                        },
                     ]
                 },
                 {
+                    title: 'Home Assistant',
+                    description: <>{t("about.technical.skills.Home Assistant.description")}</>
+                },
+                {
                     title: 'Next.js',
-                    description: <>{t("about.technical.skills.Nextjs.description")}</>, // "." not accepted in next-intl namespace
-                    images: [
-                        {
-                            src: '/images/projects/project-01/cover-04.jpg',
-                            alt: 'Project image',
-                            width: 16,
-                            height: 9
-                        },
-                    ]
+                    description: <>{t("about.technical.skills.Nextjs.description")}</> // "." not accepted in next-intl namespace
+                    // images: [
+                    //     {
+                    //         src: '/images/projects/project-01/cover-04.jpg',
+                    //         alt: 'Project image',
+                    //         width: 16,
+                    //         height: 9
+                    //     },
+                    // ]
                 }
             ]
         }

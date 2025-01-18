@@ -1,0 +1,32 @@
+---
+title: "Weersvoorspelling IoT Project"
+publishedAt: "2025-01-11"
+summary: "Ontwikkeling van een weersvoorspellingssysteem dat zich richt op een specifieke locatie met hoge nauwkeurigheid."
+images:
+---
+
+## Overzicht
+
+Voor dit project aan de Hanzehogeschool hebben we een slim weersvoorspellingssysteem gebouwd dat een betere lokale voorspelling geeft voor de temperatuur en luchtvochtigheid.
+Deze voorspelling wordt gemaakt met een AI-model dat lokaal geplaatste sensoren vergelijkt met weergegevens van het KNMI. Deze nauwkeurige voorspelling kan worden gebruikt om de temperatuur van een warmtepomp efficiënt te automatiseren.
+
+## Belangrijkste Kenmerken
+
+- **Hoge Precisie**: Met meerdere sensoren op optimale locaties is het mogelijk om nauwkeurige en precieze gegevens te verzamelen die kunnen worden gebruikt voor het maken van de beste voorspellingen.
+- **Stabiliteit**: Alle berekeningen kunnen offline en lokaal worden uitgevoerd, dit is veilig en stabiel.
+- **AI-model**: Door een AI-model te trainen met gegevens die teruggaan tot 1950, hebben we een goede basis gelegd door te leren van het verleden.
+- **Slimme Huis Integratie**: Dit systeem kan volledig worden geïntegreerd in Home Assistant voor het bouwen van weersgebaseerde automatiseringen.
+
+## Gebruikte Technologieën
+
+- **Python**: Voor het bouwen van de voorspellingsapp.
+- **Tensorflow**: Voor het trainen van het AI-model.
+- **KNMI Public API**: Voor het verzamelen van de weergegevensgeschiedenis van 1950 tot heden.
+
+## Uitdagingen en Lessen
+
+Een belangrijke uitdaging was het kiezen van de juiste weer-API om te gebruiken. We kozen uiteindelijk voor de KNMI-API omdat deze een weerstation dicht bij onze locatie had. We vergeleken ook de geschatte temperatuur van het KNMI met de werkelijke temperatuur op onze locatie.
+
+## Resultaat
+
+Het systeem werkt uitstekend voor onze locatie en is effectief in het maken van een nauwkeurige weersvoorspelling voor elk uur tot 48 uur vooruit.

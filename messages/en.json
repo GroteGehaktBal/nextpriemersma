@@ -1,18 +1,18 @@
 {
     "person": {
-        "role": "Design Engineer"
+        "role": "IT & Home Automation Expert"
     },
     "newsletter": {
         "title": "Subscribe to {firstName}'s Newsletter",
-        "description": "I occasionally write about design, technology, and share thoughts on the intersection of creativity and engineering",
+        "description": "I occasionally write about technology, and share thoughts on the intersection of creativity and engineering",
         "button": "Sign up"
     },
     "home": {
         "label": "Home",
         "title": "{name}'s Portfolio",
         "description": "Portfolio website showcasing my work as a {role}",
-        "headline": "Design engineer and builder",
-        "subline": "I'm Selene, a design engineer at FLY, where I craft intuitive user experiences. After hours, I build my own projects."
+        "headline": "IT & Home Automation Expert",
+        "subline": "I'm Peter, a network security engineering student currently providing IT and Smart Home solutions at pyxels."
     },
     "about": {
         "label": "About",
@@ -20,42 +20,47 @@
         "description": "Meet {name}, {role} from {location}",
         "intro": {
             "title": "Introduction",
-            "description": "Selene is a Jakarta-based design engineer with a passion for transforming complex challenges into simple, elegant design solutions. Her work spans digital interfaces, interactive experiences, and the convergence of design and technology."
+            "description": "Peter is a network security engineering student with a passion for high-tech home automation solutions."
         },
         "work": {
             "title": "Work Experience",
             "experiences": {
-                "FLY": {
-                    "timeframe": "2022 - Present",
-                    "role": "Senior Design Engineer",
-                    "achievements": "Redesigned the UI/UX for the FLY platform, resulting in a 20% increase in user engagement and 30% faster load times.;Spearheaded the integration of AI tools into design workflows, enabling designers to iterate 50% faster."
+                "pyxels": {
+                    "timeframe": "2024 - Present",
+                    "role": "Co-Owner",
+                    "achievements": "Installed a secure network with 2.5GbE ethernet and Wi-Fi 6E access points.;Smart home installations, including smart lighting, curtains, underfloor heating, HVAC, Camera's and much more."
                 },
-                "Creativ3": {
-                    "timeframe": "2018 - 2022",
-                    "role": "Lead Designer",
-                    "achievements": "Developed a design system that unified the brand across multiple platforms, improving design consistency by 40%.;Led a cross-functional team to launch a new product line, contributing to a 15% increase in overall company revenue."
+                "Riemersma ICT": {
+                    "timeframe": "2023 - Present",
+                    "role": "Freelance",
+                    "achievements": "Providing tech support to clients.;Worked with Microsoft Azure for network management."
                 }
             }
         },
         "studies": {
             "title": "Studies",
             "institutions": {
-                "University of Jakarta": {
-                    "description": "Studied software engineering."
+                "Hanzehogeschool Groningen": {
+                    "naamhanze": "Hanze University Groningen",
+                    "description": "ICT; network security engineering."
                 },
-                "Build the Future": {
-                    "description": "Studied online marketing and personal branding."
+                "Noorderpoort College": {
+                    "naamnoorderpoort": "Noorderpoort",
+                    "description": "Network management."
                 }
             }
         },
         "technical": {
             "title": "Technical skills",
             "skills": {
-                "Figma": {
-                    "description": "Able to prototype in Figma with Once UI with unnatural speed."
+                "Cisco Networking": {
+                    "description": "Able to securely setup complex networks with proper security and good understanding of network protocols."
+                },
+                "Home Assistant": {
+                    "description": "Experienced with Home Assistant for building complex automations and designing modern dashboards."
                 },
                 "Nextjs": {
-                    "description": "Building next gen apps with Next.js + Once UI + Supabase."
+                    "description": "Building next gen web-apps with Next.js"
                 }
             }
         }
@@ -76,6 +81,6 @@
         "description": "A photo collection by {name}"
     },
     "projectCard": {
-        "label": "Read Case Study"
+        "label": "Read More"
     }
 }

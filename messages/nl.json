@@ -1,0 +1,86 @@
+{
+    "person": {
+        "role": "IT & Huis Automatisering Expert"
+    },
+    "newsletter": {
+        "title": "Abonneer je op {firstName}'s Nieuwsbrief",
+        "description": "Ik schrijf af en toe over design, technologie en deel gedachten over de kruising van creativiteit en techniek",
+        "button": "Aanmelden"
+    },
+    "home": {
+        "label": "Home",
+        "title": "{name}'s Portfolio",
+        "description": "Portfolio website voor meer informatie over mij als {role}",
+        "headline": "IT & Huis Automatisering Expert",
+        "subline": "Ik ben Peter, een netwerkbeveiligingsstudent die momenteel werkt met IT en huisautomatiseringsoplossingen bij pyxels"
+    },
+    "about": {
+        "label": "Info",
+        "title": "Over mij",
+        "description": "Mijn naam is {name}, {role} uit {location}",
+        "intro": {
+            "title": "Introductie",
+            "description": "Peter is een netwerkbeveiligingsstudent met een passie voor high-tech huisautomatiseringsoplossingen."
+        },
+        "work": {
+            "title": "Werkervaring",
+            "experiences": {
+                "pyxels": {
+                    "timeframe": "2024 - Heden",
+                    "role": "Mede-eigenaar",
+                    "achievements": "Een veilig netwerk geïnstalleerd met 2.5GbE ethernet en Wi-Fi 6E toegangspunten.;Slimme huisinstallaties, waaronder slimme verlichting, gordijnen, vloerverwarming, HVAC, camera's en nog veel meer."
+                },
+                "Riemersma ICT": {
+                    "timeframe": "2023 - Heden",
+                    "role": "Freelance",
+                    "achievements": "Technische ondersteuning aan klanten.;Gewerkt met Microsoft Azure voor netwerkbeheer."
+                }
+            }
+        },
+        "studies": {
+            "title": "Opleidingen",
+            "institutions": {
+                "Hanzehogeschool Groningen": {
+                    "naamhanze": "Hanzehogeschool Groningen",
+                    "description": "HBO-ICT met richting network security engineering"
+                },
+                "Noorderpoort College": {
+                    "naamnoorderpoort": "Noorderpoort College",
+                    "description": "Netwerkbeheer."
+                }
+            }
+        },
+        "technical": {
+            "title": "Technische vaardigheden",
+            "skills": {
+                "Cisco Networking": {
+                    "description": "In staat om complexe netwerken veilig op te zetten met de juiste beveiliging en een goed begrip van netwerkprotocollen."
+                },
+                "Home Assistant": {
+                    "description": "Ervaren met Home Assistant voor het bouwen van complexe automatiseringen en het ontwerpen van moderne dashboards."
+                },
+                "Nextjs": {
+                    "description": "Bouwen van next-gen web-apps met Next.js"
+                }
+            }
+        }
+    },
+    "blog": {
+        "label": "Blog",
+        "title": "Schrijven over design en technologie...",
+        "description": "Lees wat {name} recent heeft gedaan"
+    },
+    "work": {
+        "label": "Werk",
+        "title": "Mijn werk",
+        "description": "Projecten van {name}"
+    },
+    "gallery": {
+        "label": "Galerij",
+        "title": "Mijn fotogalerij",
+        "description": "Een fotocollectie van {name}"
+    },
+    "projectCard": {
+        "label": "Lees Meer"
+    }
+}
