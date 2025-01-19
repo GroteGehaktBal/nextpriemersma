@@ -1,4 +1,5 @@
 import { InlineCode } from "@/once-ui/components";
+import { PiContactlessPayment } from "react-icons/pi";
 
 const createI18nContent = (t) => {
     const person = {
@@ -9,8 +10,9 @@ const createI18nContent = (t) => {
         },
         role:      t("person.role"),
         avatar:    '/images/avatar.jpg',
-        location:  'Europe/Amsterdam',        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
-        languages: ['English', 'Nederlands']  // optional: Leave the array empty if you don't want to display languages
+        location:  t("contact.timezone"),        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
+        languages: t("contact.languages").split(',')
+        //languages: {languages}   // optional: Leave the array empty if you don't want to display languages
     }
 
     const newsletter = {
@@ -41,6 +43,11 @@ const createI18nContent = (t) => {
             name: 'Email',
             icon: 'email',
             link: 'mailto:peter@riemersmaict.nl',
+        },
+        {
+            name: t("contact.phone"),
+            icon: 'phone',
+            link: 'tel:+31615939010',
         },
     ]
 
@@ -157,75 +164,14 @@ const createI18nContent = (t) => {
         label: t("gallery.label"),
         title: t("gallery.title"),
         description: t("gallery.description", {name: person.name}),
-        // Images from https://pexels.com
         images: [
             {
                 src: '/images/gallery/img-01.jpg',
                 alt: 'image',
                 orientation: 'vertical'
             },
-            {
+            { 
                 src: '/images/gallery/img-02.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            { 
-                src: '/images/gallery/img-03.jpg',
-                alt: 'image',
-                orientation: 'vertical'
-            },
-            { 
-                src: '/images/gallery/img-04.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            {
-                src: '/images/gallery/img-05.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            {
-                src: '/images/gallery/img-06.jpg',
-                alt: 'image',
-                orientation: 'vertical'
-            },
-            {
-                src: '/images/gallery/img-07.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            {
-                src: '/images/gallery/img-08.jpg',
-                alt: 'image',
-                orientation: 'vertical'
-            },
-            {
-                src: '/images/gallery/img-09.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            {
-                src: '/images/gallery/img-10.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            { 
-                src: '/images/gallery/img-11.jpg',
-                alt: 'image',
-                orientation: 'vertical'
-            },
-            {
-                src: '/images/gallery/img-12.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            {
-                src: '/images/gallery/img-13.jpg',
-                alt: 'image',
-                orientation: 'horizontal'
-            },
-            { 
-                src: '/images/gallery/img-14.jpg',
                 alt: 'image',
                 orientation: 'horizontal'
             },

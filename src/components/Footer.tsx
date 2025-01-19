@@ -29,8 +29,6 @@ export const Footer = () => {
                     <Text paddingX="4">
                         {person.name}
                     </Text>
-                    <Text onBackground="neutral-weak">
-                    </Text>
                 </Text>
                 <Flex
                     gap="16">

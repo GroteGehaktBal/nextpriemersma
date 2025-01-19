@@ -169,7 +169,7 @@ export const Header = () => {
                         }
                         <Flex hide="s">
                             { display.time && (
-                                <TimeDisplay timeZone={person.location}/>
+                                <TimeDisplay timeZone="Europe/Amsterdam"/>
                             )}
                         </Flex>
                     </Flex>

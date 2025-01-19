@@ -80,6 +80,15 @@
         "title": "My photo gallery",
         "description": "A photo collection by {name}"
     },
+    "contact": {
+        "label": "Contact",
+        "title": "Contact",
+        "description": "Contact Info",
+        "email": "Email",
+        "phone": "Phone",
+        "languages": "English,Dutch",
+        "timezone": "Friesland/Netherlands"
+    },
     "projectCard": {
         "label": "Read More"
     }

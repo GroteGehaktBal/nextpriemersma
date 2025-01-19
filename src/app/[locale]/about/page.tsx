@@ -127,7 +127,7 @@ export default function About(props: { params: Promise<{ locale: string }>}) {
                             gap="8"
                             alignItems="center">
                             <Icon
-                                onBackground="accent-weak"
+                                onBackground="neutral-weak"
                                 name="globe"/>
                             {person.location}
                         </Flex>

@@ -31,8 +31,8 @@ const effects = {
     },
     dots: {
         display: true,
-        opacity: 0.4,           // 0 - 1
-        size: '24'              // 2 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 634
+        opacity: 0.65,           // 0 - 1
+        size: '20'              // 2 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 634
     },
     lines: {
         display: true,
@@ -43,7 +43,7 @@ const style = {
     theme:       'dark',         // dark | light
     neutral:     'gray',         // sand | gray | slate
     brand:       'emerald',      // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-    accent:      'indigo',       // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+    accent:      'yellow',       // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
     solid:       'contrast',     // color | contrast
     solidStyle:  'flat',         // flat | plastic
     border:      'playful',      // rounded | playful | conservative
@@ -53,7 +53,7 @@ const style = {
 
 const display = {
     location: false,
-    time:     true
+    time:     false
 }
 
 const mailchimp = {

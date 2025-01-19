@@ -80,6 +80,15 @@
         "title": "Mijn fotogalerij",
         "description": "Een fotocollectie van {name}"
     },
+    "contact": {
+        "label": "Contact",
+        "title": "Contact",
+        "description": "Contact Info",
+        "email": "Email",
+        "phone": "Mobiel",
+        "languages": "Engels,Nederlands",
+        "timezone": "Friesland/Nederland"
+    },
     "projectCard": {
         "label": "Lees Meer"
     }
