@@ -12,7 +12,7 @@
         "title": "{name}'s Portfolio",
         "description": "Portfolio website voor meer informatie over mij als {role}",
         "headline": "IT & Huis Automatisering Expert",
-        "subline": "Ik ben Peter, een netwerkbeveiligingsstudent die momenteel werkt met IT en huisautomatiseringsoplossingen bij pyxels"
+        "subline": "Ik ben Peter, een netwerkbeveiligingsstudent die momenteel werkt met IT en huisautomatiseringsoplossingen"
     },
     "about": {
         "label": "Info",
@@ -46,7 +46,7 @@
                 },
                 "Noorderpoort College": {
                     "naamnoorderpoort": "Noorderpoort College",
-                    "description": "Netwerkbeheer."
+                    "description": "Netwerkbeheer"
                 }
             }
         },

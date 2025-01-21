@@ -12,7 +12,7 @@
         "title": "{name}'s Portfolio",
         "description": "Portfolio website showcasing my work as a {role}",
         "headline": "IT & Home Automation Expert",
-        "subline": "I'm Peter, a network security engineering student currently providing IT and Smart Home solutions at pyxels."
+        "subline": "I'm Peter, a network security engineering student currently providing IT and Smart Home solutions"
     },
     "about": {
         "label": "About",
@@ -42,11 +42,11 @@
             "institutions": {
                 "Hanzehogeschool Groningen": {
                     "naamhanze": "Hanze University Groningen",
-                    "description": "ICT; network security engineering."
+                    "description": "ICT; network security engineering"
                 },
                 "Noorderpoort College": {
                     "naamnoorderpoort": "Noorderpoort",
-                    "description": "Network management."
+                    "description": "Network management"
                 }
             }
         },
