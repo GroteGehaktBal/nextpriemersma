@@ -7,9 +7,9 @@ import styles from './ToggleButton.module.scss';
 
 interface CommonProps {
     label?: string;
-    selected?: boolean;
+    selected: boolean;
     size?: 's' | 'm' | 'l';
-    align?: 'left' | 'center' | 'right';
+    align?: 'start' | 'center';
     width?: 'fit' | 'fill';
     weight?: 'default' | 'strong';
     truncate?: boolean;
@@ -18,6 +18,7 @@ interface CommonProps {
     className?: string;
     style?: React.CSSProperties;
     children?: ReactNode;
+    href?: string;
 }
 
 type ButtonProps = CommonProps & ButtonHTMLAttributes<HTMLButtonElement>;
