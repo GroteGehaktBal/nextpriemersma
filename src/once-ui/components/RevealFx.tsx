@@ -4,6 +4,7 @@ import React, { useState, useEffect, forwardRef } from 'react';
 import { SpacingToken } from '../types';
 import styles from './RevealFx.module.scss';
 import { Flex } from '.';
+import classNames from 'classnames';
 
 interface RevealFxProps extends React.ComponentProps<typeof Flex> {
 	children: React.ReactNode;
@@ -67,7 +68,7 @@ const RevealFx = forwardRef<HTMLDivElement, RevealFxProps>(({
 
 	const translateValue = getTranslateYValue();
 
-	const combinedClassName = `${styles.revealFx} ${isRevealed ? styles.revealed : styles.hidden} ${className || ''}`;
+	const combinedClassName = classNames(styles.revealFx, { [styles.hidden]: !isRevealed }, className);
 
 	const revealStyle: React.CSSProperties = {
 		transitionDuration: getSpeedDuration(),
@@ -80,7 +81,8 @@ const RevealFx = forwardRef<HTMLDivElement, RevealFxProps>(({
 			fillWidth
 			justifyContent="center"
 			ref={ref}
-			aria-hidden="true"
+			aria-hidden={!isRevealed}
+			tabIndex={!isRevealed ? -1 : undefined}
 			style={revealStyle}
 			className={combinedClassName}
 			{...rest}>
