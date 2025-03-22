@@ -2,15 +2,14 @@
 
 import React, { forwardRef, ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react';
 import Link from 'next/link';
-
 import { Icon } from '.';
 import styles from './ToggleButton.module.scss';
 
 interface CommonProps {
     label?: string;
-    selected: boolean;
+    selected?: boolean;
     size?: 's' | 'm' | 'l';
-    align?: 'start' | 'center';
+    align?: 'left' | 'center' | 'right';
     width?: 'fit' | 'fill';
     weight?: 'default' | 'strong';
     truncate?: boolean;
@@ -19,7 +18,6 @@ interface CommonProps {
     className?: string;
     style?: React.CSSProperties;
     children?: ReactNode;
-    href?: string;
 }
 
 type ButtonProps = CommonProps & ButtonHTMLAttributes<HTMLButtonElement>;
@@ -49,9 +47,7 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
         <>
             <div className={styles.labelWrapper}>
                 {prefixIcon && (
-                    <Icon
-                        name={prefixIcon}
-                        size={iconSize}/>
+                    <Icon name={prefixIcon} size={iconSize} />
                 )}
                 {label && (
                     <div className={`font-s font-label ${styles.label} ${weight === 'strong' ? 'font-strong' : 'font-default'} ${truncate ? styles.truncate : ''}`}>
@@ -61,9 +57,7 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
                 {children}
             </div>
             {suffixIcon && (
-                <Icon
-                    name={suffixIcon}
-                    size={iconSize} />
+                <Icon name={suffixIcon} size={iconSize} />
             )}
         </>
     );
@@ -84,28 +78,31 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
                     href={href}
                     ref={ref as React.Ref<HTMLAnchorElement>}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     {...commonProps}
-                    {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}>
+                    {...props}>
                     {content}
                 </a>
             );
         }
 
         return (
-            <Link
-                href={href}
-                {...commonProps}
-                {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
-                {content}
+            <Link href={href} passHref>
+                <a
+                    ref={ref as React.Ref<HTMLAnchorElement>}
+                    {...commonProps}
+                    {...props}>
+                    {content}
+                </a>
             </Link>
         );
     }
 
     return (
         <button
+            ref={ref as React.Ref<HTMLButtonElement>}
             {...commonProps}
-            {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
+            {...props}>
             {content}
         </button>
     );
