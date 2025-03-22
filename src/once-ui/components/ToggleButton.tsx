@@ -66,7 +66,6 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
     const commonProps = {
         className: `${styles.button} ${selected ? styles.selected : ''} ${styles[size]} ${styles[align]} ${styles[width]} ${className || ''}`,
         style: { ...style, textDecoration: 'none' },
-        'aria-pressed': selected,
         tabIndex: 0,
     };
 
@@ -105,7 +104,8 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
         <button
             ref={ref as React.Ref<HTMLButtonElement>}
             {...commonProps}
-            {...buttonProps}>
+            {...buttonProps}
+            aria-pressed={selected}>
             {content}
         </button>
     );
