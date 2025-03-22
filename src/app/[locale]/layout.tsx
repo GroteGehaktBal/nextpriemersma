@@ -27,35 +27,35 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     const { person, home } = renderContent(t);
 
     return {
-		metadataBase: new URL(`https://${baseURL}/${locale}`),
-		title: home.title,
-		description: home.description,
-		openGraph: {
-			title: `${person.firstName}'s Portfolio`,
-			description: 'Portfolio website for more info about me',
-			url: baseURL,
-			siteName: `${person.firstName}'s Portfolio`,
-			locale: 'en_US',
-			type: 'website',
-		},
-		robots: {
-			index: true,
-			follow: true,
-			googleBot: {
-				index: true,
-				follow: true,
-				'max-video-preview': -1,
-				'max-image-preview': 'large',
-				'max-snippet': -1,
-			},
-		},
-	}
+        metadataBase: new URL(`https://${baseURL}/${locale}`),
+        title: home.title,
+        description: home.description,
+        openGraph: {
+            title: `${person.firstName}'s Portfolio`,
+            description: 'Portfolio website for more info about me',
+            url: baseURL,
+            siteName: `${person.firstName}'s Portfolio`,
+            locale: 'en_US',
+            type: 'website',
+        },
+        robots: {
+            index: true,
+            follow: true,
+            googleBot: {
+                index: true,
+                follow: true,
+                'max-video-preview': -1,
+                'max-image-preview': 'large',
+                'max-snippet': -1,
+            },
+        }
+    }
 };
 
 const primary = Inter({
-	variable: '--font-primary',
-	subsets: ['latin'],
-	display: 'swap',
+    variable: '--font-primary',
+    subsets: ['latin'],
+    display: 'swap',
 })
 
 type FontConfig = {
@@ -63,28 +63,26 @@ type FontConfig = {
 };
 
 /*
-	Replace with code for secondary and tertiary fonts
-	from https://once-ui.com/customize
+    Replace with code for secondary and tertiary fonts
+    from https://once-ui.com/customize
 */
 const secondary: FontConfig | undefined = undefined;
 const tertiary: FontConfig | undefined = undefined;
-/*
-*/
 
 const code = Source_Code_Pro({
-	variable: '--font-code',
-	subsets: ['latin'],
-	display: 'swap',
+    variable: '--font-code',
+    subsets: ['latin'],
+    display: 'swap',
 });
 
 interface RootLayoutProps {
-	children: React.ReactNode;
-	params: Promise<{locale: string}>;
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
 }
 
 export function generateStaticParams() {
-	return routing.locales.map((locale) => ({locale}));
-  }
+    return routing.locales.map((locale) => ({ locale }));
+}
 
 export default async function RootLayout(props: RootLayoutProps) {
     const params = await props.params;
@@ -100,50 +98,51 @@ export default async function RootLayout(props: RootLayoutProps) {
     unstable_setRequestLocale(locale);
     const messages = await getMessages();
     return (
-		<NextIntlClientProvider messages={messages}>
-			<Flex
-				as="html" lang="en"
-				background="page"
-				data-neutral={style.neutral} data-brand={style.brand} data-accent={style.accent}
-				data-solid={style.solid} data-solid-style={style.solidStyle}
-				data-theme={style.theme}
-				data-border={style.border}
-				data-surface={style.surface}
-				data-transition={style.transition}
-				className={classNames(
-					primary.variable,
-					secondary ? secondary.variable : '',
-					tertiary ? tertiary.variable : '',
-					code.variable)}>
-				<Flex style={{minHeight: '100vh'}}
-					as="body"
-					fillWidth margin="0" padding="0"
-					direction="column">
-					<Background
-						mask={effects.mask as any}
-						gradient={effects.gradient as any}
-						dots={effects.dots as any}
-						lines={effects.lines as any}/>
-					<Flex
-						fillWidth
-						minHeight="16">
-					</Flex>
-					<Header/>
-					<Flex
-						zIndex={0}
-						fillWidth paddingY="l" paddingX="l"
-						justifyContent="center" flex={1}>
-						<Flex
-							justifyContent="center"
-							fillWidth minHeight="0">
-							<RouteGuard>
-								{children}
-							</RouteGuard>
-						</Flex>
-					</Flex>
-					<Footer/>
-				</Flex>
-			</Flex>
-		</NextIntlClientProvider>
-	);
+        <NextIntlClientProvider messages={messages}>
+            <Flex
+                as="html" lang="en"
+                background="page"
+                data-neutral={style.neutral} data-brand={style.brand} data-accent={style.accent}
+                data-solid={style.solid} data-solid-style={style.solidStyle}
+                data-theme={style.theme}
+                data-border={style.border}
+                data-surface={style.surface}
+                data-transition={style.transition}
+                className={classNames(
+                    primary.variable,
+                    secondary ? secondary.variable : '',
+                    tertiary ? tertiary.variable : '',
+                    code.variable)}>
+                <Flex style={{minHeight: '100vh'}}
+                    as="body"
+                    fillWidth margin="0" padding="0"
+                    direction="column">
+                    <Background
+                        mask={effects.mask as any}
+                        gradient={effects.gradient as any}
+                        dots={effects.dots as any}
+                        lines={effects.lines as any}/>
+                    <Flex
+                        fillWidth
+                        minHeight="16">
+                    </Flex>
+                    <Header/>
+                    <Flex
+                        zIndex={0}
+                        fillWidth paddingY="l" paddingX="l"
+                        justifyContent="center" flex={1}>
+                        <Flex
+                            as="main" // Add the main element here
+                            justifyContent="center"
+                            fillWidth minHeight="0">
+                            <RouteGuard>
+                                {children}
+                            </RouteGuard>
+                        </Flex>
+                    </Flex>
+                    <Footer/>
+                </Flex>
+            </Flex>
+        </NextIntlClientProvider>
+    );
 }
