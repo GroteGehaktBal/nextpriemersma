@@ -134,14 +134,7 @@ const Accordion: React.FC<AccordionProps> = forwardRef(({
                     fillWidth
                     paddingX="16" paddingTop="8" paddingBottom="16"
                     direction="column">
-                    {React.Children.map(children, (child) => {
-                        if (React.isValidElement(child)) {
-                            return React.cloneElement(child as React.ReactElement<any>, {
-                                tabIndex: isOpen ? undefined : -1,
-                            });
-                        }
-                        return child;
-                    })}
+                    {children}
                 </Flex>
             </Flex>
         </Flex>

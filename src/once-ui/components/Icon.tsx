@@ -59,7 +59,7 @@ const Icon = forwardRef<HTMLDivElement, IconProps>(({
             ref={ref}
             className={classNames(colorClass, className)}
             style={{ display: 'contents', fontSize: sizeMap[size], ...style }}
-            // Remove the role attribute and rely on aria-hidden to hide decorative icons.
+            role={decorative ? "presentation" : undefined}
             aria-hidden={decorative ? "true" : undefined}
             aria-label={decorative ? undefined : name}>
             <IconComponent />
