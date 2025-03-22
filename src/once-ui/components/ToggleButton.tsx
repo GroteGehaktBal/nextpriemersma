@@ -74,6 +74,7 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
         const isExternal = isExternalLink(href);
 
         if (isExternal) {
+            const anchorProps = props as AnchorProps;
             return (
                 <a
                     href={href}
@@ -81,7 +82,7 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
                     target="_blank"
                     rel="noopener noreferrer"
                     {...commonProps}
-                    {...props}>
+                    {...anchorProps}>
                     {content}
                 </a>
             );
@@ -92,18 +93,19 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
                 <a
                     ref={ref as React.Ref<HTMLAnchorElement>}
                     {...commonProps}
-                    {...props}>
+                    {...props as AnchorProps}>
                     {content}
                 </a>
             </Link>
         );
     }
 
+    const buttonProps = props as ButtonProps;
     return (
         <button
             ref={ref as React.Ref<HTMLButtonElement>}
             {...commonProps}
-            {...props}>
+            {...buttonProps}>
             {content}
         </button>
     );
