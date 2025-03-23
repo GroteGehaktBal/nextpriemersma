@@ -2,6 +2,7 @@
 
 import React, { forwardRef, ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react';
 import Link from 'next/link';
+
 import { Icon } from '.';
 import styles from './ToggleButton.module.scss';
 
@@ -48,7 +49,9 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
         <>
             <div className={styles.labelWrapper}>
                 {prefixIcon && (
-                    <Icon name={prefixIcon} size={iconSize} />
+                    <Icon
+                        name={prefixIcon}
+                        size={iconSize}/>
                 )}
                 {label && (
                     <div className={`font-s font-label ${styles.label} ${weight === 'strong' ? 'font-strong' : 'font-default'} ${truncate ? styles.truncate : ''}`}>
@@ -58,7 +61,9 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
                 {children}
             </div>
             {suffixIcon && (
-                <Icon name={suffixIcon} size={iconSize} />
+                <Icon
+                    name={suffixIcon}
+                    size={iconSize} />
             )}
         </>
     );
@@ -66,6 +71,7 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
     const commonProps = {
         className: `${styles.button} ${selected ? styles.selected : ''} ${styles[size]} ${styles[align]} ${styles[width]} ${className || ''}`,
         style: { ...style, textDecoration: 'none' },
+        'aria-pressed': selected,
         tabIndex: 0,
     };
 
@@ -73,39 +79,33 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
         const isExternal = isExternalLink(href);
 
         if (isExternal) {
-            const anchorProps = props as AnchorProps;
             return (
                 <a
                     href={href}
                     ref={ref as React.Ref<HTMLAnchorElement>}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noreferrer"
                     {...commonProps}
-                    {...anchorProps}>
+                    {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}>
                     {content}
                 </a>
             );
         }
 
         return (
-            <Link href={href} passHref>
-                <a
-                    ref={ref as React.Ref<HTMLAnchorElement>}
-                    {...commonProps}
-                    {...props as AnchorProps}>
-                    {content}
-                </a>
+            <Link
+                href={href}
+                {...commonProps}
+                {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
+                {content}
             </Link>
         );
     }
 
-    const buttonProps = props as ButtonProps;
     return (
         <button
-            ref={ref as React.Ref<HTMLButtonElement>}
             {...commonProps}
-            {...buttonProps}
-            aria-pressed={selected}>
+            {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
             {content}
         </button>
     );
