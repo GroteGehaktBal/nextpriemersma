@@ -32,7 +32,6 @@ export const Footer = () => {
                 </Text>
                 <Flex
                     gap="16">
-                    style={{ minWidth: `${social.length * 40}px` }}
                     {social.map((item) => (
                         item.link && (
                             <IconButton

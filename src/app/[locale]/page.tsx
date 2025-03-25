@@ -42,11 +42,12 @@ export async function generateMetadata(
 	};
 }
 
-export default async function Home(
-    props: { params: Promise<{ locale: string }> }
-) {
-    const params = await props.params;
-    const { locale } = params;
+export default function Home(props: { params: Promise<{ locale: string }>}) {
+    const params = use(props.params);
+
+    const {
+        locale
+    } = params;
     
     unstable_setRequestLocale(locale);
     const t = useTranslations();
@@ -91,16 +92,19 @@ export default async function Home(
 								{home.headline}
 							</Heading>
 						</RevealFx>
-						<RevealFx translateY="8" delay={0.2}>
+						<RevealFx
+							translateY="8" delay={0.2} fillWidth justifyContent="flex-start" paddingBottom="m">
 							<Text
 								wrap="balance"
 								onBackground="neutral-weak"
-								variant="body-default-l">
+								variant="heading-default-xl">
 								{home.subline}
 							</Text>
 						</RevealFx>
 						<RevealFx translateY="12" delay={0.4}>
+							<Flex fillWidth>
 							<Button
+									id="about"
 								data-border="rounded"
 								href={`/${locale}/about`}
 								variant="tertiary"
