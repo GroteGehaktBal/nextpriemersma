@@ -10,7 +10,7 @@ import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
 export async function generateMetadata(
-	{ params: { locale } }: { params: { locale: string } }
+	{ params }: { params: { locale: string } }
 ) {
 	const t = await getTranslations();
 	const { home } = renderContent(t);
@@ -25,7 +25,7 @@ export async function generateMetadata(
 			title,
 			description,
 			type: 'website',
-			url: `https://${baseURL}/${locale}`,
+			url: `https://${baseURL}/${params.locale}`,
 			images: [
 				{
 					url: ogImage,
@@ -43,9 +43,9 @@ export async function generateMetadata(
 }
 
 export default function Home(
-	{ params: { locale } }: { params: { locale: string } }
+	{ params }: { params: { locale: string } }
 ) {
-	unstable_setRequestLocale(locale);
+	unstable_setRequestLocale(params.locale);
 	const t = useTranslations();
 	const { home, about, person, newsletter } = renderContent(t);
 	return (
@@ -99,7 +99,7 @@ export default function Home(
 					<RevealFx translateY="12" delay={0.4}>
 						<Button
 							data-border="rounded"
-							href={`/${locale}/about`}
+							href={`/${params.locale}/about`}
 							variant="tertiary"
 							suffixIcon="chevronRight"
 							size="m">
@@ -120,14 +120,14 @@ export default function Home(
 
 			</Flex>
 			<RevealFx translateY="16" delay={0.6}>
-				<Projects range={[1, 1]} locale={locale} />
+				<Projects range={[1, 1]} locale={params.locale} />
 			</RevealFx>
 			{routes['/blog'] && (
 				<Flex fillWidth paddingX="20">
-					<Posts range={[1, 2]} columns="2" locale={locale} />
+					<Posts range={[1, 2]} columns="2" locale={params.locale} />
 				</Flex>
 			)}
-			<Projects range={[2]} locale={locale} />
+			<Projects range={[2]} locale={params.locale} />
 			{newsletter.display &&
 				<Mailchimp newsletter={newsletter} />
 			}
