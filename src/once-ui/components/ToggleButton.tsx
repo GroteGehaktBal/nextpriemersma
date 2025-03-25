@@ -87,14 +87,15 @@ const ToggleButton = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
             );
         }
 
+        // Updated Link usage without <a> tag
         return (
-            <Link href={href} passHref>
-                <a
-                    ref={ref as React.Ref<HTMLAnchorElement>}
-                    {...commonProps}
-                    {...props as AnchorProps}>
-                    {content}
-                </a>
+            <Link
+                href={href}
+                ref={ref as React.Ref<HTMLAnchorElement>}
+                {...commonProps}
+                {...props as AnchorProps}
+            >
+                {content}
             </Link>
         );
     }
