@@ -43,8 +43,9 @@ export async function generateMetadata(
 }
 
 export default function Home(
-	{ params }: { params: { locale: string } }
+	props: { params: { locale: string } }
 ) {
+	const { params } = props as { params: { locale: string } }; // Explicitly cast props
 	unstable_setRequestLocale(params.locale);
 	const t = useTranslations();
 	const { home, about, person, newsletter } = renderContent(t);
