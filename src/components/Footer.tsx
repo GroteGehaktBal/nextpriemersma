@@ -32,6 +32,7 @@ export const Footer = () => {
                 </Text>
                 <Flex
                     gap="16">
+                    style={{ minWidth: `${social.length * 40}px` }}
                     {social.map((item) => (
                         item.link && (
                             <IconButton
@@ -40,7 +41,8 @@ export const Footer = () => {
                                 icon={item.icon}
                                 tooltip={item.name}
                                 size="s"
-                                variant="ghost"/>
+                                variant="ghost"
+                                style={{ width: '32px', height: '32px' }}/>
                         )
                     ))}
                 </Flex>
