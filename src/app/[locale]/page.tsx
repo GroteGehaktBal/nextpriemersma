@@ -3,7 +3,7 @@ import React, { use } from 'react';
 import { Heading, Flex, Text, Button,  Avatar, RevealFx, Arrow } from '@/once-ui/components';
 import { Projects } from '@/components/work/Projects';
 
-import { baseURL, routes, renderContent } from '@/app/resources';
+import { baseURL, routes, renderContent } from '@/app/resources'; 
 import { Mailchimp } from '@/components';
 import { Posts } from '@/components/blog/Posts';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
@@ -16,13 +16,13 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
         locale
     } = params;
 
-	const t = await getTranslations();
-	const { home } = renderContent(t);
-	const title = home.title;
-	const description = home.description;
-	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+    const t = await getTranslations();
+    const { home } = renderContent(t);
+    const title = home.title;
+    const description = home.description;
+    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
 
-	return {
+    return {
 		title,
 		description,
 		openGraph: {
@@ -54,9 +54,9 @@ export default function Home(props: { params: Promise<{ locale: string }>}) {
     } = params;
 
     unstable_setRequestLocale(locale);
-	const t = useTranslations();
-	const { home, about, person, newsletter } = renderContent(t);
-	return (
+    const t = useTranslations();
+    const { home, about, person, newsletter } = renderContent(t);
+    return (
 		<Flex
 			maxWidth="m" fillWidth gap="xl"
 			direction="column" alignItems="center">
@@ -86,55 +86,71 @@ export default function Home(props: { params: Promise<{ locale: string }>}) {
 				fillWidth
 				direction="column"
 				paddingY="l" gap="m">
-				<Flex
-					direction="column"
+					<Flex
+						direction="column"
 						fillWidth maxWidth="s">
 						<RevealFx
 							translateY="4" fillWidth justifyContent="flex-start" paddingBottom="m">
-						<Heading
-							wrap="balance"
-							variant="display-strong-l">
-							{home.headline}
-						</Heading>
-					</RevealFx>
+							<Heading
+								wrap="balance"
+								variant="display-strong-l">
+								{home.headline}
+							</Heading>
+						</RevealFx>
 						<RevealFx
 							translateY="8" delay={0.2} fillWidth justifyContent="flex-start" paddingBottom="m">
-						<Text
-							wrap="balance"
-							onBackground="neutral-weak"
-							variant="body-default-l">
-							{home.subline}
-						</Text>
-					</RevealFx>
-					<RevealFx translateY="12" delay={0.4}>
-						<Button
-							data-border="rounded"
+							<Text
+								wrap="balance"
+								onBackground="neutral-weak"
+								variant="heading-default-xl">
+								{home.subline}
+							</Text>
+						</RevealFx>
+						<RevealFx translateY="12" delay={0.4}>
+							<Flex fillWidth>
+								<Button
+									id="about"
+									data-border="rounded"
 									href={`/${locale}/about`}
-							variant="tertiary"
-							suffixIcon="chevronRight"
-							size="m">
-							<Flex
-								gap="8"
-								alignItems="center">
-								{about.avatar.display && (
-									<Avatar
-										style={{ marginLeft: '-0.75rem', marginRight: '0.25rem' }}
-										src={person.avatar}
-										size="m" />
-								)}
-								{t("about.title")}
+									variant="tertiary"
+									size="m">
+									<Flex
+										gap="8"
+										alignItems="center">
+										{about.avatar.display && (
+											<Avatar
+												style={{marginLeft: '-0.75rem', marginRight: '0.25rem'}}
+												src={person.avatar}
+												size="m"/>
+											)}
+											{t("about.title")}
+											<Arrow trigger="#about"/>
+									</Flex>
+								</Button>
 							</Flex>
-						</Button>
-					</RevealFx>
-				</Flex>
-
+						</RevealFx>
+					</Flex>
+				
 			</Flex>
 			<RevealFx translateY="16" delay={0.6}>
-				<Projects range={[1, 1]} locale={locale} />
+				<Projects range={[1,1]} locale={locale}/>
 			</RevealFx>
 			{routes['/blog'] && (
-				<Flex fillWidth paddingX="20">
-					<Posts range={[1, 2]} columns="2" locale={locale} />
+				<Flex
+					fillWidth gap="24"
+					mobileDirection="column">
+					<Flex flex={1} paddingLeft="l">
+						<Heading
+							as="h2"
+							variant="display-strong-xs"
+							wrap="balance">
+							Latest from the blog
+						</Heading>
+					</Flex>
+					<Flex
+						flex={3} paddingX="20">
+						<Posts range={[1,2]} columns="2" locale={locale}/>
+					</Flex>
 				</Flex>
 			)}
 			<Projects range={[2]} locale={locale}/>
