@@ -42,12 +42,15 @@ export async function generateMetadata(
 	};
 }
 
-export default function Home(
-	{ params: {locale}}: { params: { locale: string }}
+export default async function Home(
+    props: { params: Promise<{ locale: string }> }
 ) {
-	unstable_setRequestLocale(locale);
-	const t = useTranslations();
-	const { home, about, person, newsletter } = renderContent(t);
+    const params = await props.params;
+    const { locale } = params;
+    
+    unstable_setRequestLocale(locale);
+    const t = useTranslations();
+    const { home, about, person, newsletter } = renderContent(t);
 	return (
 		<Flex
 			maxWidth="m" fillWidth gap="xl"
