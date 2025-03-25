@@ -32,11 +32,6 @@ const social = [
         link: 'https://www.linkedin.com/in/peter-riemersma/',
     },
     {
-        name: 'X',
-        icon: 'x',
-        link: '',
-    },
-    {
         name: 'Email',
         icon: 'email',
         link: 'mailto:peter@riemersmaict.nl',
@@ -48,7 +43,15 @@ const home = {
     title: `${person.name}'s Portfolio`,
     description: `Portfolio website showcasing my work as a ${person.role}`,
     headline: <>ICT & Home Automation Professional</>,
-    subline: <>I'm Peter, an IT Expert currently providing IT and Smart Home solutions at <InlineCode>pyxels</InlineCode>, where I <br/> After hours, I build my own projects.</>
+    subline: <>I'm Peter, an IT Expert currently providing IT and Smart Home solutions at <InlineCode>pyxels</InlineCode>, where I <br/> After hours, I build my own projects.</>,
+    images: [
+        {
+            src: '/images/projects/project-01/cover-04.jpg',
+            alt: 'Project image',
+            width: 16,
+            height: 9
+        },
+    ]
 }
 
 const about = {
@@ -76,17 +79,17 @@ const about = {
         title: 'Work Experience',
         experiences: [
             {
-                company: 'FLY',
+                company: 'Riemersma ICT',
                 timeframe: '2022 - Present',
-                role: 'Senior Design Engineer',
+                role: 'Freelance',
                 achievements: [
                     <>Redesigned the UI/UX for the FLY platform, resulting in a 20% increase in user engagement and 30% faster load times.</>,
                     <>Spearheaded the integration of AI tools into design workflows, enabling designers to iterate 50% faster.</>
                 ],
                 images: [ // optional: leave the array empty if you don't want to display images
                     {
-                        src: '/images/projects/project-01/cover-01.jpg',
-                        alt: 'Once UI Project',
+                        src: '/images/projects/project-01/riemersmaict.jpg',
+                        alt: 'Freelance Riemersma ICT',
                         width: 16,
                         height: 9
                     }
@@ -119,7 +122,7 @@ const about = {
         ]
     },
     technical: {
-        display: true, // set to false to hide this section
+        display: false, // set to false to hide this section
         title: 'Technical skills',
         skills: [
             {

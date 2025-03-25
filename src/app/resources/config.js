@@ -1,4 +1,4 @@
-const baseURL = 'https://priemersma.nl'
+const baseURL = 'priemersma.nl'
 
 // Enable localization
 const i18n = true;
