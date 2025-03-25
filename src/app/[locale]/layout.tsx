@@ -142,6 +142,7 @@ export default async function RootLayout(props: RootLayoutProps) {
                         </Flex>
                     </Flex>
                     <Footer/>
+                    <SpeedInsights />
                 </Flex>
             </Flex>
         </NextIntlClientProvider>
