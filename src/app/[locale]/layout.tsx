@@ -1,5 +1,6 @@
 import "@/once-ui/styles/index.scss";
 import "@/once-ui/tokens/index.scss";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import classNames from 'classnames';
 
