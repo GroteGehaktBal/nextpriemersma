@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { use } from 'react';
 
-import { Heading, Flex, Text, Button, Avatar, RevealFx } from '@/once-ui/components';
+import { Heading, Flex, Text, Button,  Avatar, RevealFx, Arrow } from '@/once-ui/components';
 import { Projects } from '@/components/work/Projects';
 
 import { baseURL, routes, renderContent } from '@/app/resources';
@@ -9,9 +9,13 @@ import { Posts } from '@/components/blog/Posts';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
-export async function generateMetadata(
-	{ params }: { params: { locale: string } }
-) {
+export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
+    const params = await props.params;
+
+    const {
+        locale
+    } = params;
+
 	const t = await getTranslations();
 	const { home } = renderContent(t);
 	const title = home.title;
@@ -25,7 +29,7 @@ export async function generateMetadata(
 			title,
 			description,
 			type: 'website',
-			url: `https://${baseURL}/${params.locale}`,
+			url: `https://${baseURL}/${locale}`,
 			images: [
 				{
 					url: ogImage,
@@ -42,11 +46,14 @@ export async function generateMetadata(
 	};
 }
 
-export default function Home(
-	props: { params: { locale: string } }
-) {
-	const { params } = props as { params: { locale: string } }; // Explicitly cast props
-	unstable_setRequestLocale(params.locale);
+export default function Home(props: { params: Promise<{ locale: string }>}) {
+    const params = use(props.params);
+
+    const {
+        locale
+    } = params;
+
+    unstable_setRequestLocale(locale);
 	const t = useTranslations();
 	const { home, about, person, newsletter } = renderContent(t);
 	return (
@@ -81,15 +88,17 @@ export default function Home(
 				paddingY="l" gap="m">
 				<Flex
 					direction="column"
-					fillWidth maxWidth="s" gap="m">
-					<RevealFx translateY="4">
+						fillWidth maxWidth="s">
+						<RevealFx
+							translateY="4" fillWidth justifyContent="flex-start" paddingBottom="m">
 						<Heading
 							wrap="balance"
 							variant="display-strong-l">
 							{home.headline}
 						</Heading>
 					</RevealFx>
-					<RevealFx translateY="8" delay={0.2}>
+						<RevealFx
+							translateY="8" delay={0.2} fillWidth justifyContent="flex-start" paddingBottom="m">
 						<Text
 							wrap="balance"
 							onBackground="neutral-weak"
@@ -100,7 +109,7 @@ export default function Home(
 					<RevealFx translateY="12" delay={0.4}>
 						<Button
 							data-border="rounded"
-							href={`/${params.locale}/about`}
+									href={`/${locale}/about`}
 							variant="tertiary"
 							suffixIcon="chevronRight"
 							size="m">
@@ -121,15 +130,15 @@ export default function Home(
 
 			</Flex>
 			<RevealFx translateY="16" delay={0.6}>
-				<Projects range={[1, 1]} locale={params.locale} />
+				<Projects range={[1, 1]} locale={locale} />
 			</RevealFx>
 			{routes['/blog'] && (
 				<Flex fillWidth paddingX="20">
-					<Posts range={[1, 2]} columns="2" locale={params.locale} />
+					<Posts range={[1, 2]} columns="2" locale={locale} />
 				</Flex>
 			)}
-			<Projects range={[2]} locale={params.locale} />
-			{newsletter.display &&
+			<Projects range={[2]} locale={locale}/>
+			{ newsletter.display &&
 				<Mailchimp newsletter={newsletter} />
 			}
 		</Flex>
