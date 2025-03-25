@@ -9,9 +9,13 @@ import { Posts } from '@/components/blog/Posts';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
-export async function generateMetadata(
-	{params: {locale}}: { params: { locale: string }}
-) {
+export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
+    const params = await props.params;
+
+    const {
+        locale
+    } = params;
+
 	const t = await getTranslations();
     const { home } = renderContent(t);
 	const title = home.title;
