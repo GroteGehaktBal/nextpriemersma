@@ -10,7 +10,7 @@ import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
 export async function generateMetadata(
-	{ params }: { params: { locale: string } }
+	{ params }: { params: Awaited<{ locale: string }> }
 ) {
 	const t = await getTranslations();
 	const { home } = renderContent(t);
@@ -43,7 +43,7 @@ export async function generateMetadata(
 }
 
 export default function Home(
-	{ params }: { params: { locale: string } }
+	{ params }: { params: Awaited<{ locale: string }> }
 ) {
 	unstable_setRequestLocale(params.locale);
 	const t = useTranslations();
