@@ -1,10 +1,13 @@
+Do you want to build this portfolio yourself?
+check out [Once UI Magic Portfolio](https://github.com/once-ui-system/magic-portfolio)
+
 # **Getting started**
 
 It requires Node.js v18.17+.
 
 **1. Clone the repository**
 ```
-git clone https://github.com/once-ui-system/magic-portfolio.git
+git clone https://github.com/GroteGehaktBal/nextpriemersma.git
 ```
 
 **2. Install dependencies**
