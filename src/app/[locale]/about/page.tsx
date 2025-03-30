@@ -354,7 +354,7 @@ export default function About(props: { params: Promise<{ locale: string }>}) {
                                         <Text
                                             variant="body-default-m"
                                             onBackground="neutral-weak">
-                                            {skill.description}
+                                            <div dangerouslySetInnerHTML={{ __html: skill.description }} />
                                         </Text>
                                         {skill.images && skill.images.length > 0 && (
                                             <Flex
