@@ -57,7 +57,7 @@
                     "description": "In staat om complexe netwerken veilig op te zetten met de juiste beveiliging en een goed begrip van netwerkprotocollen."
                 },
                 "Home Assistant": {
-                    "description": "Ervaren met Home Assistant voor het bouwen van complexe automatiseringen en het ontwerpen van moderne dashboards."
+                    "description": "Ervaren met <a href='https://home-assistant.io'>Home Assistant</a> voor het bouwen van complexe automatiseringen en het ontwerpen van moderne dashboards."
                 },
                 "Nextjs": {
                     "description": "Bouwen van next-gen web-apps met Next.js"
