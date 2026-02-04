@@ -82,7 +82,6 @@ export const Header = () => {
                 as="header"
                 zIndex={9}
                 fillWidth padding="8"
-                minHeight="80"
                 justifyContent="center">
                 <Flex
                     paddingLeft="12" fillWidth
