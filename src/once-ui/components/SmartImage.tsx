@@ -152,6 +152,7 @@ const SmartImage: React.FC<SmartImageProps> = ({
                         alt={alt}
                         fill
                         priority={priority}
+                        fetchPriority={priority ? "high" : undefined}
                         style={{ 
                             objectFit: isEnlarged ? 'contain' : objectFit,
                         }}
