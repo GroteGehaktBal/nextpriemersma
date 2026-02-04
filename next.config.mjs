@@ -12,6 +12,10 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {
     reactStrictMode: true,
     pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
+    sassOptions: {
+        silenceDeprecations: ['legacy-js-api', 'import'],
+        quietDeps: true,
+    },
 };
 
 export default withNextIntl(withMDX(nextConfig));
