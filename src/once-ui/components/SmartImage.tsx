@@ -18,6 +18,7 @@ export type SmartImageProps = ImageProps & {
     enlarge?: boolean;
     src: string;
     unoptimized?: boolean;
+    priority?: boolean;
 };
 
 const SmartImage: React.FC<SmartImageProps> = ({

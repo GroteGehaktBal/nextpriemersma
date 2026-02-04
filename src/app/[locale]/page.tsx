@@ -90,7 +90,8 @@ export default function Home(props: { params: Promise<{ locale: string }>}) {
 						direction="column"
 						fillWidth maxWidth="s">
 						<RevealFx
-							translateY="4" fillWidth justifyContent="flex-start" paddingBottom="m">
+							translateY="4" fillWidth justifyContent="flex-start" paddingBottom="m"
+							revealedByDefault={true}>
 							<Heading
 								wrap="balance"
 								variant="display-strong-l">
@@ -121,7 +122,9 @@ export default function Home(props: { params: Promise<{ locale: string }>}) {
 											<Avatar
 												style={{marginLeft: '-0.75rem', marginRight: '0.25rem'}}
 												src={person.avatar}
-												size="m"/>
+												size="m"
+                                                priority // Prioritize loading this LCP candidate
+                                                />
 											)}
 											{t("about.title")}
 											<Arrow trigger="#about"/>

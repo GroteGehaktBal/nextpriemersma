@@ -16,6 +16,7 @@ interface AvatarProps {
     };
     style?: React.CSSProperties;
     className?: string;
+    priority?: boolean;
 }
 
 const sizeMapping: Record<'xs' | 's' | 'm' | 'l' | 'xl', number> = {
@@ -42,7 +43,8 @@ const Avatar: React.FC<AvatarProps> = forwardRef<HTMLDivElement, AvatarProps>(({
     empty,
     statusIndicator,
     style,
-    className
+    className,
+    priority
 }, ref) => {
     const isEmpty = empty || (!src && !value);
 
@@ -81,6 +83,7 @@ const Avatar: React.FC<AvatarProps> = forwardRef<HTMLDivElement, AvatarProps>(({
                     fill
                     alt="Avatar"
                     sizes={`${sizeMapping[size]}px`}
+                    priority={priority}
                     className={styles.image}/>
             );
         }
