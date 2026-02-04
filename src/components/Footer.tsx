@@ -1,3 +1,5 @@
+"use client";
+
 import { renderContent } from "@/app/resources";
 import { Flex, IconButton, SmartLink, Text } from "@/once-ui/components"
 import { useTranslations } from "next-intl";
@@ -23,6 +25,7 @@ export const Footer = () => {
                     variant="body-default-s"
                     onBackground="neutral-strong">
                     <Text
+                        suppressHydrationWarning
                         onBackground="neutral-weak">
                         © {currentYear} /
                     </Text>
