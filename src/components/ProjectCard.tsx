@@ -139,6 +139,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                             <SmartLink
                                 suffixIcon="chevronRight"
                                 style={{margin: '0', width: 'fit-content'}}
+                                aria-label={`${t("projectCard.label")} ${title}`}
                                 href={href}>
                                     <Text
                                         variant="body-default-s">

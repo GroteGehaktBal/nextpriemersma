@@ -105,6 +105,7 @@ export const Header = () => {
                                 <ToggleButton
                                     prefixIcon="home"
                                     href={`/${params?.locale}`}
+                                    aria-label={home.label}
                                     selected={pathname === "/"}>
                                     <Flex paddingX="2" hide="s">{home.label}</Flex>
                                 </ToggleButton>
@@ -113,6 +114,7 @@ export const Header = () => {
                                 <ToggleButton
                                     prefixIcon="person"
                                     href={`/${params?.locale}/about`}
+                                    aria-label={about.label}
                                     selected={pathname === "/about"}>
                                     <Flex paddingX="2" hide="s">{about.label}</Flex>
                                 </ToggleButton>
@@ -121,6 +123,7 @@ export const Header = () => {
                                 <ToggleButton
                                     prefixIcon="grid"
                                     href={`/${params?.locale}/work`}
+                                    aria-label={work.label}
                                     selected={pathname.startsWith('/work')}>
                                     <Flex paddingX="2" hide="s">{work.label}</Flex>
                                 </ToggleButton>
@@ -129,6 +132,7 @@ export const Header = () => {
                                 <ToggleButton
                                     prefixIcon="book"
                                     href={`/${params?.locale}/blog`}
+                                    aria-label={blog.label}
                                     selected={pathname.startsWith('/blog')}>
                                     <Flex paddingX="2" hide="s">{blog.label}</Flex>
                                 </ToggleButton>
@@ -137,6 +141,7 @@ export const Header = () => {
                                 <ToggleButton
                                     prefixIcon="gallery"
                                     href={`/${params?.locale}/gallery`}
+                                    aria-label={gallery.label}
                                     selected={pathname.startsWith('/gallery')}>
                                     <Flex paddingX="2" hide="s">{gallery.label}</Flex>
                                 </ToggleButton>

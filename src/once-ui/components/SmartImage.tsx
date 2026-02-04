@@ -33,6 +33,7 @@ const SmartImage: React.FC<SmartImageProps> = ({
     enlarge = false,
     src,
     unoptimized = false,
+    priority,
     ...props
 }) => {
     const [isEnlarged, setIsEnlarged] = useState(false);
@@ -150,6 +151,7 @@ const SmartImage: React.FC<SmartImageProps> = ({
                         src={src}
                         alt={alt}
                         fill
+                        priority={priority}
                         style={{ 
                             objectFit: isEnlarged ? 'contain' : objectFit,
                         }}
