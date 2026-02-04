@@ -101,7 +101,7 @@ export default async function RootLayout(props: RootLayoutProps) {
     return (
         <NextIntlClientProvider messages={messages}>
             <Flex
-                as="html" lang="en"
+                as="html" lang={locale}
                 background="page"
                 data-neutral={style.neutral} data-brand={style.brand} data-accent={style.accent}
                 data-solid={style.solid} data-solid-style={style.solidStyle}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from '@/i18n/routing';
+import { notFound } from 'next/navigation';
 import { routes, protectedRoutes } from '@/app/resources';
 import { Flex, Spinner, Input, Button, Heading } from '@/once-ui/components';
 
@@ -84,11 +85,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
     }
 
     if (!isRouteEnabled) {
-        return (
-        <Flex fillWidth paddingY="128" justifyContent="center">
-            <Spinner />
-        </Flex>
-        );
+        notFound();
     }
 
     if (isPasswordRequired && !isAuthenticated) {

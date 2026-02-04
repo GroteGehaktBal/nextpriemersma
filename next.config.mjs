@@ -3,13 +3,14 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withMDX = mdx({
     extension: /\.mdx?$/,
-    options: { },
+    options: {},
 });
 
 const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactStrictMode: true,
     pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
 };
 
