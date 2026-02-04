@@ -16,7 +16,7 @@
     "classnames": "^2.5.1",
     "cookie": "^1.0.1",
     "gray-matter": "^4.0.3",
-    "next": "15.5.12",
+    "next": "^15.2.4",
     "next-intl": "^3.23.5",
     "next-mdx-remote": "^5.0.0",
     "postcss": "^8.4.39",
@@ -44,10 +44,6 @@
     "postcss-flexbugs-fixes": "^5.0.2",
     "typescript": "^5",
     "vercel": "^39.3.0"
-  },
-  "overrides": {
-    "esbuild": "^0.25.0",
-    "path-to-regexp": "^6.3.0"
   },
   "pnpm": {
     "overrides": {
