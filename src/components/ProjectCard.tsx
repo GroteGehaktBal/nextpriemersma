@@ -24,7 +24,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     priority = false
 }) => {
     const [activeIndex, setActiveIndex] = useState(0);
-    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [isTransitioning, setIsTransitioning] = useState(priority);
 
     const t = useTranslations();
 
@@ -62,7 +62,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             {images[activeIndex] && <Flex onClick={handleImageClick}>
                 <RevealFx
                     style={{width: '100%'}}
-                    delay={0.4}
+                    delay={priority ? 0 : 0.4}
                     trigger={isTransitioning}
                     speed="fast">
                     <SmartImage
