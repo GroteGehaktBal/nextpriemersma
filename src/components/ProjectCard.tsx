@@ -11,6 +11,7 @@ interface ProjectCardProps {
     content: string;
     description: string;
     avatars: { src: string }[];
+    priority?: boolean;
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -19,7 +20,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     title,
     content,
     description,
-    avatars
+    avatars,
+    priority = false
 }) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -68,6 +70,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                         radius="l"
                         alt={title}
                         aspectRatio="16 / 9"
+                        priority={priority}
+                        sizes="(max-width: 960px) 100vw, 960px"
                         src={images[activeIndex]}
                         style={{
                             border: '1px solid var(--neutral-alpha-weak)',

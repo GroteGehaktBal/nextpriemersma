@@ -23,9 +23,10 @@ export function Projects({ range, locale }: ProjectsProps) {
         <Flex
             fillWidth gap="xl" marginBottom="40" paddingX="l"
             direction="column">
-            {displayedProjects.map((post) => (
+            {displayedProjects.map((post, index) => (
                 <ProjectCard
                     key={post.slug}
+                    priority={index === 0}
                     href={`work/${post.slug}`}
                     images={post.metadata.images}
                     title={post.metadata.title}

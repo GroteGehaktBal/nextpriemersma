@@ -34,7 +34,7 @@ export const Footer = () => {
                     </Text>
                 </Text>
                 <Flex
-                    gap="16">
+                    gap="16" minHeight="24">
                     {social.map((item) => (
                         item.link && (
                             <IconButton
