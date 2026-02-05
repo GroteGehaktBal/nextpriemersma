@@ -74,8 +74,7 @@ const SmartLink = forwardRef<HTMLAnchorElement, SmartLinkProps>(({
         return (
             <Link
                 href={href}
-                {...commonProps}
-                {...props}>
+                {...commonProps}>
                 {content}
             </Link>
         );
