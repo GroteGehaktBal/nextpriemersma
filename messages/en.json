@@ -12,7 +12,7 @@
         "title": "{name}'s Portfolio",
         "description": "Portfolio website showcasing my work as a {role}",
         "headline": "IT & Home Automation Expert",
-        "subline": "I'm Peter, a Network security engineering student currently providing IT and Smart Home solutions"
+        "subline": "I'm Peter, a Network Security Engineering student specializing in IT and advanced Smart Home solutions"
     },
     "about": {
         "label": "About",
@@ -20,7 +20,7 @@
         "description": "Meet {name}, {role} from {location}",
         "intro": {
             "title": "Introduction",
-            "description": "Peter is a Network security engineering student with a passion for high-tech home automation solutions."
+            "description": "Peter is a Network Security Engineering student passionate about high-tech home automation and secure infrastructure."
         },
         "work": {
             "title": "Work Experience",
@@ -28,12 +28,12 @@
                 "pyxels": {
                     "timeframe": "2024 - Present",
                     "role": "Co-Owner",
-                    "achievements": "Installed a secure network with 2.5GbE ethernet and Wi-Fi 7 access points.;Smart home installations, including smart lighting, curtains, underfloor heating, HVAC, Camera's and much more."
+                    "achievements": "Deployed secure high-speed networks featuring 2.5GbE and Wi-Fi 7.;Executed comprehensive smart home installations including lighting, climate control, and security systems."
                 },
                 "Riemersma ICT": {
                     "timeframe": "2023 - Present",
                     "role": "Freelance",
-                    "achievements": "Providing tech support to clients.;Worked with Microsoft Azure for network management."
+                    "achievements": "Provide expert technical support to clients.;Manage network infrastructure using Microsoft Azure."
                 }
             }
         },
@@ -42,7 +42,7 @@
             "institutions": {
                 "Hanzehogeschool Groningen": {
                     "naamhanze": "Hanze University Groningen",
-                    "description": "ICT; Network security engineering"
+                    "description": "ICT; Network Security Engineering"
                 },
                 "Noorderpoort College": {
                     "naamnoorderpoort": "Noorderpoort",
@@ -54,13 +54,13 @@
             "title": "Technical skills",
             "skills": {
                 "Cisco Networking": {
-                    "description": "Able to securely setup complex networks with proper security and good understanding of network protocols."
+                    "description": "Designing and deploying secure, complex network architectures with deep protocol knowledge."
                 },
                 "Home Assistant": {
-                    "description": "Experienced with Home Assistant for building complex automations and designing modern dashboards."
+                    "description": "Expertise in Home Assistant for engineering complex automations and intuitive dashboards."
                 },
                 "Nextjs": {
-                    "description": "Building next gen web-apps with Next.js"
+                    "description": "Developing next-generation web applications with Next.js."
                 }
             }
         }

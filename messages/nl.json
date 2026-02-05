@@ -12,7 +12,7 @@
         "title": "{name}'s Portfolio",
         "description": "Portfolio website voor meer informatie over mij als {role}",
         "headline": "IT & Huis Automatisering Expert",
-        "subline": "Ik ben Peter, een netwerkbeveiligingsstudent die momenteel werkt met IT en huisautomatiseringsoplossingen"
+        "subline": "Ik ben Peter, student Network Security Engineering, gespecialiseerd in IT- en Smart Home-oplossingen"
     },
     "about": {
         "label": "Info",
@@ -20,7 +20,7 @@
         "description": "Mijn naam is {name}, {role} uit {location}",
         "intro": {
             "title": "Introductie",
-            "description": "Peter is een netwerkbeveiligingsstudent met een passie voor high-tech huisautomatiseringsoplossingen."
+            "description": "Peter is een student Network Security Engineering met een passie voor high-tech huisautomatisering en veilige infrastructuur."
         },
         "work": {
             "title": "Werkervaring",
@@ -28,12 +28,12 @@
                 "pyxels": {
                     "timeframe": "2024 - Heden",
                     "role": "Mede-eigenaar",
-                    "achievements": "Een veilig netwerk geïnstalleerd met 2.5GbE ethernet en Wi-Fi 7 toegangspunten.;Slimme huisinstallaties, waaronder slimme verlichting, gordijnen, vloerverwarming, HVAC, camera's en nog veel meer."
+                    "achievements": "Realisatie van veilige high-speed netwerken met 2.5GbE en Wi-Fi 7.;Complete smart home installaties, inclusief verlichting, klimaatbeheersing en beveiliging."
                 },
                 "Riemersma ICT": {
                     "timeframe": "2023 - Heden",
                     "role": "Freelance",
-                    "achievements": "Technische ondersteuning aan klanten.;Gewerkt met Microsoft Azure voor netwerkbeheer."
+                    "achievements": "Leveren van deskundige technische ondersteuning aan klanten.;Beheer van netwerkinfrastructuur met Microsoft Azure."
                 }
             }
         },
@@ -54,13 +54,13 @@
             "title": "Technische vaardigheden",
             "skills": {
                 "Cisco Networking": {
-                    "description": "In staat om complexe netwerken veilig op te zetten met de juiste beveiliging en een goed begrip van netwerkprotocollen."
+                    "description": "Ontwerpen en implementeren van veilige, complexe netwerkarchitecturen met diepgaande kennis van protocollen."
                 },
                 "Home Assistant": {
                     "description": "Ervaren met <a href='https://home-assistant.io'>Home Assistant</a> voor het bouwen van complexe automatiseringen en het ontwerpen van moderne dashboards."
                 },
                 "Nextjs": {
-                    "description": "Bouwen van next-gen web-apps met Next.js"
+                    "description": "Ontwikkelen van next-generation webapplicaties met Next.js"
                 }
             }
         }
