@@ -28,7 +28,7 @@
                 "pyxels": {
                     "timeframe": "2024 - Heden",
                     "role": "Mede-eigenaar",
-                    "achievements": "Een veilig netwerk geïnstalleerd met 2.5GbE ethernet en Wi-Fi 6E toegangspunten.;Slimme huisinstallaties, waaronder slimme verlichting, gordijnen, vloerverwarming, HVAC, camera's en nog veel meer."
+                    "achievements": "Een veilig netwerk geïnstalleerd met 2.5GbE ethernet en Wi-Fi 7 toegangspunten.;Slimme huisinstallaties, waaronder slimme verlichting, gordijnen, vloerverwarming, HVAC, camera's en nog veel meer."
                 },
                 "Riemersma ICT": {
                     "timeframe": "2023 - Heden",
@@ -42,7 +42,7 @@
             "institutions": {
                 "Hanzehogeschool Groningen": {
                     "naamhanze": "Hanzehogeschool Groningen",
-                    "description": "HBO-ICT met richting network security engineering"
+                    "description": "HBO-ICT met richting Network Security Engineering"
                 },
                 "Noorderpoort College": {
                     "naamnoorderpoort": "Noorderpoort College",
