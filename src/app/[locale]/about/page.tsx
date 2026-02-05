@@ -1,9 +1,10 @@
 import { use } from "react";
 import { Avatar, Button, Flex, Heading, Icon, IconButton, SmartImage, Tag, Text } from '@/once-ui/components';
-import { baseURL, renderContent } from '@/app/resources';
+import { baseURL } from '@/app/resources';
+import { renderContent } from '@/app/resources/renderContent';
 import TableOfContents from '@/components/about/TableOfContents';
 import styles from '@/components/about/about.module.scss'
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
@@ -50,7 +51,7 @@ export default function About(props: { params: Promise<{ locale: string }>}) {
         locale
     } = params;
 
-    unstable_setRequestLocale(locale);
+    setRequestLocale(locale);
     const t = useTranslations();
     const {person, about, social } = renderContent(t);
     const structure = [

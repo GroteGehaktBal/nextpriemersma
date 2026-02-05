@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation'
 import { CustomMDX } from '@/components/mdx'
 import { getPosts } from '@/app/utils/utils'
 import { AvatarGroup, Button, Flex, Heading, SmartImage, Text } from '@/once-ui/components'
-import { baseURL, renderContent } from '@/app/resources';
+import { baseURL } from '@/app/resources';
+import { renderContent } from '@/app/resources/renderContent';
 import { routing } from '@/i18n/routing';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 import { formatDate } from '@/app/utils/formatDate';
 import ScrollToHash from '@/components/ScrollToHash';
@@ -89,7 +90,7 @@ export async function generateMetadata(props: WorkParams) {
 
 export default function Project(props: WorkParams) {
     const params = use(props.params);
-    unstable_setRequestLocale(params.locale);
+    setRequestLocale(params.locale);
     let post = getPosts(['src', 'app', '[locale]', 'work', 'projects', params.locale]).find((post) => post.slug === params.slug)
 
     if (!post) {

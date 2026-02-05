@@ -2,8 +2,9 @@ import { use } from "react";
 import { Flex, Heading } from '@/once-ui/components';
 import { Mailchimp } from '@/components';
 import { Posts } from '@/components/blog/Posts';
-import { baseURL, renderContent } from '@/app/resources'
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { baseURL } from '@/app/resources'
+import { renderContent } from '@/app/resources/renderContent'
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
@@ -51,7 +52,7 @@ export default function Blog(props: { params: Promise<{ locale: string }>}) {
         locale
     } = params;
 
-    unstable_setRequestLocale(locale);
+    setRequestLocale(locale);
 
     const t = useTranslations();
     const { person, blog, newsletter } = renderContent(t);

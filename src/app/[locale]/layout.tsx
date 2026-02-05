@@ -11,7 +11,7 @@ import { Inter } from 'next/font/google'
 import { Source_Code_Pro } from 'next/font/google';
 
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { routing } from "@/i18n/routing";
 import { renderContent } from "@/app/resources";
@@ -96,7 +96,7 @@ export default async function RootLayout(props: RootLayoutProps) {
         children
     } = props;
 
-    unstable_setRequestLocale(locale);
+    setRequestLocale(locale);
     const messages = await getMessages();
     return (
         <NextIntlClientProvider messages={messages}>

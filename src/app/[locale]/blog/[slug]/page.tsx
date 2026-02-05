@@ -5,8 +5,9 @@ import { CustomMDX } from '@/components/mdx'
 import { getPosts } from '@/app/utils/utils'
 import { Avatar, Button, Flex, Heading, Text } from '@/once-ui/components'
 
-import { baseURL, renderContent } from '@/app/resources'
-import { unstable_setRequestLocale } from 'next-intl/server'
+import { baseURL } from '@/app/resources'
+import { renderContent } from '@/app/resources/renderContent'
+import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { formatDate } from '@/app/utils/formatDate'
@@ -86,7 +87,7 @@ export async function generateMetadata(props: BlogParams) {
 
 export default function Blog(props: BlogParams) {
     const params = use(props.params);
-    unstable_setRequestLocale(params.locale);
+    setRequestLocale(params.locale);
     let post = getPosts(['src', 'app', '[locale]', 'blog', 'posts', params.locale]).find((post) => post.slug === params.slug)
 
     if (!post) {
