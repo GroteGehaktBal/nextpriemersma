@@ -597,5 +597,8 @@ rewrite `/preview` to a locale-prefixed path that has no route. Nothing else was
 the current site still builds and behaves exactly as before, and the preview route is
 `noindex`. It exists to be judged, then either promoted or thrown away.
 
+Live at the pull request preview:
+**https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/preview**
+
 See [`PROOF_OF_CONCEPT.md`](./PROOF_OF_CONCEPT.md) for what it demonstrates and how to
-run it.
+run it locally.

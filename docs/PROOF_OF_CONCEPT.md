@@ -155,17 +155,13 @@ Scope was kept to what is needed to judge the direction:
 4. **The two editorial calls on your history** — certifications ranked rather than
    listed flat, and the non-technical roles dimmed. See §7.3 of the plan.
 
-## Known issue
+## Deployment
 
-The Vercel preview deployment for this branch failed. The cause is not visible from
-here: a clean clone with `npm ci && next build` succeeds with exit 0 and no warnings
-beyond the pre-existing `middleware` → `proxy` deprecation, and route resolution is
-correct (`/preview` returns 200, unknown locales 404). Reading the deployment log needs
-either `vercel.com` or the GitHub check-runs API, both of which this environment's
-egress policy blocks.
+Live on the pull request preview, so it can be reviewed without running anything:
 
-As a precaution the proof of concept no longer introduces a new webfont family — it
-reuses Inter and Source Code Pro, the two `next/font/google` families the live site
-already builds with, so it adds no new build-time network dependency. Whether that was
-the cause is unconfirmed. The log from `npx vercel inspect <deployment> --logs` would
-settle it in one read.
+**https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/preview**
+
+The deployment that was failing is fixed. The cause was not this branch: Vercel refused
+to build the project at all because `next-mdx-remote@5.0.0` carries an
+arbitrary-code-execution advisory, which it now blocks at build time. That, and the 49
+other vulnerabilities `npm audit` reported, are resolved — see §2.4b of the plan.
