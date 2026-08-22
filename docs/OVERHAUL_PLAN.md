@@ -583,21 +583,35 @@ Phase 1 is where most of the measured gain lands. Phases 4 and 5 are where most 
 
 ## 12. What is in this branch right now
 
-- This plan.
+**The proof of concept** — additive, and removable without trace:
+
 - `src/styles/tokens.css` — the complete token layer, dark and light.
 - `src/styles/base.css` — reset and element defaults.
 - `src/styles/motion.css` — the scroll-driven animation system.
-- `src/app/[locale]/preview/` — a fully server-rendered PoC page using all of the above.
-
+- `src/app/(preview)/layout.tsx` — a second root layout, server components only.
+- `src/app/(preview)/preview/` — the page, its typed content module and its styles.
 - `src/components/ui/icons.tsx` — inline SVG icons, replacing `react-icons`.
+- `docs/OVERHAUL_PLAN.md` and `docs/PROOF_OF_CONCEPT.md`.
 
-The PoC is additive. Exactly one existing file was modified — `src/middleware.ts`, where
-`preview` was added to the matcher's exclusion list so the locale middleware does not
-rewrite `/preview` to a locale-prefixed path that has no route. Nothing else was touched:
-the current site still builds and behaves exactly as before, and the preview route is
-`noindex`. It exists to be judged, then either promoted or thrown away.
+The route is `noindex` and lives outside the `[locale]` segment, so it neither appears
+in the sitemap nor collides with a locale. It exists to be judged, then either promoted
+or deleted.
 
-Live at the pull request preview:
+**The dependency and security work** — not additive, and not optional: it is what
+unblocked deployment (§2.4b). It touches existing files across the project:
+
+- `package.json`, `package-lock.json`, `eslint.config.mjs` (new), `.eslintrc.json`
+  (deleted), `.env.example` — dependency updates, removals, and a working lint setup.
+- `src/pages/api/authenticate.ts`, `src/pages/api/check-auth.ts` — cookie v2 API, and
+  the password moved out of the source into the environment.
+- `src/app/utils/utils.ts` plus its eleven call sites in `blog/`, `work/`, `sitemap.ts`,
+  `Posts.tsx` and `Projects.tsx` — statically scoped content root.
+- `src/app/resources/content.js` (deleted), `renderContent.js`, `index.ts`,
+  `content-i18n.js` — template placeholder content removed, and the two bugs its dead
+  code path was masking fixed.
+- `src/app/og/route.tsx`, `tsconfig.json`, `src/middleware.ts` — lint and config fixes.
+
+**Live at the pull request preview:**
 **https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/preview**
 
 See [`PROOF_OF_CONCEPT.md`](./PROOF_OF_CONCEPT.md) for what it demonstrates and how to
