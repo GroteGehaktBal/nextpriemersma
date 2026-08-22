@@ -27,7 +27,7 @@ export async function generateStaticParams() {
 
     // Fetch posts for each locale
     for (const locale of locales) {
-        const posts = getPosts(['src', 'app', '[locale]', 'blog', 'posts', locale]);
+        const posts = getPosts('blog/posts', locale);
         allPosts.push(...posts.map(post => ({
             slug: post.slug,
             locale: locale,
@@ -45,7 +45,7 @@ export async function generateMetadata(props: BlogParams) {
         locale
     } = params;
 
-    let post = getPosts(['src', 'app', '[locale]', 'blog', 'posts', locale]).find((post) => post.slug === slug)
+    let post = getPosts('blog/posts', locale).find((post) => post.slug === slug)
 
     if (!post) {
 		return
@@ -88,7 +88,7 @@ export async function generateMetadata(props: BlogParams) {
 export default function Blog(props: BlogParams) {
     const params = use(props.params);
     setRequestLocale(params.locale);
-    let post = getPosts(['src', 'app', '[locale]', 'blog', 'posts', params.locale]).find((post) => post.slug === params.slug)
+    let post = getPosts('blog/posts', params.locale).find((post) => post.slug === params.slug)
 
     if (!post) {
 		notFound()

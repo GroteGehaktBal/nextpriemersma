@@ -26,7 +26,7 @@ export async function generateStaticParams(): Promise<{ slug: string; locale: st
 
     // Fetch posts for each locale
     for (const locale of locales) {
-        const posts = getPosts(['src', 'app', '[locale]', 'work', 'projects', locale]);
+        const posts = getPosts('work/projects', locale);
         allPosts.push(...posts.map(post => ({
             slug: post.slug,
             locale: locale,
@@ -44,7 +44,7 @@ export async function generateMetadata(props: WorkParams) {
         locale
     } = params;
 
-    let post = getPosts(['src', 'app', '[locale]', 'work', 'projects', locale]).find((post) => post.slug === slug)
+    let post = getPosts('work/projects', locale).find((post) => post.slug === slug)
 
     if (!post) {
 		return
@@ -91,7 +91,7 @@ export async function generateMetadata(props: WorkParams) {
 export default function Project(props: WorkParams) {
     const params = use(props.params);
     setRequestLocale(params.locale);
-    let post = getPosts(['src', 'app', '[locale]', 'work', 'projects', params.locale]).find((post) => post.slug === params.slug)
+    let post = getPosts('work/projects', params.locale).find((post) => post.slug === params.slug)
 
     if (!post) {
 		notFound()

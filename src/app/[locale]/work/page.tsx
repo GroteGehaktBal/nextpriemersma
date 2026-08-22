@@ -53,7 +53,7 @@ export default function Work(props: { params: Promise<{ locale: string }>}) {
     } = params;
 
     setRequestLocale(locale);
-    let allProjects = getPosts(['src', 'app', '[locale]', 'work', 'projects', locale]);
+    let allProjects = getPosts('work/projects', locale);
 
     const t = useTranslations();
     const { person, work } = renderContent(t);

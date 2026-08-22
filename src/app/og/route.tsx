@@ -51,7 +51,16 @@ export async function GET(request: Request) {
                             alignItems: 'center',
                             gap: '5rem'
                         }}>
-                        <img src={'https://' + baseURL + person.avatar}
+                        {/*
+                          next/og renders with satori, which supports plain <img>
+                          only — next/image does not run in this context. The alt
+                          text is empty because the avatar is decorative here: the
+                          name is rendered as text beside it.
+                        */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            alt=""
+                            src={'https://' + baseURL + person.avatar}
                             style={{
                                 width: '12rem',
                                 height: '12rem',

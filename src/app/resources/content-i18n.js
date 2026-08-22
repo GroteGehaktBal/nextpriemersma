@@ -1,5 +1,10 @@
-import { InlineCode } from "@/once-ui/components";
-import { PiContactlessPayment } from "react-icons/pi";
+/**
+ * @typedef {Object} ContentImage
+ * @property {string} src
+ * @property {string} alt
+ * @property {number} width  Aspect-ratio width, not pixels.
+ * @property {number} height Aspect-ratio height, not pixels.
+ */
 
 const createI18nContent = (t) => {
     const person = {
@@ -88,15 +93,16 @@ const createI18nContent = (t) => {
                     timeframe: t("about.work.experiences.pyxels.timeframe"),
                     role: t("about.work.experiences.pyxels.role"),
                     achievements: t("about.work.experiences.pyxels.achievements").split(";"),
-                    images: [ // optional: leave the array empty if you don't want to display images
-                    ]
+                    /** @type {ContentImage[]} */
+                    images: []
                 },
                 {
                     company: 'Riemersma ICT',
                     timeframe: t("about.work.experiences.Riemersma ICT.timeframe"),
                     role: t("about.work.experiences.Riemersma ICT.role"),
                     achievements: t("about.work.experiences.Riemersma ICT.achievements").split(";"),
-                    images: [ ]
+                    /** @type {ContentImage[]} */
+                    images: []
                 }
             ]
         },
@@ -105,11 +111,11 @@ const createI18nContent = (t) => {
             title: 'Studies',
             institutions: [
                 {
-                    name: <>{t(`about.studies.institutions.Hanzehogeschool Groningen.naamhanze`)}</>,
+                    name: t(`about.studies.institutions.Hanzehogeschool Groningen.naamhanze`),
                     description: <>{t(`about.studies.institutions.Hanzehogeschool Groningen.description`)}</>,
                 },
                 {
-                    name: <>{t(`about.studies.institutions.Noorderpoort College.naamnoorderpoort`)}</>,
+                    name: t(`about.studies.institutions.Noorderpoort College.naamnoorderpoort`),
                     description: <>{t("about.studies.institutions.Noorderpoort College.description")}</>,
                 }
             ]
@@ -121,16 +127,20 @@ const createI18nContent = (t) => {
                 {
                     title: 'Cisco Networking',
                     description: <>{t("about.technical.skills.Cisco Networking.description")}</>,
-                    images: [
-                    ]
+                    /** @type {ContentImage[]} */
+                    images: []
                 },
                 {
                     title: 'Home Assistant',
-                    description: <>{t("about.technical.skills.Home Assistant.description")}</>
+                    description: <>{t("about.technical.skills.Home Assistant.description")}</>,
+                    /** @type {ContentImage[]} */
+                    images: []
                 },
                 {
                     title: 'Next.js',
-                    description: <>{t("about.technical.skills.Nextjs.description")}</> // "." not accepted in next-intl namespace
+                    description: <>{t("about.technical.skills.Nextjs.description")}</>, // "." not accepted in next-intl namespace
+                    /** @type {ContentImage[]} */
+                    images: []
                     // images: [
                     //     {
                     //         src: '/images/projects/project-01/cover-04.jpg',
