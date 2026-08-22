@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Flex, Toast } from '.';
@@ -16,9 +16,28 @@ interface ToasterProps {
     removeToast: (id: string) => void;
 }
 
+/**
+ * Renders toasts into a portal on document.body.
+ *
+ * The portal is deferred until after mount. `document` does not exist while the
+ * server renders, and this component is reachable from MDX content through
+ * HeadingLink, so without the guard every statically generated page carrying MDX
+ * fails to prerender with "document is not defined". It went unnoticed because
+ * RouteGuard used to stop the server from rendering page content at all.
+ */
 const Toaster: React.FC<ToasterProps> = ({
     toasts,
     removeToast }) => {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return null;
+    }
+
     return createPortal(
         <Flex
             zIndex={11}

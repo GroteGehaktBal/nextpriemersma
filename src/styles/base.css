@@ -100,3 +100,62 @@ ol {
   background-color: var(--accent-muted);
   color: var(--text-primary);
 }
+
+/* ---------------------------------------------------------------------------
+ * Page shell
+ *
+ * The ambient wash replaces a component that tracked the cursor with a
+ * requestAnimationFrame loop. Two radial gradients over a fine grid, fixed to
+ * the viewport, painted once and never touched again.
+ * ------------------------------------------------------------------------ */
+
+.siteShell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+.siteShell > main {
+  flex: 1;
+}
+
+.siteAmbient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(60rem 40rem at 15% -10%, var(--ambient-a), transparent 65%),
+    radial-gradient(50rem 35rem at 92% 8%, var(--ambient-b), transparent 62%);
+}
+
+.siteAmbientGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 4.5rem 4.5rem;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+  mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+}
+
+/* Skip link: visible only once focused. */
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  border-radius: var(--radius-sm);
+}
+
+.skipLink:focus {
+  left: var(--space-4);
+  top: var(--space-4);
+}

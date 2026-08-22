@@ -7,7 +7,7 @@ import type {
   Ui,
   Project,
   TimelineEntry,
-} from './content.types';
+} from './types';
 
 /**
  * Dutch content.

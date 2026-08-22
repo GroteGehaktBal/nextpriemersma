@@ -1,156 +1,110 @@
-import "@/once-ui/styles/index.scss";
-import "@/once-ui/tokens/index.scss";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Inter, Source_Code_Pro } from 'next/font/google';
+import { setRequestLocale } from 'next-intl/server';
 
-import classNames from 'classnames';
-
-import { Footer, Header, RouteGuard } from "@/components";
-import { baseURL, effects, style } from '@/app/resources'
-import { ORIGIN, localeAlternates } from '@/i18n/urls'
-
-import { Inter } from 'next/font/google'
-import { Source_Code_Pro } from 'next/font/google';
-
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
-
-import { routing } from "@/i18n/routing";
-import { renderContent } from "@/app/resources";
-import { Background, Flex } from "@/once-ui/components";
-
-export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
-    const params = await props.params;
-
-    const {
-        locale
-    } = params;
-
-    const t = await getTranslations();
-    const { person, home } = renderContent(t);
-
-    return {
-        // The locale used to be part of metadataBase, which made every relative
-        // metadata URL resolve inside one language's subtree.
-        metadataBase: new URL(ORIGIN),
-        title: home.title,
-        description: home.description,
-        alternates: localeAlternates(locale),
-        openGraph: {
-            title: `${person.firstName}'s Portfolio`,
-            description: 'Portfolio website for more info about me',
-            url: ORIGIN,
-            siteName: `${person.firstName}'s Portfolio`,
-            // Was hardcoded to en_US, so the Dutch pages advertised themselves
-            // to crawlers and social platforms as English.
-            locale: locale === 'nl' ? 'nl_NL' : 'en_US',
-            type: 'website',
-        },
-        robots: {
-            index: true,
-            follow: true,
-            googleBot: {
-                index: true,
-                follow: true,
-                'max-video-preview': -1,
-                'max-image-preview': 'large',
-                'max-snippet': -1,
-            },
-        }
-    }
-};
-
-const primary = Inter({
-    variable: '--font-primary',
-    subsets: ['latin'],
-    display: 'swap',
-})
-
-type FontConfig = {
-    variable: string;
-};
+import '@/styles/tokens.css';
+import '@/styles/base.css';
+import '@/styles/motion.css';
 
 /*
-    Replace with code for secondary and tertiary fonts
-    from https://once-ui.com/customize
-*/
-const secondary: FontConfig | undefined = undefined;
-const tertiary: FontConfig | undefined = undefined;
+ * Once UI's stylesheets, still imported because the case-study pages have not
+ * been migrated off its components yet. They go when those do (phase 3), taking
+ * roughly 14 KB of gzipped CSS with them.
+ */
+import '@/once-ui/styles/index.scss';
+import '@/once-ui/tokens/index.scss';
 
-const code = Source_Code_Pro({
-    variable: '--font-code',
-    subsets: ['latin'],
-    display: 'swap',
+import { getContent } from '@/content';
+import { routing } from '@/i18n/routing';
+import { ORIGIN, localeAlternates } from '@/i18n/urls';
+import { Footer } from '@/components/site/Footer';
+import { Header } from '@/components/site/Header';
+
+/**
+ * Root layout.
+ *
+ * Three things that were here are deliberately gone:
+ *
+ *  - `RouteGuard`, a client component that wrapped every page and started in a
+ *    loading state. Because that was its initial state, the pre-rendered HTML
+ *    Vercel served contained a spinner and none of the page. Disabled routes are
+ *    a build-time decision now, handled by `generateStaticParams`.
+ *  - `<Background>`, which registered a mousemove listener and a
+ *    requestAnimationFrame loop calling React setState on every frame, forever,
+ *    to move a decorative gradient. The ambient wash is CSS now: painted once.
+ *  - The dozen `data-*` theme attributes Once UI switched on. Theme is CSS custom
+ *    properties following `prefers-color-scheme`.
+ */
+
+const sans = Inter({
+  variable: '--font-primary',
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '600'],
 });
 
-interface RootLayoutProps {
-    children: React.ReactNode;
-    params: Promise<{ locale: string }>;
+const mono = Source_Code_Pro({
+  variable: '--font-code',
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500'],
+});
+
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }) {
+  const { locale } = await props.params;
+  const { profile } = getContent(locale);
+
+  return {
+    metadataBase: new URL(ORIGIN),
+    title: { default: profile.name, template: `%s` },
+    description: profile.subline,
+    alternates: localeAlternates(locale),
+    openGraph: {
+      title: profile.name,
+      description: profile.subline,
+      url: ORIGIN,
+      siteName: profile.name,
+      locale: locale === 'nl' ? 'nl_NL' : 'en_US',
+      type: 'website',
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large' as const,
+        'max-snippet': -1,
+      },
+    },
+  };
 }
 
 export function generateStaticParams() {
-    return routing.locales.map((locale) => ({ locale }));
+  return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function RootLayout(props: RootLayoutProps) {
-    const params = await props.params;
+export default async function RootLayout(props: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
 
-    const {
-        locale
-    } = params;
+  const content = getContent(locale);
 
-    const {
-        children
-    } = props;
-
-    setRequestLocale(locale);
-    const messages = await getMessages();
-    return (
-        <NextIntlClientProvider messages={messages}>
-            <Flex
-                as="html" lang={locale}
-                background="page"
-                data-neutral={style.neutral} data-brand={style.brand} data-accent={style.accent}
-                data-solid={style.solid} data-solid-style={style.solidStyle}
-                data-theme={style.theme}
-                data-border={style.border}
-                data-surface={style.surface}
-                data-transition={style.transition}
-                className={classNames(
-                    primary.variable,
-                    secondary ? secondary.variable : '',
-                    tertiary ? tertiary.variable : '',
-                    code.variable)}>
-                <Flex style={{minHeight: '100vh'}}
-                    as="body"
-                    fillWidth margin="0" padding="0"
-                    direction="column">
-                    <Background
-                        mask={effects.mask as any}
-                        gradient={effects.gradient as any}
-                        dots={effects.dots as any}
-                        lines={effects.lines as any}/>
-                    <Flex
-                        fillWidth
-                        minHeight="16">
-                    </Flex>
-                    <Header/>
-                    <Flex
-                        zIndex={0}
-                        fillWidth paddingY="l" paddingX="l"
-                        justifyContent="center" flex={1}>
-                        <Flex
-                            as="main" // Add the main element here
-                            justifyContent="center"
-                            fillWidth minHeight="0">
-                            <RouteGuard>
-                                {children}
-                            </RouteGuard>
-                        </Flex>
-                    </Flex>
-                    <Footer/>
-                    <SpeedInsights />
-                </Flex>
-            </Flex>
-        </NextIntlClientProvider>
-    );
+  return (
+    <html lang={locale} className={`${sans.variable} ${mono.variable}`}>
+      <body>
+        <div className="siteShell">
+          <div className="siteAmbient" aria-hidden="true">
+            <div className="siteAmbientGrid" />
+          </div>
+          <Header content={content} locale={locale} />
+          <main id="main">{props.children}</main>
+          <Footer content={content} />
+        </div>
+      </body>
+    </html>
+  );
 }

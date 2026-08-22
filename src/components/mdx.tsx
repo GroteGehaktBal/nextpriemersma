@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 
 import { SmartImage, SmartLink, Text } from '@/once-ui/components';
 import { CodeBlock } from '@/once-ui/modules';
-import { HeadingLink } from '@/components';
+import { HeadingLink } from '@/components/HeadingLink';
 
 import { TextProps } from '@/once-ui/interfaces';
 import { SmartImageProps } from '@/once-ui/components/SmartImage';

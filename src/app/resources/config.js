@@ -9,12 +9,13 @@ const i18nOptions = {
     defaultLocale: 'en'         // Locale used by default and as a fallback
 }
 
+// A route that is off is simply not built, so it returns a real 404 with no
+// client code involved. This replaced RouteGuard, which enforced the same thing
+// at runtime by putting a spinner in every page's pre-rendered HTML.
 const routes = {
-    '/':        true,
-    '/about':   true,
-    '/work':    true,
-    '/blog':    false,
-    '/gallery': false,
+    '/':      true,
+    '/about': true,
+    '/work':  true,
 }
 
 // Enable password protection on selected routes

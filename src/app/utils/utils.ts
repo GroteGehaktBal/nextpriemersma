@@ -73,7 +73,7 @@ function getMDXData(dir: string) {
  */
 const CONTENT_ROOT = path.join(process.cwd(), 'src', 'app', '[locale]');
 
-export type ContentSection = 'blog/posts' | 'work/projects';
+export type ContentSection = 'work/projects';
 
 /**
  * Reads every MDX file for one section in one locale.

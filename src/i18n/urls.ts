@@ -11,9 +11,9 @@ import { baseURL } from '@/app/resources';
  *    Interpolating it straight into a URL produces `priemersma.nl/about`, which
  *    is not a URL — the sitemap was emitting exactly that, and search engines
  *    reject those entries.
- *  - The locale prefix is `as-needed`, so the default locale has *no* prefix.
- *    `/about` is English and `/nl/about` is Dutch. Anything building a localised
- *    URL has to know that, so it is expressed once here.
+ *  - Every locale is prefixed (`localePrefix: 'always'`), so a URL names its
+ *    language unambiguously: `/en/about` and `/nl/about`. Building that in one
+ *    place keeps it that way.
  */
 
 export const ORIGIN = `https://${baseURL}`;
@@ -24,8 +24,7 @@ export const ORIGIN = `https://${baseURL}`;
  * @param path Route without a locale prefix, e.g. `/about`. Use `''` for home.
  */
 export function localeUrl(locale: string, path = ''): string {
-  const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
-  return `${ORIGIN}${prefix}${path}`;
+  return `${ORIGIN}/${locale}${path}`;
 }
 
 /**
@@ -35,8 +34,7 @@ export function localeUrl(locale: string, path = ''): string {
  * unwanted. Same rule: the default locale carries no prefix.
  */
 export function localePath(locale: string, path = ''): string {
-  const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
-  return `${prefix}${path}` || '/';
+  return `/${locale}${path}`;
 }
 
 /**

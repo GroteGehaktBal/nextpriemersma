@@ -15,7 +15,7 @@ import { localeUrl } from '@/i18n/urls'
 export default async function sitemap() {
     const { locales } = routing;
 
-    const posts = (section: 'blog/posts' | 'work/projects', urlBase: string) =>
+    const posts = (section: 'work/projects', urlBase: string) =>
         locales.flatMap((locale) =>
             getPosts(section, locale).map((post) => ({
                 url: localeUrl(locale, `${urlBase}/${post.slug}`),
@@ -36,7 +36,6 @@ export default async function sitemap() {
 
     return [
         ...pages,
-        ...(routesConfig['/blog'] ? posts('blog/posts', '/blog') : []),
         ...(routesConfig['/work'] ? posts('work/projects', '/work') : []),
     ];
 }
