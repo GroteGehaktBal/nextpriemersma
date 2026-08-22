@@ -1,79 +1,72 @@
+import type {
+  Capability,
+  Certification,
+  Content,
+  Fact,
+  Profile,
+  Ui,
+  Project,
+  TimelineEntry,
+} from './content.types';
+
 /**
- * Proof-of-concept content.
+ * English content.
  *
- * This file also demonstrates the content model proposed in the overhaul plan:
- * typed TypeScript modules instead of a `.js` file containing JSX and translation
- * lookups. The benefits are visible immediately — list data is a real array rather
- * than a string split on a delimiter, every field is checked at compile time, and
- * a missing field in one locale is a build error rather than a blank on the page.
- *
- * In the full rewrite this becomes `src/content/en.ts` and `src/content/nl.ts`,
- * both satisfying a shared `Content` interface exported from `src/content/types.ts`.
- *
- * Roles, dates, education and certifications are taken from Peter's LinkedIn
- * profile. The prose around them is written for this layout, which is built to
- * reward specifics: every claim names a technology, a scale or a result.
+ * Both locales satisfy the same `Content` interface, so a field present here and
+ * missing from the Dutch file is a compile error rather than a blank on the page.
+ * That is the point of moving content into TypeScript: the current site's JSON
+ * message files can drift silently, and did.
  */
 
-export interface Fact {
-  /** Short mono label rendered above the value. */
-  label: string;
-  /** The headline value. Kept terse — two or three words at most. */
-  value: string;
-}
+const ui: Ui = {
+  notice: { badge: 'Proof of concept', text: 'Design proposal — not the live site' },
+  nav: {
+    work: 'Work',
+    capabilities: 'Capabilities',
+    background: 'Background',
+    contact: 'Contact',
+  },
+  actions: { seeWork: 'See the work', getInTouch: 'Get in touch' },
+  sections: {
+    work: {
+      index: '01 / Work',
+      title: 'Selected projects',
+      lead: 'Infrastructure, automation and the software that ties them together. Each entry names what was built, what it runs on, and what changed as a result.',
+    },
+    capabilities: {
+      index: '02 / Capabilities',
+      title: 'What I actually do',
+      lead: 'Four areas, each backed by the tools and protocols behind it rather than a self-assessed percentage bar.',
+    },
+    background: {
+      index: '03 / Background',
+      title: 'Background',
+      lead: 'Studying network and security engineering while running two businesses that put it into practice — after eight months inside a Google data centre.',
+    },
+    contact: {
+      index: '04 / Contact',
+      title: 'Got a network or a house that needs thinking about?',
+      text: 'Available for internships, freelance work and smart-home projects across Friesland and the north of the Netherlands.',
+    },
+  },
+  background: {
+    experience: 'Experience',
+    education: 'Education',
+    certifications: 'Certifications',
+    certificationsLead: 'Cisco CCNA first, then the rest in full.',
+  },
+  languageLabel: 'Language',
+};
 
-export interface Project {
-  slug: string;
-  /** Mono eyebrow describing the kind of work. */
-  kind: string;
-  title: string;
-  summary: string;
-  /** Concrete technologies, rendered as mono tags. */
-  stack: string[];
-  /** A measurable result. Omitted when there is not an honest one to give. */
-  outcome?: string;
-  year: string;
-}
-
-export interface Capability {
-  title: string;
-  description: string;
-  /** Specific tools and protocols — the evidence behind the title. */
-  keywords: string[];
-}
-
-export interface TimelineEntry {
-  period: string;
-  role: string;
-  organisation: string;
-  description: string;
-  /** Marks the entry as ongoing, which renders a live status dot. */
-  current?: boolean;
-  /**
-   * Secondary entries are real and worth listing, but they are not what the
-   * reader is here for. They render in a quieter, more compact treatment so the
-   * engineering roles above them keep the weight.
-   */
-  secondary?: boolean;
-}
-
-export interface Certification {
-  name: string;
-  issuer: string;
-  date: string;
-  /**
-   * Lead certifications get their own card. The rest are listed compactly —
-   * eleven equally weighted entries would bury the two that carry real weight.
-   */
-  lead?: boolean;
-}
-
-export const profile = {
+const profile: Profile = {
   name: 'Peter Riemersma',
   role: 'Network & Security Engineering',
   location: 'Burum, Friesland',
   /** One sentence. If it needs two, it is not sharp enough yet. */
-  headline: 'I design networks that stay up and homes that think for themselves.',
+  headline: {
+    lead: 'I design networks that stay up',
+    accent: 'and homes that think for themselves.',
+  },
   subline:
     'Network & Security Engineering student at Hanze University, co-owner of pyxels, and freelance at Riemersma ICT. CCNA-certified, and I spent eight months keeping Google’s Eemshaven data centre running.',
   availability: 'Open to internships and freelance work',
@@ -81,16 +74,16 @@ export const profile = {
   phone: '+31 6 15 93 90 10',
   github: 'https://github.com/grotegehaktbal',
   linkedin: 'https://www.linkedin.com/in/peter-riemersma/',
-} as const;
+};
 
-export const facts: Fact[] = [
+const facts: Fact[] = [
   { label: 'Certified', value: 'Cisco CCNA' },
   { label: 'Internship', value: 'Google, Eemshaven' },
   { label: 'Throughput', value: '2.5GbE / Wi-Fi 7' },
   { label: 'Languages', value: 'NL / EN' },
 ];
 
-export const projects: Project[] = [
+const projects: Project[] = [
   {
     slug: 'pyxels',
     kind: 'Company',
@@ -132,7 +125,7 @@ export const projects: Project[] = [
   },
 ];
 
-export const capabilities: Capability[] = [
+const capabilities: Capability[] = [
   {
     title: 'Network engineering',
     description:
@@ -159,7 +152,7 @@ export const capabilities: Capability[] = [
   },
 ];
 
-export const timeline: TimelineEntry[] = [
+const timeline: TimelineEntry[] = [
   {
     period: '2024 — now',
     role: 'Co-owner',
@@ -200,7 +193,7 @@ export const timeline: TimelineEntry[] = [
   },
 ];
 
-export const education: TimelineEntry[] = [
+const education: TimelineEntry[] = [
   {
     period: '2022 — now',
     role: 'BSc ICT — Network & Security Engineering',
@@ -218,7 +211,7 @@ export const education: TimelineEntry[] = [
   },
 ];
 
-export const certifications: Certification[] = [
+const certifications: Certification[] = [
   {
     name: 'CCNA: Enterprise Networking, Security, and Automation',
     issuer: 'Cisco',
@@ -245,3 +238,22 @@ export const certifications: Certification[] = [
   { name: 'Effective communication in ICT', issuer: 'Hanze', date: 'Jan 2023' },
   { name: 'Introduction to Parametric Feature-Based CAD', issuer: 'Onshape by PTC', date: 'Nov 2025' },
 ];
+
+/**
+ * English content.
+ *
+ * Both locales satisfy the same `Content` interface, so a field added here that
+ * is missing from the Dutch file is a compile error rather than a blank on the
+ * page. That is the whole point of moving content into TypeScript: the current
+ * site's JSON message files can drift silently, and did.
+ */
+export const en: Content = {
+  ui,
+  profile,
+  facts,
+  projects,
+  capabilities,
+  timeline,
+  education,
+  certifications,
+};

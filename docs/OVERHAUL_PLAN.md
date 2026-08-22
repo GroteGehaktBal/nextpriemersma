@@ -527,28 +527,68 @@ is effectively an unmetered free tier.
 
 ### Recommendation
 
-**Finish the rebuild on Vercel, then move to Cloudflare.**
+**Finish the rebuild on Vercel, then move.** Staying put during phases 1–3 costs
+nothing: preview deployments on every pull request are genuinely useful while the
+design is still moving, and Next.js needs no adapter there. Migrating early would mean
+debugging a hosting change and a rewrite at the same time.
 
-Staying put during phases 1–3 costs nothing: preview deployments on every pull request
-are genuinely useful while the design is still moving, and Next.js needs no adapter
-there. Moving early would mean debugging a hosting migration and a rewrite at the same
-time.
+### The migration, tested rather than assumed
 
-Once phase 3 lands, the site is static and the migration is small:
+A static export was run against this branch to find out what actually breaks. The
+results are specific, and one of them is a trap.
 
-1. Switch `localePrefix` to `'always'` so every URL carries its locale. That removes
-   the only reason middleware exists, and with it the last dynamic surface.
-2. Export statically. Both `next/image` optimisation and the OG route are already
-   scheduled to become build-time output, so nothing needs a server.
-3. Deploy to Cloudflare Pages. A static site needs no `@opennextjs/cloudflare`
-   adapter, which is where most of the friction in Next-on-Cloudflare lives.
+**Four things block `output: 'export'` today.** Each fails the build with a named error:
 
-The fallback, if step 1 turns out to be unacceptable for SEO reasons, is Cloudflare
-Workers with the OpenNext adapter — more moving parts, still free, still commercially
-licensed.
+| Blocker | Why | Resolution |
+| --- | --- | --- |
+| `src/app/og/route.tsx` | Dynamic route handler; `ImageResponse` cannot be exported | Already scheduled: becomes a build-time `opengraph-image.tsx` (§6.1) |
+| `src/pages/api/*` | Pages Router API routes cannot be exported | Already scheduled for removal (§3) |
+| `src/middleware.ts` | Middleware does not exist in a static export | Removed — see the URL problem below |
+| `robots.ts`, `sitemap.ts` | Need `export const dynamic = 'force-static'` | One line each |
 
-Read the current terms before committing either way; plan terms change, and the
-consequence of getting this one wrong is a suspended portfolio rather than a bill.
+With those handled, the export succeeds and emits both locale trees in full:
+`out/en/about.html`, `out/nl/about.html` and so on for every page.
+
+**The trap: going static silently changes every English URL.**
+
+Today the middleware makes the default locale unprefixed. `/about` serves English, and
+`/en/about` *redirects to* `/about`. In a static export there is no middleware to do
+that, so the only file that exists is `out/en/about.html`. There is no `out/about.html`
+and no `out/index.html` at all.
+
+Verified on both `localePrefix` settings — `as-needed` and `always` produce the same
+output. Changing that setting does **not** avoid this; it is a consequence of losing
+middleware, not of the prefix strategy.
+
+Left alone, the migration would 404 the bare domain and every English URL the site has
+ever published — including anything already indexed or shared.
+
+**The fix is a redirect map**, which Cloudflare Pages reads from a `_redirects` file at
+the output root:
+
+```
+/            /en/              302
+/about       /en/about         301
+/work        /en/work          301
+/work/*      /en/work/:splat   301
+/blog/*      /en/blog/:splat   301
+```
+
+The root redirect is a 302 because which language a visitor should get is a decision
+that may change; the rest are 301 because those URLs have genuinely moved. Language
+negotiation from `Accept-Language` needs a Worker rather than a static rule — worth it
+only if the analytics later show it matters; the language toggle covers it otherwise.
+
+**One more Cloudflare consideration:** `@vercel/speed-insights` is Vercel-only and will
+silently stop reporting. Cloudflare Web Analytics is the free equivalent, and it is a
+one-line swap at migration time.
+
+### Consequence for the rebuild
+
+Because the destination is prefixed URLs, phase 2 should adopt `localePrefix: 'always'`
+early rather than at migration time. That way the URL change happens once, on Vercel,
+where middleware can still issue the redirects — and the eventual move to Cloudflare is
+a pure hosting change with no URL churn at all.
 
 ## 10. Roadmap
 

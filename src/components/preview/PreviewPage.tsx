@@ -2,19 +2,11 @@ import type { CSSProperties } from 'react';
 
 import { ArrowRight, ArrowUpRight, Check, GitHub, LinkedIn, Mail } from '@/components/ui/icons';
 
-import {
-  capabilities,
-  certifications,
-  education,
-  facts,
-  profile,
-  projects,
-  timeline,
-} from './content';
+import type { Content } from './content.types';
 import styles from './preview.module.css';
 
 /**
- * Proof of concept for the portfolio overhaul.
+ * The proof-of-concept page, rendered for whichever locale it is given.
  *
  * The whole page is a server component. There is no `"use client"` anywhere in this
  * route, which means the HTML Vercel serves already contains every word below —
@@ -38,7 +30,16 @@ const enterIndex = (index: number) => ({ '--enter-index': index }) as CSSPropert
 /** Same idea for scroll-reveal stagger within a list. */
 const revealOffset = (index: number) => ({ '--reveal-offset': index }) as CSSProperties;
 
-export default function PreviewPage() {
+export interface PreviewPageProps {
+  content: Content;
+  /** Drives the `lang` attribute and which side of the language toggle is active. */
+  locale: 'en' | 'nl';
+}
+
+export function PreviewPage({ content, locale }: PreviewPageProps) {
+  const { ui, profile, facts, projects, capabilities, timeline, education, certifications } =
+    content;
+
   return (
     <div className={styles.page}>
       <div className={styles.ambient} aria-hidden="true">
@@ -50,8 +51,8 @@ export default function PreviewPage() {
         promoted once a direction is chosen; the banner makes that unambiguous.
       */}
       <div className={styles.notice}>
-        <span className={styles.noticeBadge}>Proof of concept</span>
-        <span>Design proposal — not the live site</span>
+        <span className={styles.noticeBadge}>{ui.notice.badge}</span>
+        <span>{ui.notice.text}</span>
       </div>
 
       <header className={styles.header}>
@@ -62,28 +63,53 @@ export default function PreviewPage() {
 
         <nav className={styles.nav} aria-label="Sections">
           <a className={styles.navLink} href="#work">
-            Work
+            {ui.nav.work}
           </a>
           <a className={styles.navLink} href="#capabilities">
-            Capabilities
+            {ui.nav.capabilities}
           </a>
           <a className={styles.navLink} href="#background">
-            Background
+            {ui.nav.background}
           </a>
           <a className={styles.navLink} href="#contact">
-            Contact
+            {ui.nav.contact}
           </a>
         </nav>
 
         {/*
-          Static in the PoC — it demonstrates the treatment. In the real build this
-          is the only interactive element in the header, and the one place a client
-          component is genuinely warranted.
+          A real language switch, and still zero JavaScript: two links to two
+          pre-rendered pages. The current site does this with a client component
+          and a router call.
+
+          Plain <a> rather than next/link is deliberate, and the lint rule is
+          disabled below rather than satisfied. next/link is a client component,
+          so it would put JavaScript on a page whose entire claim is that it needs
+          none — and it would buy nothing here, because the two locales have
+          separate root layouts and Next.js always does a full page load when a
+          navigation crosses one. All cost, no benefit.
         */}
-        <div className={styles.localeSwitch} aria-hidden="true">
-          <span className={`${styles.localeOption} ${styles.localeOptionActive}`}>EN</span>
-          <span className={styles.localeOption}>NL</span>
-        </div>
+        {/* eslint-disable @next/next/no-html-link-for-pages */}
+        <nav className={styles.localeSwitch} aria-label={ui.languageLabel}>
+          <a
+            className={`${styles.localeOption} ${locale === 'en' ? styles.localeOptionActive : ''}`}
+            href="/preview"
+            hrefLang="en"
+            lang="en"
+            aria-current={locale === 'en' ? 'page' : undefined}
+          >
+            EN
+          </a>
+          <a
+            className={`${styles.localeOption} ${locale === 'nl' ? styles.localeOptionActive : ''}`}
+            href="/preview/nl"
+            hrefLang="nl"
+            lang="nl"
+            aria-current={locale === 'nl' ? 'page' : undefined}
+          >
+            NL
+          </a>
+        </nav>
+        {/* eslint-enable @next/next/no-html-link-for-pages */}
       </header>
 
       <main id="top">
@@ -94,8 +120,8 @@ export default function PreviewPage() {
           </p>
 
           <h1 className={`${styles.heroTitle} enter`} style={enterIndex(1)}>
-            I design networks that stay up{' '}
-            <span className={styles.heroAccent}>and homes that think for themselves.</span>
+            {profile.headline.lead}{' '}
+            <span className={styles.heroAccent}>{profile.headline.accent}</span>
           </h1>
 
           <p className={`${styles.heroSubline} enter`} style={enterIndex(2)}>
@@ -104,7 +130,7 @@ export default function PreviewPage() {
 
           <div className={`${styles.heroActions} enter`} style={enterIndex(3)}>
             <a className={`${styles.button} ${styles.buttonPrimary}`} href="#work">
-              See the work
+              {ui.actions.seeWork}
               <ArrowRight className={styles.buttonArrow} />
             </a>
             <a
@@ -112,7 +138,7 @@ export default function PreviewPage() {
               href={`mailto:${profile.email}`}
             >
               <Mail />
-              Get in touch
+              {ui.actions.getInTouch}
             </a>
           </div>
 
@@ -128,13 +154,10 @@ export default function PreviewPage() {
 
         <section id="work" className={`${styles.container} ${styles.section}`}>
           <div className={`${styles.sectionHead} reveal`}>
-            <span className={styles.sectionIndex}>01 / Work</span>
+            <span className={styles.sectionIndex}>{ui.sections.work.index}</span>
             <div>
-              <h2 className={styles.sectionTitle}>Selected projects</h2>
-              <p className={styles.sectionLead}>
-                Infrastructure, automation and the software that ties them together. Each entry
-                names what was built, what it runs on, and what changed as a result.
-              </p>
+              <h2 className={styles.sectionTitle}>{ui.sections.work.title}</h2>
+              <p className={styles.sectionLead}>{ui.sections.work.lead}</p>
             </div>
           </div>
 
@@ -185,13 +208,10 @@ export default function PreviewPage() {
 
         <section id="capabilities" className={`${styles.container} ${styles.section}`}>
           <div className={`${styles.sectionHead} reveal`}>
-            <span className={styles.sectionIndex}>02 / Capabilities</span>
+            <span className={styles.sectionIndex}>{ui.sections.capabilities.index}</span>
             <div>
-              <h2 className={styles.sectionTitle}>What I actually do</h2>
-              <p className={styles.sectionLead}>
-                Four areas, each backed by the tools and protocols behind it rather than a
-                self-assessed percentage bar.
-              </p>
+              <h2 className={styles.sectionTitle}>{ui.sections.capabilities.title}</h2>
+              <p className={styles.sectionLead}>{ui.sections.capabilities.lead}</p>
             </div>
           </div>
 
@@ -213,18 +233,15 @@ export default function PreviewPage() {
 
         <section id="background" className={`${styles.container} ${styles.section}`}>
           <div className={`${styles.sectionHead} reveal`}>
-            <span className={styles.sectionIndex}>03 / Background</span>
+            <span className={styles.sectionIndex}>{ui.sections.background.index}</span>
             <div>
-              <h2 className={styles.sectionTitle}>Background</h2>
-              <p className={styles.sectionLead}>
-                Studying network and security engineering while running two businesses that put it
-                into practice — after eight months inside a Google data centre.
-              </p>
+              <h2 className={styles.sectionTitle}>{ui.sections.background.title}</h2>
+              <p className={styles.sectionLead}>{ui.sections.background.lead}</p>
             </div>
           </div>
 
           <div className={`${styles.subHead} ${styles.subHeadFirst} reveal`}>
-            <h3 className={styles.subTitle}>Experience</h3>
+            <h3 className={styles.subTitle}>{ui.background.experience}</h3>
           </div>
 
           <div className={styles.timeline}>
@@ -248,7 +265,7 @@ export default function PreviewPage() {
           </div>
 
           <div className={`${styles.subHead} reveal`}>
-            <h3 className={styles.subTitle}>Education</h3>
+            <h3 className={styles.subTitle}>{ui.background.education}</h3>
           </div>
 
           <div className={styles.timeline}>
@@ -272,10 +289,8 @@ export default function PreviewPage() {
           </div>
 
           <div className={`${styles.subHead} reveal`}>
-            <h3 className={styles.subTitle}>Certifications</h3>
-            <p className={styles.subLead}>
-              Cisco CCNA first, then the rest in full.
-            </p>
+            <h3 className={styles.subTitle}>{ui.background.certifications}</h3>
+            <p className={styles.subLead}>{ui.background.certificationsLead}</p>
           </div>
 
           <div className={styles.certLead}>
@@ -311,12 +326,9 @@ export default function PreviewPage() {
 
         <section id="contact" className={`${styles.container} ${styles.section}`}>
           <div className={`${styles.contact} reveal`}>
-            <span className={styles.sectionIndex}>04 / Contact</span>
-            <h2 className={styles.contactTitle}>Got a network or a house that needs thinking about?</h2>
-            <p className={styles.contactText}>
-              Available for internships, freelance work and smart-home projects across Friesland and
-              the north of the Netherlands.
-            </p>
+            <span className={styles.sectionIndex}>{ui.sections.contact.index}</span>
+            <h2 className={styles.contactTitle}>{ui.sections.contact.title}</h2>
+            <p className={styles.contactText}>{ui.sections.contact.text}</p>
             <a
               className={`${styles.button} ${styles.buttonPrimary}`}
               href={`mailto:${profile.email}`}
