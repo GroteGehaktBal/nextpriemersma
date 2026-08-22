@@ -596,9 +596,9 @@ Each phase is independently shippable. Nothing goes to production half-finished.
 
 | Phase | Work | Outcome |
 | --- | --- | --- |
-| **0 — PoC** *(this branch)* | Token layer, motion system, one fully realised page at `/preview` | Something to react to before the rewrite starts |
+| **0 — PoC** ✅ | Token layer, motion system, one fully realised page | Direction agreed before the rewrite started |
 | **1 — Foundation** | Token layer merged, `RouteGuard` removed, primitives built, fonts self-hosted | Content in the HTML; the largest performance win, on its own |
-| **2 — Pages** | Home, about, work index and case-study template rebuilt on the new system | The new site, feature-complete |
+| **2 — Pages** ◐ | Home, about and work index rebuilt on the new system | Done, except the case-study template — `/work/[slug]` still renders through Once UI |
 | **3 — Cleanup** | Once UI, Sass, `react-icons` and the API routes removed; budget enforced in CI | The budget in §6 met and defended |
 | **3b — Static + move** | `localePrefix: 'always'`, static export, deploy to Cloudflare Pages | Free hosting that permits commercial use (§9) |
 | **4 — Content** | Case studies rewritten to the template, LinkedIn details folded in, real images | The site actually sells the work |
@@ -621,38 +621,35 @@ Phase 1 is where most of the measured gain lands. Phases 4 and 5 are where most 
 
 ---
 
-## 12. What is in this branch right now
+## 12. Where the branch stands
 
-**The proof of concept** — additive, and removable without trace:
+**Shipped.** The design is the site. `/preview` is gone; home, about and work run
+on the new system in both languages, and `RouteGuard` and the requestAnimationFrame
+background are deleted — page content is in the pre-rendered HTML.
 
-- `src/styles/tokens.css` — the complete token layer, dark and light.
-- `src/styles/base.css` — reset and element defaults.
-- `src/styles/motion.css` — the scroll-driven animation system.
-- `src/app/(preview)/layout.tsx` — a second root layout, server components only.
-- `src/app/(preview)/preview/` — the page, its typed content module and its styles.
-- `src/components/ui/icons.tsx` — inline SVG icons, replacing `react-icons`.
-- `docs/OVERHAUL_PLAN.md` and `docs/PROOF_OF_CONCEPT.md`.
+Live at the pull request preview:
+**https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/en**
+(and `/nl`).
 
-The route is `noindex` and lives outside the `[locale]` segment, so it neither appears
-in the sitemap nor collides with a locale. It exists to be judged, then either promoted
-or deleted.
+**Measured per page, gzip, against `main`:**
 
-**The dependency and security work** — not additive, and not optional: it is what
-unblocked deployment (§2.4b). It touches existing files across the project:
+| | main | now |
+| --- | --- | --- |
+| Content in the served HTML | none | all of it |
+| HTML | 8.9 KB | 6.7 KB |
+| JS | 226.4 KB | 210.0 KB |
+| CSS | 19.8 KB | 24.4 KB |
 
-- `package.json`, `package-lock.json`, `eslint.config.mjs` (new), `.eslintrc.json`
-  (deleted), `.env.example` — dependency updates, removals, and a working lint setup.
-- `src/pages/api/authenticate.ts`, `src/pages/api/check-auth.ts` — cookie v2 API, and
-  the password moved out of the source into the environment.
-- `src/app/utils/utils.ts` plus its eleven call sites in `blog/`, `work/`, `sitemap.ts`,
-  `Posts.tsx` and `Projects.tsx` — statically scoped content root.
-- `src/app/resources/content.js` (deleted), `renderContent.js`, `index.ts`,
-  `content-i18n.js` — template placeholder content removed, and the two bugs its dead
-  code path was masking fixed.
-- `src/app/og/route.tsx`, `tsconfig.json`, `src/middleware.ts` — lint and config fixes.
+CSS is *up*, and honestly so: Once UI's stylesheets are still imported because
+`/work/[slug]` has not been migrated off its components. That is the next job, and
+it takes both JS and CSS down substantially.
 
-**Live at the pull request preview:**
-**https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/preview**
+**Outstanding, in order:**
 
-See [`PROOF_OF_CONCEPT.md`](./PROOF_OF_CONCEPT.md) for what it demonstrates and how to
-run it locally.
+1. **Case-study pages off Once UI**, then delete the vendored design system —
+   roughly 11,950 lines, ~14 KB of gzipped CSS, and whatever client JavaScript
+   comes with it.
+2. **Self-host the fonts** (`next/font/local`), removing the build-time fetch.
+3. **Static Open Graph images**, replacing the dynamic `/og` route.
+4. **CI**: typecheck, lint, build and a size budget on every pull request.
+5. **Then** §9: static export and the move to Cloudflare Pages.

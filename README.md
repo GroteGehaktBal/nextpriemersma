@@ -1,60 +1,80 @@
-Do you want to build this portfolio yourself?
-check out [Once UI Magic Portfolio](https://github.com/once-ui-system/magic-portfolio)
+# priemersma.nl
 
-# **Getting started**
+Personal portfolio for Peter Riemersma — Network & Security Engineering student
+at Hanze University, co-owner of [pyxels](https://www.pyxels.eu), freelance at
+Riemersma ICT.
 
-It requires Node.js v18.17+.
+Built with Next.js (App Router) and next-intl. Bilingual: English and Dutch.
 
-**1. Clone the repository**
-```
-git clone https://github.com/GroteGehaktBal/nextpriemersma.git
-```
+## Running it
 
-**2. Install dependencies**
-```
+Requires Node.js 20+.
+
+```bash
 npm install
+npm run dev        # http://localhost:3000/en
 ```
 
-**3. Run dev server**
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript, no emit |
+
+## How it is put together
+
 ```
-npm run dev
+src/
+├── app/[locale]/          # routes — home, about, work, work/[slug]
+│   └── work/projects/     # case studies as MDX, one folder per locale
+├── content/               # site copy: types.ts, en.ts, nl.ts
+├── components/site/       # header, footer, page sections
+├── components/ui/         # inline SVG icons
+├── styles/                # tokens.css, base.css, motion.css
+└── i18n/                  # routing config and URL construction
 ```
 
-**4. Edit config**
-```
-src/app/resources/config
-```
+**Content lives in `src/content`**, as typed TypeScript rather than JSON. Both
+locales satisfy the same `Content` interface, so a field added to one language
+and forgotten in the other is a build error instead of a blank on the page.
 
-**5. Edit content**
-```
-src/app/resources/content (or content-i18n for localization)
-```
+**Every visible string is in that model**, including navigation labels and button
+text. If it renders, it is translatable.
 
-**6. Create blog posts / projects**
-```
-Add a new .mdx file to src/app/[locale]/blog/posts or src/app/[locale]/work/projects
-```
+**Styling is CSS Modules over a token layer.** Every colour, size, duration and
+radius in the interface resolves to a custom property in `src/styles/tokens.css`,
+which defines complete dark and light palettes and follows `prefers-color-scheme`.
 
-# **Features**
+**Animation costs no JavaScript.** Reveal-on-scroll uses CSS scroll timelines
+(`animation-timeline: view()`) rather than an IntersectionObserver, so animated
+sections stay server components. Every animation sits behind an `@supports` guard
+with the finished state as its default, so a browser without scroll timelines —
+or a visitor with reduced motion enabled — gets the completed page rather than a
+blank one waiting for an animation that will never run.
 
-## **SEO**
-- Automatic open-graph and X image generation with next/og
-- Automatic schema and metadata generation based on the content file
+## Adding a project
 
-## **Design**
-- Responsive layout optimized for all screen sizes
-- Timeless design without heavy animations and motion
+1. Write `src/app/[locale]/work/projects/en/my-project.mdx` and its Dutch
+   counterpart in `../nl/`. The filename is the URL slug.
+2. Add an entry to `projects` in `src/content/en.ts` and `src/content/nl.ts`.
+   Its `slug` must match the filename — a mismatch is a 404, not a type error.
 
-## **Content**
-- Render sections conditionally based on the content file
-- Enable or disable pages for blog, work, gallery and about / CV
-- Generate and display social links automatically
-- Set up password protection for URLs
+## URLs
 
-# **License**
+Every locale is prefixed: `/en/about`, `/nl/about`. The default locale is
+prefixed too, deliberately — without it, one URL could serve either language
+depending on a cookie while its own canonical tag claimed otherwise.
 
-Distributed under the CC BY-NC 4.0 License.
-- Commercial usage is not allowed.
-- Attribution is required.
+## Roadmap
 
-See `LICENSE.txt` for more information.
+See [`docs/OVERHAUL_PLAN.md`](docs/OVERHAUL_PLAN.md) for the audit this rebuild
+came out of, the design and performance decisions behind it, and what is left.
+
+## Licence
+
+CC BY-NC 4.0 — see [`LICENSE`](LICENSE). Note that this is inherited from the
+[Once UI Magic Portfolio](https://github.com/once-ui-system/magic-portfolio)
+template the project started from; little of that template remains, and the
+licence is due a review.
