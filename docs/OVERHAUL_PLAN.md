@@ -313,8 +313,8 @@ All figures are gzip, measured on a real production build.
 | --- | --- | --- | --- |
 | **Application JS** | 63.0 KB | ≤ 15 KB | **0.0 KB** |
 | Framework baseline JS | 163.4 KB | — | 163.4 KB |
-| CSS | 19.8 KB | ≤ 10 KB | **5.1 KB** |
-| HTML | 8.9 KB | ≤ 15 KB | 8.1 KB |
+| CSS | 19.8 KB | ≤ 10 KB | **5.4 KB** |
+| HTML | 8.9 KB | ≤ 15 KB | 10.6 KB |
 | Page content in the HTML | none | all | **all** |
 | LCP (mobile, slow 4G) | gated on hydration | < 1.5 s | not JS-gated |
 | CLS | shifts on hydrate | 0 | 0 |
@@ -393,23 +393,49 @@ Every project answers the same five questions, so they can be scanned side by si
 The existing Teradruk BV and Weather Forecast entries already have most of this; they
 need restructuring, not rewriting.
 
-### 7.3 Open questions for you
+### 7.3 What the LinkedIn profile added
 
-These are the gaps I cannot fill from the repository:
+The profile has now been folded into the content model. Two things on it were absent
+from the site entirely, and both are among the strongest credentials there:
 
-1. **LinkedIn.** Your profile is blocked by this environment's network policy, so I
-   could not read it. Exact job titles, dates, the certifications you hold (CCNA?
-   Azure? Home Assistant-related?), and your own "about" text would meaningfully
-   improve the copy.
-2. **Numbers.** Case studies live on specifics — sites connected, users supported,
+- **Data Center Technician, Google — Eemshaven (2021–2022).** An eight-month internship
+  in one of Europe's largest data centres, troubleshooting network faults and server
+  hardware at production scale. This was nowhere on the portfolio. For a network and
+  security student it is the single most persuasive line available, and it now sits in
+  the hero facts and the experience timeline.
+- **Cisco CCNA — two modules** (Enterprise Networking, Security & Automation, Nov 2023;
+  Switching, Routing & Wireless Essentials, Oct 2023). Named certification from the
+  vendor whose equipment the work is about. Previously the site said only "Cisco
+  Networking" as a self-described skill.
+
+Also corrected: exact dates for every role, Noorderpoort as *Network and System
+Administration* (2019–2022) rather than "Network management", and Hanze from 2022.
+
+Two editorial decisions worth confirming:
+
+1. **Eleven certifications is too many to show flat.** The two Cisco CCNA modules get
+   their own cards; the remaining nine — mostly LinkedIn Learning courses — are a
+   compact list underneath. Showing all eleven at equal weight buries the two that a
+   hiring manager actually recognises.
+2. **Conduent (telesales) and Studentaanhuis are rendered as secondary entries**,
+   dimmed and tightened. They are real and worth listing for continuity, but they are
+   not what a reader is on the page for. ProjectXXL (logistics, 2021) is omitted
+   entirely as unrelated to the field — easy to add back if you would rather show it.
+
+### 7.4 Still open
+
+1. **Numbers.** Case studies live on specifics — sites connected, users supported,
    uptime, throughput, hours saved. Even rough figures are far stronger than none.
-3. **Images.** There is one avatar and three project images in `public/`. Photographs of
+2. **Images.** There is one avatar and three project images in `public/`. Photographs of
    real racks, dashboards or installations would carry the work pages.
-4. **Positioning.** Is this aimed at employers (internships, graduate roles) or at
+3. **Positioning.** Is this aimed at employers (internships, graduate roles) or at
    pyxels/Riemersma ICT clients? The two audiences want different first screens. It can
    serve both, but one has to lead.
-5. **CV.** Should the site offer a downloadable PDF, generated from the same content
+4. **CV.** Should the site offer a downloadable PDF, generated from the same content
    source so it can never drift out of date?
+5. **The Google internship.** Confirm you are happy to name the employer prominently —
+   it is on your public LinkedIn, so this is a presentation question rather than a
+   permission one, but it is your call how far forward it sits.
 
 ---
 

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, Source_Code_Pro } from 'next/font/google';
 
 import '@/styles/tokens.css';
 import '@/styles/base.css';
@@ -30,7 +30,14 @@ const sans = Inter({
   weight: ['400', '500', '600'],
 });
 
-const mono = JetBrains_Mono({
+/*
+ * Deliberately the same two families the live site already loads. `next/font/google`
+ * fetches at build time, so every additional family is another network dependency the
+ * production build can fail on; the proof of concept should not introduce one to make
+ * a point it can make with the fonts already proven in this project's deployments.
+ * Phase 1 self-hosts both and removes the build-time fetch altogether.
+ */
+const mono = Source_Code_Pro({
   variable: '--font-code',
   subsets: ['latin'],
   display: 'swap',

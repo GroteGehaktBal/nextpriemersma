@@ -84,8 +84,8 @@ Both figures are gzip, from a production build.
 | --- | --- | --- |
 | **Application JS** | 63.0 KB | **0.0 KB** |
 | Framework baseline JS | 163.4 KB | 163.4 KB |
-| CSS | 19.8 KB | **5.1 KB** (74% less) |
-| HTML | 8.9 KB | 8.1 KB |
+| CSS | 19.8 KB | **5.4 KB** (73% less) |
+| HTML | 8.9 KB | 10.6 KB |
 | **Content in the pre-rendered HTML** | **none** | **all of it** |
 
 The 163 KB framework baseline is the Next.js App Router and React runtime. It is
@@ -140,9 +140,9 @@ Scope was kept to what is needed to judge the direction:
 - **Static language switcher.** It shows the treatment. In the real build it is the
   one place a client component is genuinely warranted.
 - **English only.** The Dutch translation follows once the copy is settled.
-- **Content is illustrative.** It is drawn from the existing site, sharpened to show
-  what the layout does with specifics. The real copy needs your input — see
-  §7.3 of the plan for the open questions.
+- **Content is real but the prose is a draft.** Roles, dates, education and the eleven
+  certifications come from the LinkedIn profile; the sentences around them are written
+  for this layout and are open to rewriting.
 
 ---
 
@@ -152,6 +152,20 @@ Scope was kept to what is needed to judge the direction:
    pairing and the density are all easy to change now and expensive to change later.
 2. **The animation level** — too much, too little, or about right?
 3. **Positioning** — should the first screen speak to employers or to clients?
-4. **LinkedIn.** Your profile is blocked by this environment's network policy, so I
-   could not read it. Your headline, dates, certifications and about text would
-   sharpen the copy considerably.
+4. **The two editorial calls on your history** — certifications ranked rather than
+   listed flat, and the non-technical roles dimmed. See §7.3 of the plan.
+
+## Known issue
+
+The Vercel preview deployment for this branch failed. The cause is not visible from
+here: a clean clone with `npm ci && next build` succeeds with exit 0 and no warnings
+beyond the pre-existing `middleware` → `proxy` deprecation, and route resolution is
+correct (`/preview` returns 200, unknown locales 404). Reading the deployment log needs
+either `vercel.com` or the GitHub check-runs API, both of which this environment's
+egress policy blocks.
+
+As a precaution the proof of concept no longer introduces a new webfont family — it
+reuses Inter and Source Code Pro, the two `next/font/google` families the live site
+already builds with, so it adds no new build-time network dependency. Whether that was
+the cause is unconfirmed. The log from `npx vercel inspect <deployment> --logs` would
+settle it in one read.

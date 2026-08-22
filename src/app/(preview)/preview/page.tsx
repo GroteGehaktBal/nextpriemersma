@@ -2,7 +2,15 @@ import type { CSSProperties } from 'react';
 
 import { ArrowRight, ArrowUpRight, Check, GitHub, LinkedIn, Mail } from '@/components/ui/icons';
 
-import { capabilities, facts, profile, projects, timeline } from './content';
+import {
+  capabilities,
+  certifications,
+  education,
+  facts,
+  profile,
+  projects,
+  timeline,
+} from './content';
 import styles from './preview.module.css';
 
 /**
@@ -207,18 +215,46 @@ export default function PreviewPage() {
           <div className={`${styles.sectionHead} reveal`}>
             <span className={styles.sectionIndex}>03 / Background</span>
             <div>
-              <h2 className={styles.sectionTitle}>Experience and education</h2>
+              <h2 className={styles.sectionTitle}>Background</h2>
               <p className={styles.sectionLead}>
                 Studying network and security engineering while running two businesses that put it
-                into practice.
+                into practice — after eight months inside a Google data centre.
               </p>
             </div>
+          </div>
+
+          <div className={`${styles.subHead} ${styles.subHeadFirst} reveal`}>
+            <h3 className={styles.subTitle}>Experience</h3>
           </div>
 
           <div className={styles.timeline}>
             {timeline.map((entry, index) => (
               <article
                 key={`${entry.organisation}-${entry.role}`}
+                className={`${styles.entry} ${entry.secondary ? styles.entrySecondary : ''} revealItem`}
+                style={revealOffset(index)}
+              >
+                <p className={styles.entryPeriod}>
+                  {entry.current && <span className={styles.statusDot} aria-hidden="true" />}
+                  {entry.period}
+                </p>
+                <div className={styles.entryBody}>
+                  <h4 className={styles.entryRole}>{entry.role}</h4>
+                  <p className={styles.entryOrg}>{entry.organisation}</p>
+                  <p className={styles.entryText}>{entry.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className={`${styles.subHead} reveal`}>
+            <h3 className={styles.subTitle}>Education</h3>
+          </div>
+
+          <div className={styles.timeline}>
+            {education.map((entry, index) => (
+              <article
+                key={entry.organisation}
                 className={`${styles.entry} revealItem`}
                 style={revealOffset(index)}
               >
@@ -227,13 +263,50 @@ export default function PreviewPage() {
                   {entry.period}
                 </p>
                 <div className={styles.entryBody}>
-                  <h3 className={styles.entryRole}>{entry.role}</h3>
+                  <h4 className={styles.entryRole}>{entry.role}</h4>
                   <p className={styles.entryOrg}>{entry.organisation}</p>
                   <p className={styles.entryText}>{entry.description}</p>
                 </div>
               </article>
             ))}
           </div>
+
+          <div className={`${styles.subHead} reveal`}>
+            <h3 className={styles.subTitle}>Certifications</h3>
+            <p className={styles.subLead}>
+              Cisco CCNA first, then the rest in full.
+            </p>
+          </div>
+
+          <div className={styles.certLead}>
+            {certifications
+              .filter((cert) => cert.lead)
+              .map((cert, index) => (
+                <article
+                  key={cert.name}
+                  className={`${styles.cert} revealItem`}
+                  style={revealOffset(index)}
+                >
+                  <p className={styles.certIssuer}>
+                    {cert.issuer} · {cert.date}
+                  </p>
+                  <h4 className={styles.certName}>{cert.name}</h4>
+                </article>
+              ))}
+          </div>
+
+          <ul className={`${styles.certRest} reveal`}>
+            {certifications
+              .filter((cert) => !cert.lead)
+              .map((cert) => (
+                <li key={cert.name} className={styles.certRestItem}>
+                  <span className={styles.certRestName}>{cert.name}</span>
+                  <span className={styles.certRestMeta}>
+                    {cert.issuer} · {cert.date}
+                  </span>
+                </li>
+              ))}
+          </ul>
         </section>
 
         <section id="contact" className={`${styles.container} ${styles.section}`}>

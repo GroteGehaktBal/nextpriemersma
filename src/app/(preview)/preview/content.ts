@@ -10,9 +10,9 @@
  * In the full rewrite this becomes `src/content/en.ts` and `src/content/nl.ts`,
  * both satisfying a shared `Content` interface exported from `src/content/types.ts`.
  *
- * The copy below is drawn from the existing site and is illustrative. It is
- * deliberately specific: every claim names a technology, a scale or a result,
- * because that is what the layout is designed to show off.
+ * Roles, dates, education and certifications are taken from Peter's LinkedIn
+ * profile. The prose around them is written for this layout, which is built to
+ * reward specifics: every claim names a technology, a scale or a result.
  */
 
 export interface Fact {
@@ -49,26 +49,44 @@ export interface TimelineEntry {
   description: string;
   /** Marks the entry as ongoing, which renders a live status dot. */
   current?: boolean;
+  /**
+   * Secondary entries are real and worth listing, but they are not what the
+   * reader is here for. They render in a quieter, more compact treatment so the
+   * engineering roles above them keep the weight.
+   */
+  secondary?: boolean;
+}
+
+export interface Certification {
+  name: string;
+  issuer: string;
+  date: string;
+  /**
+   * Lead certifications get their own card. The rest are listed compactly —
+   * eleven equally weighted entries would bury the two that carry real weight.
+   */
+  lead?: boolean;
 }
 
 export const profile = {
   name: 'Peter Riemersma',
   role: 'Network & Security Engineering',
-  location: 'Friesland, Netherlands',
+  location: 'Burum, Friesland',
   /** One sentence. If it needs two, it is not sharp enough yet. */
   headline: 'I design networks that stay up and homes that think for themselves.',
   subline:
-    'Network & Security Engineering student at Hanze University, co-owner of pyxels, and freelance at Riemersma ICT. I build secure, high-throughput infrastructure and the smart-home systems that run on top of it.',
+    'Network & Security Engineering student at Hanze University, co-owner of pyxels, and freelance at Riemersma ICT. CCNA-certified, and I spent eight months keeping Google’s Eemshaven data centre running.',
   availability: 'Open to internships and freelance work',
   email: 'peter@riemersmaict.nl',
+  phone: '+31 6 15 93 90 10',
   github: 'https://github.com/grotegehaktbal',
   linkedin: 'https://www.linkedin.com/in/peter-riemersma/',
 } as const;
 
 export const facts: Fact[] = [
-  { label: 'Focus', value: 'Network & security' },
+  { label: 'Certified', value: 'Cisco CCNA' },
+  { label: 'Internship', value: 'Google, Eemshaven' },
   { label: 'Throughput', value: '2.5GbE / Wi-Fi 7' },
-  { label: 'Running since', value: '2023' },
   { label: 'Languages', value: 'NL / EN' },
 ];
 
@@ -109,7 +127,7 @@ export const projects: Project[] = [
     title: 'Riemersma ICT',
     summary:
       'Technical support and managed network infrastructure for small businesses and private clients, with cloud identity and device management handled through Microsoft Azure.',
-    stack: ['Microsoft Azure', 'Windows Server', 'Networking'],
+    stack: ['Microsoft Azure', 'Windows Server', 'Wireless networks'],
     year: '2023',
   },
 ];
@@ -119,13 +137,13 @@ export const capabilities: Capability[] = [
     title: 'Network engineering',
     description:
       'Designing and deploying segmented, secure network architectures — and being able to explain what every packet is doing and why.',
-    keywords: ['Cisco IOS', 'VLAN', 'Routing', 'IPsec', 'DNS/DHCP'],
+    keywords: ['Cisco IOS', 'VLAN', 'Routing', 'IPv4/IPv6', 'IPsec', 'DNS/DHCP'],
   },
   {
     title: 'Security',
     description:
       'Building infrastructure that assumes it will be attacked: segmentation, least privilege, and identity as the perimeter.',
-    keywords: ['Firewalling', 'Active Directory', 'Group Policy', 'Hardening'],
+    keywords: ['Firewalling', 'Active Directory', 'Azure AD', 'Group Policy', 'Hardening'],
   },
   {
     title: 'Home automation',
@@ -152,14 +170,39 @@ export const timeline: TimelineEntry[] = [
   },
   {
     period: '2023 — now',
-    role: 'Freelance engineer',
+    role: 'ICT services, freelance',
     organisation: 'Riemersma ICT',
     description:
-      'Technical support and network infrastructure management for clients, with cloud services delivered on Microsoft Azure.',
+      'Technical support and network infrastructure management for clients across Friesland, with cloud services delivered on Microsoft Azure.',
     current: true,
   },
   {
-    period: 'Present',
+    period: '2021 — 2022',
+    role: 'Data Center Technician, internship',
+    organisation: 'Google — Eemshaven',
+    description:
+      'Eight months inside one of Europe’s largest data centres, troubleshooting network faults and server hardware at production scale.',
+  },
+  {
+    period: '2020 — 2023',
+    role: 'Student IT',
+    organisation: 'Studentaanhuis',
+    description:
+      'On-site software and network troubleshooting for private clients in and around Groningen.',
+    secondary: true,
+  },
+  {
+    period: '2022 — 2023',
+    role: 'Telesales Agent',
+    organisation: 'Conduent',
+    description: 'Remote sales and customer service.',
+    secondary: true,
+  },
+];
+
+export const education: TimelineEntry[] = [
+  {
+    period: '2022 — now',
     role: 'BSc ICT — Network & Security Engineering',
     organisation: 'Hanze University of Applied Sciences, Groningen',
     description:
@@ -167,10 +210,38 @@ export const timeline: TimelineEntry[] = [
     current: true,
   },
   {
-    period: 'Completed',
-    role: 'Network Management',
+    period: '2019 — 2022',
+    role: 'Network and System Administration',
     organisation: 'Noorderpoort',
     description:
-      'Vocational training in network management, including the multi-site Teradruk BV infrastructure project.',
+      'Vocational training in network and system administration, including the multi-site Teradruk BV infrastructure project.',
   },
+];
+
+export const certifications: Certification[] = [
+  {
+    name: 'CCNA: Enterprise Networking, Security, and Automation',
+    issuer: 'Cisco',
+    date: 'Nov 2023',
+    lead: true,
+  },
+  {
+    name: 'CCNA: Switching, Routing, and Wireless Essentials',
+    issuer: 'Cisco',
+    date: 'Oct 2023',
+    lead: true,
+  },
+  { name: 'Introduction to Internet of Things', issuer: 'Cisco', date: 'Feb 2026' },
+  { name: 'Routing IPv4 and IPv6', issuer: 'Pluralsight', date: 'Mar 2022' },
+  { name: 'Azure Active Directory: Basics', issuer: 'LinkedIn', date: 'Oct 2023' },
+  { name: 'Learning Network Troubleshooting', issuer: 'LinkedIn', date: 'Oct 2023' },
+  {
+    name: 'Cisco CCNA (200-301) Cert Prep: Network Fundamentals and Access',
+    issuer: 'LinkedIn',
+    date: 'Oct 2023',
+  },
+  { name: 'Leveraging ChatGPT for Smarter Cybersecurity', issuer: 'LinkedIn', date: 'Oct 2023' },
+  { name: 'Crash Course on Python', issuer: 'Coursera', date: 'Mar 2022' },
+  { name: 'Effective communication in ICT', issuer: 'Hanze', date: 'Jan 2023' },
+  { name: 'Introduction to Parametric Feature-Based CAD', issuer: 'Onshape by PTC', date: 'Nov 2025' },
 ];
