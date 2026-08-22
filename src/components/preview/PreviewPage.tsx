@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 
 import { ArrowRight, ArrowUpRight, Check, GitHub, LinkedIn, Mail } from '@/components/ui/icons';
+import { localePath } from '@/i18n/urls';
 
 import type { Content } from './content.types';
 import styles from './preview.module.css';
@@ -180,7 +181,7 @@ export function PreviewPage({ content, locale }: PreviewPageProps) {
                 </div>
 
                 <h3 className={styles.projectTitle}>
-                  <a className={styles.projectLink} href={`/work/${project.slug}`}>
+                  <a className={styles.projectLink} href={localePath(locale, `/work/${project.slug}`)}>
                     {project.title}
                   </a>
                 </h3>

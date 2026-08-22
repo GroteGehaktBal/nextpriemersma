@@ -23,6 +23,10 @@ export interface Fact {
 }
 
 export interface Project {
+  /**
+   * Must match the MDX filename in `src/app/[locale]/work/projects/<locale>/`.
+   * The card links to it, so a mismatch is a 404 rather than a type error.
+   */
   slug: string;
   /** Mono eyebrow describing the kind of work. */
   kind: string;

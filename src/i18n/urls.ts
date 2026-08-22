@@ -29,6 +29,17 @@ export function localeUrl(locale: string, path = ''): string {
 }
 
 /**
+ * Root-relative path for a route in a given locale.
+ *
+ * The counterpart to `localeUrl` for internal links, where an absolute URL is
+ * unwanted. Same rule: the default locale carries no prefix.
+ */
+export function localePath(locale: string, path = ''): string {
+  const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
+  return `${prefix}${path}` || '/';
+}
+
+/**
  * `alternates` metadata for a route: its canonical URL plus an hreflang entry
  * for every locale.
  *

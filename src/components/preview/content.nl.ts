@@ -98,7 +98,7 @@ const projects: Project[] = [
     year: '2024',
   },
   {
-    slug: 'weather-forecast-iot',
+    slug: 'weather-forecast-iot-project',
     kind: 'Toegepast onderzoek',
     title: 'Hyperlokale weersverwachting voor warmtepompen',
     summary:
@@ -118,7 +118,7 @@ const projects: Project[] = [
     year: '2021',
   },
   {
-    slug: 'riemersma-ict',
+    slug: 'riemersmaict',
     kind: 'Freelance',
     title: 'Riemersma ICT',
     summary:
