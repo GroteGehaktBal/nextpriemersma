@@ -15,9 +15,11 @@ const createI18nContent = (t) => {
         },
         role:      t("person.role"),
         avatar:    '/images/avatar.jpg',
-        location:  t("contact.timezone"),        // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
-        languages: t("contact.languages").split(',')
-        //languages: {languages}   // optional: Leave the array empty if you don't want to display languages
+        location:  t("contact.location"),
+        // `t.raw` returns the value as authored in the message file. Languages and
+        // achievements are real JSON arrays now; they used to be single strings split
+        // on a delimiter, which silently broke a sentence in two if it contained one.
+        languages: t.raw("contact.languages")
     }
 
     const newsletter = {
@@ -45,7 +47,7 @@ const createI18nContent = (t) => {
             link: '',
         },
         {
-            name: 'Email',
+            name: t("contact.email"),
             icon: 'email',
             link: 'mailto:peter@riemersmaict.nl',
         },
@@ -92,15 +94,15 @@ const createI18nContent = (t) => {
                     company: 'pyxels',
                     timeframe: t("about.work.experiences.pyxels.timeframe"),
                     role: t("about.work.experiences.pyxels.role"),
-                    achievements: t("about.work.experiences.pyxels.achievements").split(";"),
+                    achievements: t.raw("about.work.experiences.pyxels.achievements"),
                     /** @type {ContentImage[]} */
                     images: []
                 },
                 {
                     company: 'Riemersma ICT',
-                    timeframe: t("about.work.experiences.Riemersma ICT.timeframe"),
-                    role: t("about.work.experiences.Riemersma ICT.role"),
-                    achievements: t("about.work.experiences.Riemersma ICT.achievements").split(";"),
+                    timeframe: t("about.work.experiences.riemersma-ict.timeframe"),
+                    role: t("about.work.experiences.riemersma-ict.role"),
+                    achievements: t.raw("about.work.experiences.riemersma-ict.achievements"),
                     /** @type {ContentImage[]} */
                     images: []
                 }
@@ -108,15 +110,15 @@ const createI18nContent = (t) => {
         },
         studies: {
             display: true, // set to false to hide this section
-            title: 'Studies',
+            title: t("about.studies.title"),
             institutions: [
                 {
-                    name: t(`about.studies.institutions.Hanzehogeschool Groningen.naamhanze`),
-                    description: <>{t(`about.studies.institutions.Hanzehogeschool Groningen.description`)}</>,
+                    name: t("about.studies.institutions.hanze.name"),
+                    description: <>{t("about.studies.institutions.hanze.description")}</>,
                 },
                 {
-                    name: t(`about.studies.institutions.Noorderpoort College.naamnoorderpoort`),
-                    description: <>{t("about.studies.institutions.Noorderpoort College.description")}</>,
+                    name: t("about.studies.institutions.noorderpoort.name"),
+                    description: <>{t("about.studies.institutions.noorderpoort.description")}</>,
                 }
             ]
         },
@@ -126,19 +128,19 @@ const createI18nContent = (t) => {
             skills: [
                 {
                     title: 'Cisco Networking',
-                    description: <>{t("about.technical.skills.Cisco Networking.description")}</>,
+                    description: <>{t("about.technical.skills.cisco.description")}</>,
                     /** @type {ContentImage[]} */
                     images: []
                 },
                 {
                     title: 'Home Assistant',
-                    description: <>{t("about.technical.skills.Home Assistant.description")}</>,
+                    description: <>{t("about.technical.skills.home-assistant.description")}</>,
                     /** @type {ContentImage[]} */
                     images: []
                 },
                 {
                     title: 'Next.js',
-                    description: <>{t("about.technical.skills.Nextjs.description")}</>, // "." not accepted in next-intl namespace
+                    description: <>{t("about.technical.skills.nextjs.description")}</>,
                     /** @type {ContentImage[]} */
                     images: []
                     // images: [

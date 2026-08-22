@@ -1,95 +1,101 @@
 {
-    "person": {
-        "role": "IT & Huis Automatisering Expert"
-    },
-    "newsletter": {
-        "title": "Abonneer je op {firstName}'s Nieuwsbrief",
-        "description": "Ik schrijf af en toe over design, technologie en deel gedachten over de kruising van creativiteit en techniek",
-        "button": "Aanmelden"
-    },
-    "home": {
-        "label": "Home",
-        "title": "{name}'s Portfolio",
-        "description": "Portfolio website voor meer informatie over mij als {role}",
-        "headline": "IT & Huis Automatisering Expert",
-        "subline": "Ik ben Peter, student Network Security Engineering, gespecialiseerd in IT- en Smart Home-oplossingen"
-    },
-    "about": {
-        "label": "Info",
-        "title": "Over mij",
-        "description": "Mijn naam is {name}, {role} uit {location}",
-        "intro": {
-            "title": "Introductie",
-            "description": "Peter is een student Network Security Engineering met een passie voor high-tech huisautomatisering en veilige infrastructuur."
-        },
-        "work": {
-            "title": "Werkervaring",
-            "experiences": {
-                "pyxels": {
-                    "timeframe": "2024 - Heden",
-                    "role": "Mede-eigenaar",
-                    "achievements": "Realisatie van veilige high-speed netwerken met 2.5GbE en Wi-Fi 7.;Complete smart home installaties, inclusief verlichting, klimaatbeheersing en beveiliging."
-                },
-                "Riemersma ICT": {
-                    "timeframe": "2023 - Heden",
-                    "role": "Freelance",
-                    "achievements": "Leveren van deskundige technische ondersteuning aan klanten.;Beheer van netwerkinfrastructuur met Microsoft Azure."
-                }
-            }
-        },
-        "studies": {
-            "title": "Opleidingen",
-            "institutions": {
-                "Hanzehogeschool Groningen": {
-                    "naamhanze": "Hanzehogeschool Groningen",
-                    "description": "HBO-ICT met richting Network Security Engineering"
-                },
-                "Noorderpoort College": {
-                    "naamnoorderpoort": "Noorderpoort College",
-                    "description": "Netwerkbeheer"
-                }
-            }
-        },
-        "technical": {
-            "title": "Technische vaardigheden",
-            "skills": {
-                "Cisco Networking": {
-                    "description": "Ontwerpen en implementeren van veilige, complexe netwerkarchitecturen met diepgaande kennis van protocollen."
-                },
-                "Home Assistant": {
-                    "description": "Ervaren met <a href='https://home-assistant.io'>Home Assistant</a> voor het bouwen van complexe automatiseringen en het ontwerpen van moderne dashboards."
-                },
-                "Nextjs": {
-                    "description": "Ontwikkelen van next-generation webapplicaties met Next.js"
-                }
-            }
-        }
-    },
-    "blog": {
-        "label": "Blog",
-        "title": "Schrijven over design en technologie...",
-        "description": "Lees wat {name} recent heeft gedaan"
+  "person": {
+    "role": "netwerk- en securityengineer"
+  },
+  "newsletter": {
+    "title": "Abonneer je op de nieuwsbrief van {firstName}",
+    "description": "Ik schrijf af en toe over netwerken, security en domotica.",
+    "button": "Aanmelden"
+  },
+  "home": {
+    "label": "Home",
+    "title": "Portfolio van {name}",
+    "description": "Portfolio met mijn werk als {role}",
+    "headline": "Netwerken die blijven draaien, huizen die zelf nadenken",
+    "subline": "Ik ben Peter — student Network & Security Engineering aan de Hanzehogeschool, mede-eigenaar van pyxels en freelancer bij Riemersma ICT."
+  },
+  "about": {
+    "label": "Over mij",
+    "title": "Over mij",
+    "description": "Dit is {name}, {role} uit {location}",
+    "intro": {
+      "title": "Introductie",
+      "description": "Peter is student Network & Security Engineering aan de Hanzehogeschool, gericht op veilige infrastructuur en de domotica die daarop draait. Hij is mede-eigenaar van pyxels en werkt als freelancer via Riemersma ICT."
     },
     "work": {
-        "label": "Werk",
-        "title": "Mijn werk",
-        "description": "Projecten van {name}"
+      "title": "Werkervaring",
+      "experiences": {
+        "pyxels": {
+          "timeframe": "2024 — heden",
+          "role": "Mede-eigenaar",
+          "achievements": [
+            "Veilige high-speed netwerken gerealiseerd met 2.5GbE en Wi-Fi 7.",
+            "Complete domotica-installaties opgeleverd, van verlichting en klimaatbeheersing tot beveiliging."
+          ]
+        },
+        "riemersma-ict": {
+          "timeframe": "2023 — heden",
+          "role": "ICT-diensten, freelance",
+          "achievements": [
+            "Technische ondersteuning voor bedrijven en particulieren.",
+            "Beheer van netwerkinfrastructuur en clouddiensten in Microsoft Azure."
+          ]
+        }
+      }
     },
-    "gallery": {
-        "label": "Galerij",
-        "title": "Mijn fotogalerij",
-        "description": "Een fotocollectie van {name}"
+    "studies": {
+      "title": "Opleidingen",
+      "institutions": {
+        "hanze": {
+          "name": "Hanzehogeschool Groningen",
+          "description": "HBO-ICT, richting Network & Security Engineering"
+        },
+        "noorderpoort": {
+          "name": "Noorderpoort",
+          "description": "Netwerk- en systeembeheer"
+        }
+      }
     },
-    "contact": {
-        "label": "Contact",
-        "title": "Contact",
-        "description": "Contact Info",
-        "email": "Email",
-        "phone": "Mobiel",
-        "languages": "Engels,Nederlands",
-        "timezone": "Friesland/Nederland"
-    },
-    "projectCard": {
-        "label": "Lees Meer"
+    "technical": {
+      "title": "Technische vaardigheden",
+      "skills": {
+        "cisco": {
+          "description": "Ontwerpen en implementeren van veilige, complexe netwerkarchitecturen met diepgaande kennis van protocollen."
+        },
+        "home-assistant": {
+          "description": "Complexe automatiseringen en overzichtelijke dashboards bouwen in <a href='https://home-assistant.io'>Home Assistant</a>."
+        },
+        "nextjs": {
+          "description": "Ontwikkelen van moderne webapplicaties met Next.js."
+        }
+      }
     }
+  },
+  "blog": {
+    "label": "Blog",
+    "title": "Schrijven over netwerken en security",
+    "description": "Lees waar {name} recent mee bezig is geweest"
+  },
+  "work": {
+    "label": "Werk",
+    "title": "Mijn projecten",
+    "description": "Projecten van {name}"
+  },
+  "gallery": {
+    "label": "Galerij",
+    "title": "Mijn fotogalerij",
+    "description": "Een fotocollectie van {name}"
+  },
+  "contact": {
+    "label": "Contact",
+    "title": "Contact",
+    "description": "Contactgegevens",
+    "email": "E-mail",
+    "phone": "Mobiel",
+    "languages": ["Engels", "Nederlands"],
+    "location": "Friesland, Nederland"
+  },
+  "projectCard": {
+    "label": "Lees meer"
+  }
 }
