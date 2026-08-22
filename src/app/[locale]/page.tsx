@@ -4,6 +4,7 @@ import { Heading, Flex, Text, Button,  Avatar, RevealFx, Arrow } from '@/once-ui
 import { Projects } from '@/components/work/Projects';
 
 import { baseURL, routes } from '@/app/resources'; 
+import { localeAlternates, localeUrl } from '@/i18n/urls';
 import { renderContent } from '@/app/resources/renderContent'; 
 import { Mailchimp } from '@/components';
 import { Posts } from '@/components/blog/Posts';
@@ -26,11 +27,13 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     return {
 		title,
 		description,
+		alternates: localeAlternates(locale, ''),
 		openGraph: {
 			title,
 			description,
 			type: 'website',
-			url: `https://${baseURL}/${locale}`,
+			locale: locale === 'nl' ? 'nl_NL' : 'en_US',
+			url: localeUrl(locale, ''),
 			images: [
 				{
 					url: ogImage,

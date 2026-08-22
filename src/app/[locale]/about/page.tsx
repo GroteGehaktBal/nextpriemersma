@@ -1,6 +1,7 @@
 import { use } from "react";
 import { Avatar, Button, Flex, Heading, Icon, IconButton, SmartImage, Tag, Text } from '@/once-ui/components';
 import { baseURL } from '@/app/resources';
+import { localeAlternates, localeUrl } from '@/i18n/urls';
 import { renderContent } from '@/app/resources/renderContent';
 import TableOfContents from '@/components/about/TableOfContents';
 import styles from '@/components/about/about.module.scss'
@@ -23,11 +24,13 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     return {
 		title,
 		description,
+		alternates: localeAlternates(locale, '/about'),
 		openGraph: {
 			title,
 			description,
 			type: 'website',
-			url: `https://${baseURL}/${locale}/about`,
+			locale: locale === 'nl' ? 'nl_NL' : 'en_US',
+			url: localeUrl(locale, '/about'),
 			images: [
 				{
 					url: ogImage,

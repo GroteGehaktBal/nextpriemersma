@@ -1,33 +1,42 @@
 import { getPosts } from '@/app/utils/utils'
-import { baseURL, routes as routesConfig } from '@/app/resources'
+import { routes as routesConfig } from '@/app/resources'
 import { routing } from '@/i18n/routing'
+import { localeUrl } from '@/i18n/urls'
 
+/**
+ * Sitemap for both locales.
+ *
+ * Previously this interpolated `baseURL` directly, and `baseURL` is a bare host
+ * with no scheme — so every entry read `priemersma.nl/about` rather than
+ * `https://priemersma.nl/about`, and search engines discard entries that are not
+ * absolute URLs. `localeUrl` builds them correctly and knows that the default
+ * locale carries no prefix.
+ */
 export default async function sitemap() {
-    const locales = routing.locales;
-    const includeLocalePrefix = locales.length > 1;
+    const { locales } = routing;
 
-    let blogs = locales.flatMap((locale) => 
-        getPosts('blog/posts', locale).map((post) => ({
-            url: `${baseURL}${includeLocalePrefix ? `/${locale}` : ''}/blog/${post.slug}`,
-            lastModified: post.metadata.publishedAt,
-        }))
+    const posts = (section: 'blog/posts' | 'work/projects', urlBase: string) =>
+        locales.flatMap((locale) =>
+            getPosts(section, locale).map((post) => ({
+                url: localeUrl(locale, `${urlBase}/${post.slug}`),
+                lastModified: post.metadata.publishedAt,
+            }))
+        );
+
+    const activeRoutes = Object.keys(routesConfig).filter(
+        (route) => routesConfig[route as keyof typeof routesConfig]
     );
 
-    let works = locales.flatMap((locale) => 
-        getPosts('work/projects', locale).map((post) => ({
-            url: `${baseURL}${includeLocalePrefix ? `/${locale}` : ''}/work/${post.slug}`,
-            lastModified: post.metadata.publishedAt,
-        }))
-    );
-
-    const activeRoutes = Object.keys(routesConfig).filter((route) => routesConfig[route]);
-
-    let routes = locales.flatMap((locale)=> 
+    const pages = locales.flatMap((locale) =>
         activeRoutes.map((route) => ({
-            url: `${baseURL}${includeLocalePrefix ? `/${locale}` : ''}${route !== '/' ? route : ''}`,
+            url: localeUrl(locale, route === '/' ? '' : route),
             lastModified: new Date().toISOString().split('T')[0],
         }))
     );
 
-    return [...routes, ...blogs, ...works]
+    return [
+        ...pages,
+        ...(routesConfig['/blog'] ? posts('blog/posts', '/blog') : []),
+        ...(routesConfig['/work'] ? posts('work/projects', '/work') : []),
+    ];
 }

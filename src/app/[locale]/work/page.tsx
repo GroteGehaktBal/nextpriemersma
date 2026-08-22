@@ -3,6 +3,7 @@ import { getPosts } from '@/app/utils/utils';
 import { Flex } from '@/once-ui/components';
 import { Projects } from '@/components/work/Projects';
 import { baseURL } from '@/app/resources';
+import { localeAlternates, localeUrl } from '@/i18n/urls';
 import { renderContent } from '@/app/resources/renderContent';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
@@ -24,11 +25,13 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     return {
 		title,
 		description,
+		alternates: localeAlternates(locale, '/work'),
 		openGraph: {
 			title,
 			description,
 			type: 'website',
-			url: `https://${baseURL}/${locale}/work/`,
+			locale: locale === 'nl' ? 'nl_NL' : 'en_US',
+			url: localeUrl(locale, '/work'),
 			images: [
 				{
 					url: ogImage,

@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import { Footer, Header, RouteGuard } from "@/components";
 import { baseURL, effects, style } from '@/app/resources'
+import { ORIGIN, localeAlternates } from '@/i18n/urls'
 
 import { Inter } from 'next/font/google'
 import { Source_Code_Pro } from 'next/font/google';
@@ -28,15 +29,20 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     const { person, home } = renderContent(t);
 
     return {
-        metadataBase: new URL(`https://${baseURL}/${locale}`),
+        // The locale used to be part of metadataBase, which made every relative
+        // metadata URL resolve inside one language's subtree.
+        metadataBase: new URL(ORIGIN),
         title: home.title,
         description: home.description,
+        alternates: localeAlternates(locale),
         openGraph: {
             title: `${person.firstName}'s Portfolio`,
             description: 'Portfolio website for more info about me',
-            url: baseURL,
+            url: ORIGIN,
             siteName: `${person.firstName}'s Portfolio`,
-            locale: 'en_US',
+            // Was hardcoded to en_US, so the Dutch pages advertised themselves
+            // to crawlers and social platforms as English.
+            locale: locale === 'nl' ? 'nl_NL' : 'en_US',
             type: 'website',
         },
         robots: {
