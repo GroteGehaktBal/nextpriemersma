@@ -1,0 +1,750 @@
+/*
+ * Proof-of-concept page styles.
+ *
+ * Every value here resolves to a token from `src/styles/tokens.css`. There are no
+ * literal colours, sizes or durations below, which is what makes the design
+ * language changeable from one file.
+ *
+ * Written flat, without CSS nesting, so the output needs no PostCSS transform to
+ * be understood in DevTools.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Shell and ambient background
+ * ------------------------------------------------------------------------ */
+
+.page {
+  position: relative;
+  min-height: 100dvh;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+/*
+ * The ambient wash. Two soft radial gradients over a fine dot grid, masked so the
+ * grid fades out toward the bottom of the first screen.
+ *
+ * This replaces the cursor-tracking background in the current site. It is painted
+ * once, is fixed to the viewport, and never re-renders — no listeners, no
+ * requestAnimationFrame, no React state.
+ */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(60rem 40rem at 15% -10%, var(--ambient-a), transparent 65%),
+    radial-gradient(50rem 35rem at 92% 8%, var(--ambient-b), transparent 62%);
+}
+
+.ambientGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 4.5rem 4.5rem;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+  mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+}
+
+/* ---------------------------------------------------------------------------
+ * Header
+ * ------------------------------------------------------------------------ */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--gutter);
+  background-color: var(--overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: var(--border-width) solid var(--border-subtle);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.wordmarkDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: var(--radius-full);
+  background-color: var(--accent);
+  /* Aligns the dot with the cap-height of the mono text beside it. */
+  transform: translateY(-0.1em);
+}
+
+.nav {
+  display: none;
+  align-items: center;
+  gap: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.navLink {
+  position: relative;
+  padding-block: var(--space-1);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.navLink:hover {
+  color: var(--text-primary);
+}
+
+/*
+ * The underline sweep. A pseudo-element scaled from zero on the X axis, with its
+ * origin swapped on hover so it grows in from the left and retracts to the right.
+ */
+.navLink::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.navLink:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.localeSwitch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+}
+
+.localeOption {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.localeOptionActive {
+  color: var(--text-primary);
+  background-color: var(--raised);
+}
+
+@media (min-width: 48rem) {
+  .nav {
+    display: flex;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Layout primitives
+ * ------------------------------------------------------------------------ */
+
+.container {
+  width: 100%;
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-gap);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+/*
+ * Section header with the left rail. Below 64rem the rail collapses and the
+ * number sits inline above the title, so nothing is lost on mobile.
+ */
+.sectionHead {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.sectionIndex {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-display);
+}
+
+.sectionLead {
+  max-width: var(--measure);
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-md);
+}
+
+@media (min-width: 64rem) {
+  .sectionHead {
+    grid-template-columns: var(--rail-width) 1fr;
+    column-gap: var(--space-5);
+    align-items: start;
+  }
+
+  .sectionIndex {
+    /* Optically aligns the mono label with the cap-height of the heading beside it. */
+    padding-top: 0.65em;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Hero
+ * ------------------------------------------------------------------------ */
+
+.hero {
+  padding-block: clamp(3.5rem, 2rem + 8vw, 8rem) var(--section-gap);
+}
+
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
+  border: var(--border-width) solid var(--accent-border);
+  border-radius: var(--radius-full);
+  background-color: var(--accent-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.statusDot {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--accent);
+  flex: none;
+}
+
+/*
+ * A slow pulse on the availability dot — the one looping animation on the page.
+ * It animates only `transform` and `opacity` on a pseudo-element, so it stays on
+ * the compositor, and it is inside a reduced-motion guard.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .statusDot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    background-color: var(--accent);
+    animation: statusPulse 2.6s var(--ease-out) infinite;
+  }
+}
+
+@keyframes statusPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.heroTitle {
+  max-width: 18ch;
+  margin-top: var(--space-5);
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
+}
+
+/* The clause the eye should land on. */
+.heroAccent {
+  color: var(--accent);
+}
+
+.heroSubline {
+  max-width: 54ch;
+  margin-top: var(--space-5);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-heading);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+}
+
+/* ---------------------------------------------------------------------------
+ * Buttons
+ * ------------------------------------------------------------------------ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid transparent;
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.buttonPrimary {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.buttonPrimary:hover {
+  background-color: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 6px var(--accent-glow);
+}
+
+.buttonSecondary {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.buttonSecondary:hover {
+  border-color: var(--border-strong);
+  background-color: var(--raised);
+  transform: translateY(-1px);
+}
+
+/* The arrow that nudges forward on hover — a 2px move, and no more. */
+.buttonArrow {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.button:hover .buttonArrow {
+  transform: translateX(3px);
+}
+
+/* ---------------------------------------------------------------------------
+ * Fact strip
+ * ------------------------------------------------------------------------ */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-4);
+  margin-top: var(--space-10);
+  padding-top: var(--space-6);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.factLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.factValue {
+  margin-top: var(--space-2);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-heading);
+}
+
+@media (min-width: 48rem) {
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Work
+ * ------------------------------------------------------------------------ */
+
+.projectList {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.project {
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.project:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+/*
+ * The whole card is clickable, but only the title is a link. Stretching the
+ * title's hit area over the card keeps the accessibility tree correct — one link
+ * with a meaningful name — instead of wrapping a heading inside an anchor.
+ */
+.projectLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.projectMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.projectKind {
+  color: var(--accent);
+}
+
+.projectMetaRule {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-subtle);
+}
+
+.projectTitle {
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-display);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.project:hover .projectTitle {
+  color: var(--accent);
+}
+
+.projectSummary {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+}
+
+.projectOutcome {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.projectOutcomeIcon {
+  flex: none;
+  margin-top: 0.15em;
+  color: var(--accent);
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tag {
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  background-color: var(--raised);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-muted);
+}
+
+@media (min-width: 64rem) {
+  .projectList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The two lead case studies get the full width; the rest sit side by side. */
+  .projectFeatured {
+    grid-column: 1 / -1;
+  }
+
+  .project {
+    padding: var(--space-7);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Capabilities
+ * ------------------------------------------------------------------------ */
+
+.capabilityList {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.capability {
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-base) var(--ease-out);
+}
+
+.capability:hover {
+  border-color: var(--border-default);
+}
+
+.capabilityTitle {
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-heading);
+}
+
+/*
+ * The accent rule under each capability title. It draws itself as the card
+ * scrolls into view via the shared `.revealRule` class in motion.css.
+ */
+.capabilityRule {
+  width: 2.5rem;
+  height: 2px;
+  margin-block: var(--space-3) var(--space-4);
+  background-color: var(--accent);
+  border-radius: var(--radius-full);
+}
+
+.capabilityText {
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+}
+
+.capabilityKeywords {
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+@media (min-width: 48rem) {
+  .capabilityList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Timeline
+ * ------------------------------------------------------------------------ */
+
+.timeline {
+  display: grid;
+  gap: 0;
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-6);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.entry:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.entryPeriod {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.entryRole {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-heading);
+}
+
+.entryOrg {
+  color: var(--accent);
+  font-size: var(--text-base);
+}
+
+.entryText {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+}
+
+@media (min-width: 64rem) {
+  .entry {
+    grid-template-columns: var(--timeline-rail) 1fr;
+    column-gap: var(--space-6);
+    /* Without this the stretched row vertically centres the period against the body. */
+    align-items: start;
+  }
+
+  .entryPeriod {
+    /*
+     * The period is a single unit — "2024 — NOW" must never break across lines,
+     * and the status dot must stay on the same line as the text beside it.
+     */
+    white-space: nowrap;
+    padding-top: 0.35em;
+  }
+
+  .entryBody {
+    display: grid;
+    gap: var(--space-2);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Contact
+ * ------------------------------------------------------------------------ */
+
+.contact {
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-6);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background-color: var(--surface);
+  text-align: center;
+  justify-items: center;
+}
+
+.contactTitle {
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-display);
+  max-width: 20ch;
+}
+
+.contactText {
+  max-width: 46ch;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 48rem) {
+  .contact {
+    padding: var(--space-10) var(--space-8);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Footer
+ * ------------------------------------------------------------------------ */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-6) var(--space-8);
+  border-top: var(--border-width) solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.footerLinks {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.footerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.footerLink:hover {
+  color: var(--text-primary);
+}
+
+/* ---------------------------------------------------------------------------
+ * Preview notice
+ *
+ * Only exists on this branch. It labels the page as a proposal so it can never be
+ * mistaken for the live site.
+ * ------------------------------------------------------------------------ */
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--gutter);
+  background-color: var(--raised);
+  border-bottom: var(--border-width) solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.noticeBadge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: var(--weight-medium);
+}

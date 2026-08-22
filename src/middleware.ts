@@ -7,7 +7,10 @@ export const config = {
   // Match only internationalized pathnames
   matcher: [
       '/',
-      '/((?!api|_next|_vercel|.*\\..*).*)',
+      // `preview` is excluded so the design proof of concept, which lives outside
+      // the [locale] segment, is not rewritten to a locale-prefixed path that has
+      // no matching route. Remove this once the PoC route is promoted or deleted.
+      '/((?!api|_next|_vercel|preview|.*\\..*).*)',
       '/(en|id)/:path*'
     ]
 };
