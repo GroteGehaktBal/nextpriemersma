@@ -127,6 +127,38 @@ is never idle.
   (`jsx: preserve` → `react-jsx`), which has already caused one revert commit.
 - **Next.js 16 deprecation:** the build warns that `middleware.ts` should become `proxy.ts`.
 
+### 2.4b Resolved — dependencies and the failing deployment
+
+Handled on this branch rather than deferred, because it was blocking deployment.
+
+Vercel refused the build outright: *"Vulnerable version of next-mdx-remote detected
+(5.0.0)"* — an arbitrary-code-execution advisory in server-side rendering of MDX.
+`npm audit` found 49 more, 50 in total, 2 critical and 27 high.
+
+Most came from packages nothing imports: the `vercel` CLI and `@swc/cli` were
+devDependencies no script invoked, and between them carried both criticals. Removing
+them plus `punycode`, `remark` and `remark-html` took 377 packages out of the tree.
+Everything else moved to its latest working release. **Result: 0 vulnerabilities.**
+
+Two upgrades were deliberately *not* taken to the newest number. TypeScript 7.0 is out,
+but `typescript-eslint` refuses to load under it, and ESLint 10 breaks
+`eslint-config-next`'s parser. Both are pinned one major back, where the toolchain
+works. An upgrade that breaks the tooling is not an upgrade.
+
+The version bumps also forced fixes that were overdue:
+
+- The password for protected routes was the string literal `'password'` in the source.
+  It now reads `SITE_PASSWORD` from the environment and refuses every attempt when
+  unset — no configuration should mean no access, not trivial access.
+- Turbopack now warns that `getPosts` building its path from a caller-supplied array
+  forces the entire project, `public/` included, into the server bundle. The path is
+  anchored to a literal content root; traced files per route dropped from 856 to 677.
+- Linting was restored (see §2.4) and a `typecheck` script added.
+- Deleting the unreachable non-i18n branch un-masked a real bug: study institution
+  names were JSX fragments passed to an `id` attribute, so every entry rendered
+  `id="[object Object]"` and the About page's table-of-contents links to Studies could
+  never resolve. Verified fixed in a browser.
+
 ### 2.5 What is worth keeping
 
 Not everything needs to go. Explicitly carried forward:
@@ -428,14 +460,26 @@ Two editorial decisions worth confirming:
    uptime, throughput, hours saved. Even rough figures are far stronger than none.
 2. **Images.** There is one avatar and three project images in `public/`. Photographs of
    real racks, dashboards or installations would carry the work pages.
-3. **Positioning.** Is this aimed at employers (internships, graduate roles) or at
-   pyxels/Riemersma ICT clients? The two audiences want different first screens. It can
-   serve both, but one has to lead.
-4. **CV.** Should the site offer a downloadable PDF, generated from the same content
+3. **CV.** Should the site offer a downloadable PDF, generated from the same content
    source so it can never drift out of date?
-5. **The Google internship.** Confirm you are happy to name the employer prominently —
+4. **The Google internship.** Confirm you are happy to name the employer prominently —
    it is on your public LinkedIn, so this is a presentation question rather than a
    permission one, but it is your call how far forward it sits.
+
+### 7.5 Positioning — settled
+
+The first screen is for **anyone who wants to know who Peter Riemersma is** — not
+employers specifically, and not pyxels clients specifically.
+
+That is the easiest brief of the three, and it is what the current hero already does:
+it states what he builds, then backs it with four facts a stranger can check
+(CCNA, Google, the throughput he works at, the languages he speaks). It does not
+pitch a service or ask for a job. The availability line stays because it is useful
+information to any visitor, not because the page is a job application.
+
+The practical consequence for the rebuild: **no audience switch, no duplicated
+landing page.** One home page, written for a curious reader, with the work and the
+background doing the persuading.
 
 ---
 
@@ -460,7 +504,53 @@ The repository is going public, so it should read like a repository worth readin
 
 ---
 
-## 9. Roadmap
+## 9. Hosting: Vercel or Cloudflare
+
+Worth settling early, because it changes what the build has to produce.
+
+### The finding that decides it
+
+Vercel's Hobby plan is **not licensed for commercial use**, and Vercel's definition is
+broader than "does it take payments". Their Fair Use guidelines count *advertising a
+product or service* as commercial usage, alongside processing payments, affiliate
+links, ads and being paid to build or host the site.
+
+This portfolio advertises pyxels and Riemersma ICT and invites freelance enquiries.
+Under that definition it is a commercial site, and Hobby is the wrong plan for it —
+the alternative on Vercel is Pro at roughly $20 per month, which fails the "it must be
+free" requirement.
+
+Cloudflare's free plan carries no such restriction. Its limits are usage-based, and
+**requests for static assets are free and unlimited** — a request only counts against
+the quota when it invokes a Function. For a site whose end state is fully static, that
+is effectively an unmetered free tier.
+
+### Recommendation
+
+**Finish the rebuild on Vercel, then move to Cloudflare.**
+
+Staying put during phases 1–3 costs nothing: preview deployments on every pull request
+are genuinely useful while the design is still moving, and Next.js needs no adapter
+there. Moving early would mean debugging a hosting migration and a rewrite at the same
+time.
+
+Once phase 3 lands, the site is static and the migration is small:
+
+1. Switch `localePrefix` to `'always'` so every URL carries its locale. That removes
+   the only reason middleware exists, and with it the last dynamic surface.
+2. Export statically. Both `next/image` optimisation and the OG route are already
+   scheduled to become build-time output, so nothing needs a server.
+3. Deploy to Cloudflare Pages. A static site needs no `@opennextjs/cloudflare`
+   adapter, which is where most of the friction in Next-on-Cloudflare lives.
+
+The fallback, if step 1 turns out to be unacceptable for SEO reasons, is Cloudflare
+Workers with the OpenNext adapter — more moving parts, still free, still commercially
+licensed.
+
+Read the current terms before committing either way; plan terms change, and the
+consequence of getting this one wrong is a suspended portfolio rather than a bill.
+
+## 10. Roadmap
 
 Each phase is independently shippable. Nothing goes to production half-finished.
 
@@ -470,6 +560,7 @@ Each phase is independently shippable. Nothing goes to production half-finished.
 | **1 — Foundation** | Token layer merged, `RouteGuard` removed, primitives built, fonts self-hosted | Content in the HTML; the largest performance win, on its own |
 | **2 — Pages** | Home, about, work index and case-study template rebuilt on the new system | The new site, feature-complete |
 | **3 — Cleanup** | Once UI, Sass, `react-icons` and the API routes removed; budget enforced in CI | The budget in §6 met and defended |
+| **3b — Static + move** | `localePrefix: 'always'`, static export, deploy to Cloudflare Pages | Free hosting that permits commercial use (§9) |
 | **4 — Content** | Case studies rewritten to the template, LinkedIn details folded in, real images | The site actually sells the work |
 | **5 — Polish** | Static OG images, `hreflang`, JSON-LD, `/uses`, optional CV export | Search, sharing and the long tail |
 
@@ -478,7 +569,7 @@ Phase 1 is where most of the measured gain lands. Phases 4 and 5 are where most 
 
 ---
 
-## 10. Risks and how they are handled
+## 11. Risks and how they are handled
 
 | Risk | Mitigation |
 | --- | --- |
@@ -490,7 +581,7 @@ Phase 1 is where most of the measured gain lands. Phases 4 and 5 are where most 
 
 ---
 
-## 11. What is in this branch right now
+## 12. What is in this branch right now
 
 - This plan.
 - `src/styles/tokens.css` — the complete token layer, dark and light.
