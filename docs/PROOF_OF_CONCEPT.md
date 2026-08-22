@@ -62,12 +62,25 @@ application JavaScript.** Diffing the chunk sets of the two built pages shows
 `/preview` loading nothing beyond the shared framework baseline, while the current
 pages add 63 KB of application code on top of it — and show nothing until it arrives.
 
-### 3. Both themes are real
+### 3. Both languages are real
+
+Two routes, two pre-rendered pages, one shared component. The language switch is two
+links — no client component, no router call, and still 0 KB of application JavaScript.
+
+Each locale has its own root layout so `lang` is correct on `<html>`; a page cannot
+override an attribute its layout set, and getting it wrong makes screen readers
+pronounce the page in the wrong language.
+
+Every visible string lives in the content model behind a `Ui` interface, and both
+locale files satisfy the same `Content` type — so a string added to one language and
+forgotten in the other is a compile error, not a blank on the page.
+
+### 4. Both themes are real
 
 The token layer defines a complete dark palette and a complete light palette, and the
 page follows `prefers-color-scheme`. The current site is hardcoded to dark.
 
-### 4. The ambient background stopped costing frames
+### 5. The ambient background stopped costing frames
 
 The current background registers a `mousemove` listener and a `requestAnimationFrame`
 loop that calls `setState` on every frame, for as long as the tab is open. The PoC
@@ -82,10 +95,10 @@ Both figures are gzip, from a production build.
 
 | | Current `/about` | PoC `/preview` |
 | --- | --- | --- |
-| **Application JS** | 63.0 KB | **0.0 KB** |
-| Framework baseline JS | 163.4 KB | 163.4 KB |
-| CSS | 19.8 KB | **5.4 KB** (73% less) |
-| HTML | 8.9 KB | 10.6 KB |
+| **Application JS** | 63.1 KB | **0.0 KB** (both languages) |
+| Framework baseline JS | 169.2 KB | 169.2 KB |
+| CSS | 19.9 KB | **5.5 KB** (72% less) |
+| HTML | 9.1 KB | 10.8 KB (EN) / 11.0 KB (NL) |
 | **Content in the pre-rendered HTML** | **none** | **all of it** |
 
 The 163 KB framework baseline is the Next.js App Router and React runtime. It is
@@ -139,7 +152,6 @@ Scope was kept to what is needed to judge the direction:
   design dishonestly.
 - **Static language switcher.** It shows the treatment. In the real build it is the
   one place a client component is genuinely warranted.
-- **English only.** The Dutch translation follows once the copy is settled.
 - **Content is real but the prose is a draft.** Roles, dates, education and the eleven
   certifications come from the LinkedIn profile; the sentences around them are written
   for this layout and are open to rewriting.
@@ -159,7 +171,8 @@ Scope was kept to what is needed to judge the direction:
 
 Live on the pull request preview, so it can be reviewed without running anything:
 
-**https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/preview**
+- English: **https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/preview**
+- Dutch: **https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/preview/nl**
 
 The deployment that was failing is fixed. The cause was not this branch: Vercel refused
 to build the project at all because `next-mdx-remote@5.0.0` carries an
