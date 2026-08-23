@@ -25,9 +25,22 @@ npm run dev        # http://localhost:3000/en
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript, no emit |
 | `npm run size` | Size budget, against the last build |
+| `npm run build:static` | Static export to `out/`, for Cloudflare Pages |
+| `npm run check:export` | Verifies that export: pages, links, redirects |
+| `npm run serve:static` | Serves `out/` the way Cloudflare Pages would |
 
-CI runs typecheck, lint, build, the size budget and `npm audit` on every push and
-pull request.
+CI runs typecheck, lint, build, the size budget, the static export and its check,
+and `npm audit` on every push and pull request.
+
+## Hosting
+
+The site is deployed on Vercel and builds equally well as a static export, which
+is what Cloudflare Pages will serve. The difference between the two is one file:
+`src/proxy.ts` negotiates the locale for an unprefixed URL on Vercel, and
+`public/_redirects` does the same job as static rules on Cloudflare. Both are
+built in CI, and `npm run serve:static` runs the export locally with Cloudflare's
+own path resolution and redirect handling, so the move can be rehearsed before it
+happens.
 
 ## How it is put together
 

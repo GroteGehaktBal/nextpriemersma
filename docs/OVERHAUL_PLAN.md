@@ -546,11 +546,18 @@ results are specific, and one of them is a trap.
 | --- | --- | --- |
 | `src/app/og/route.tsx` | Dynamic route handler; `ImageResponse` cannot be exported | ✅ Deleted. The card is a static PNG in `public/` (§6.1) |
 | `src/pages/api/*` | Pages Router API routes cannot be exported | ✅ Deleted along with the route guard that called them |
-| `src/proxy.ts` | Middleware does not exist in a static export | Still here, and the last one. Becomes `_redirects` — see below |
-| `robots.ts`, `sitemap.ts` | Need `export const dynamic = 'force-static'` | One line each |
+| `src/proxy.ts` | Middleware does not exist in a static export | ✅ Not a blocker after all: the export ignores it rather than failing, so it can stay for Vercel while `_redirects` covers Cloudflare |
+| `robots.ts`, `sitemap.ts` | Need `export const dynamic = 'force-static'` | ✅ One line each, added |
 
-Three of the four are cleared. The build output now lists exactly one dynamic
-entry, the locale proxy; every page and both metadata routes are static.
+**All four are cleared.** `npm run build:static` produces a complete `out/`, and
+`npm run check:export` proves it: 16 pages, 15 internal links and 13 redirect
+rules, every one resolving to a file that exists. Both run in CI on every pull
+request, so the export cannot rot between now and the migration.
+
+`npm run serve:static` serves that directory with Cloudflare's own rules — exact
+file, then `.html`, then `index.html`, with `_redirects` applied in order — which
+is how the redirect table below was verified rather than assumed. The full
+accessibility and link sweep passes against it identically to the Vercel build.
 
 With those handled, the export succeeds and emits both locale trees in full:
 `out/en/about.html`, `out/nl/about.html` and so on for every page.
@@ -570,14 +577,15 @@ Left alone, the migration would 404 the bare domain and every English URL the si
 ever published — including anything already indexed or shared.
 
 **The fix is a redirect map**, which Cloudflare Pages reads from a `_redirects` file at
-the output root:
+the output root. It lives at `public/_redirects`, so the export carries it:
 
 ```
-/            /en/              302
+/            /en               302
 /about       /en/about         301
 /work        /en/work          301
 /work/*      /en/work/:splat   301
-/blog/*      /en/blog/:splat   301
+/blog/*      /en               301
+/gallery     /en               301
 ```
 
 The root redirect is a 302 because which language a visitor should get is a decision
@@ -662,16 +670,28 @@ exactly one `h1` per page with no skipped heading levels, no horizontal overflow
 between 320 px and 1920 px, no JavaScript errors, and zero axe violations at
 WCAG 2.1 AA. Lint, typecheck and `npm audit` are clean.
 
+**Merged** into `main` on 23 August 2026 as #21, and live.
+
+**Since then**, on `claude/cloudflare-and-contact-form`: the static export works
+end to end and is checked in CI (§9), so the Cloudflare migration is now a
+hosting change and nothing else.
+
 **Outstanding, in order:**
 
-1. **CI**: typecheck, lint, build and a size budget on every pull request.
-2. **Static export and the move to Cloudflare Pages** (§9). Only the locale proxy
-   is left to replace, with a `_redirects` file.
+1. **The move itself**: point Cloudflare Pages at the repository with
+   `npm run build:static` and `out/`, check the preview, then move DNS.
+2. **A contact form**, which needs a Pages Function and an email provider — the
+   one thing on this site that cannot be a file.
 3. **Font payload.** 68.8 KB gzipped for Inter and Source Code Pro is now the
    single largest asset on a page. Subsetting, or dropping to one weight of the
    mono face, is the remaining win.
-4. **Case-study copy.** `pyxels` and `riemersmaict` have one line of body text
-   each; the page carries them on the summary, stack and outcome from the content
-   model, but they deserve a few paragraphs.
-5. **Licence.** CC BY-NC 4.0 is inherited from the template, and none of the
-   template's code remains. Peter's decision.
+4. **Case-study copy.** The `pyxels` page is still one line of body text, carried
+   by the summary, stack and outcome from the content model. Riemersma ICT has
+   been rewritten; pyxels is waiting on Peter.
+
+**Settled since:** the licence. The repository was CC BY-SA 4.0 in `LICENSE` and
+CC BY-NC 4.0 in the README — neither a good fit for code, and Creative Commons
+advise against their licences for software. It is MIT now, with a `NOTICE` that
+reserves the site's own writing and photograph and carries the attribution for
+the template this project started from. The repository is public as of
+23 August 2026.
