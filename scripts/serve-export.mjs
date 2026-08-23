@@ -16,6 +16,9 @@
  *  - Path resolution: the exact file, then the path with `.html` appended, then
  *    `index.html` inside the directory.
  *  - A miss serves `404.html` with a 404 status, rather than a bare error.
+ *  - `_headers` at the output root: rules in order, later ones winning for a
+ *    header of the same name, so the Content-Security-Policy can be seen failing
+ *    here rather than in production.
  *  - `/api/contact` runs the Pages Function, so the contact form can be
  *    submitted here exactly as it will be in production.
  *
@@ -76,6 +79,58 @@ async function loadRedirects() {
     });
 }
 
+/**
+ * Parses `_headers` into rules.
+ *
+ * The format is a path on a line of its own, then indented `Name: value` lines
+ * until the next path. Comments and blank lines are skipped, which is what makes
+ * the file worth commenting.
+ */
+async function loadHeaders() {
+  let file = '';
+  try {
+    file = await readFile(path.join(ROOT, '_headers'), 'utf-8');
+  } catch {
+    return [];
+  }
+
+  const rules = [];
+
+  for (const raw of file.split('\n')) {
+    const line = raw.trim();
+    if (line === '' || line.startsWith('#')) continue;
+
+    if (!raw.startsWith(' ') && !raw.startsWith('\t')) {
+      rules.push({ from: line, headers: {} });
+      continue;
+    }
+
+    const separator = line.indexOf(':');
+    if (separator === -1 || rules.length === 0) continue;
+
+    rules.at(-1).headers[line.slice(0, separator).trim().toLowerCase()] = line
+      .slice(separator + 1)
+      .trim();
+  }
+
+  return rules;
+}
+
+/** Every header rule matching a path, merged in order — the last one wins. */
+function headersFor(rules, pathname) {
+  const merged = {};
+
+  for (const rule of rules) {
+    const matches = rule.from.endsWith('*')
+      ? pathname.startsWith(rule.from.slice(0, -1))
+      : rule.from === pathname;
+
+    if (matches) Object.assign(merged, rule.headers);
+  }
+
+  return merged;
+}
+
 function match(rule, pathname) {
   if (!rule.from.endsWith('*')) {
     return rule.from === pathname ? rule.to : null;
@@ -110,6 +165,7 @@ async function resolve(pathname) {
 }
 
 const redirects = await loadRedirects();
+const headerRules = await loadHeaders();
 
 if (process.env.CONTACT_DRY_RUN === '1') {
   const send = globalThis.fetch;
@@ -133,12 +189,19 @@ async function handleFunction(request) {
   return new Response('Method not allowed', { status: 405 });
 }
 
-/** Rebuilds the incoming Node request as a standard `Request`. */
+/**
+ * Rebuilds the incoming Node request as a standard `Request`.
+ *
+ * The URL is built from the `Host` header rather than a fixed `localhost`,
+ * because that is what Cloudflare hands a Function and the Function compares it
+ * against `Origin`. Hard-coding the host here would drop the port, and every
+ * submission from the browser would look like it came from another site.
+ */
 async function toRequest(nodeRequest) {
   const chunks = [];
   for await (const chunk of nodeRequest) chunks.push(chunk);
 
-  return new Request(`http://localhost${nodeRequest.url}`, {
+  return new Request(`http://${nodeRequest.headers.host ?? `localhost:${PORT}`}${nodeRequest.url}`, {
     method: nodeRequest.method,
     headers: nodeRequest.headers,
     body: chunks.length > 0 ? Buffer.concat(chunks) : undefined,
@@ -169,9 +232,11 @@ createServer(async (request, response) => {
 
   response.writeHead(found ? 200 : 404, {
     'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream',
+    ...headersFor(headerRules, pathname),
   });
   createReadStream(file).pipe(response);
 }).listen(PORT, () => {
   console.log(`Serving out/ as Cloudflare Pages would: http://localhost:${PORT}`);
-  console.log(`${redirects.length} redirect rules loaded from _redirects`);
+  console.log(`${redirects.length} redirect rules from _redirects`);
+  console.log(`${headerRules.length} header rules from _headers`);
 });

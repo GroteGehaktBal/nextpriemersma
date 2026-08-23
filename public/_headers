@@ -1,0 +1,64 @@
+# Response headers for Cloudflare Pages.
+#
+# Copied into `out/` by the build, next to `_redirects`, and read at the edge.
+# Rules apply in order and a later one wins for a header of the same name, so
+# the site-wide block comes first and the paths that need something different
+# come after it.
+#
+# `npm run check:export` reads this file back out of the export and fails the
+# build if the policy below would block something the pages actually load. A
+# Content-Security-Policy that is wrong is worse than none: it breaks the site
+# for everyone, silently, and only in production.
+
+/*
+  # Content sniffing turns a file the server called text into a file the browser
+  # decides to execute. There is no case where guessing is wanted here.
+  X-Content-Type-Options: nosniff
+
+  # Superseded by `frame-ancestors` below in every browser that matters, and
+  # kept because it costs one line and every scanner still looks for it.
+  X-Frame-Options: DENY
+
+  # Send the full URL within the site, the origin only when leaving it over
+  # HTTPS, and nothing at all when leaving it over HTTP. A visitor's path
+  # through a portfolio is not information the sites it links to need.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # The site asks for none of these. Denying them means an injected iframe
+  # cannot ask on its behalf either.
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+
+  # Two years, subdomains included. `preload` is deliberately absent: getting on
+  # the preload list is easy and getting off it takes months, and it should be a
+  # decision made once the header has been running without incident for a while.
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+
+  # Nothing on this site is loaded from anywhere else — no CDN, no font service,
+  # no analytics — so `default-src 'self'` is a statement of fact rather than a
+  # restriction, and `check:export` keeps it one.
+  #
+  # `'unsafe-inline'` on scripts is the one loose thread, and it is honest about
+  # what it is. Next emits the RSC payload as inline `<script>` blocks whose
+  # content differs per page, so pinning them by hash would mean generating this
+  # file per page on every build and breaking hydration whenever a hash drifted.
+  # What it does not weaken is the part that matters here: `script-src 'self'`
+  # still refuses every *external* script, which is the way a static site with no
+  # user-generated HTML actually gets compromised — a dependency that decides to
+  # phone home. `style-src` is inline for the same reason: the reveal animations
+  # pass their index as a custom property in a `style` attribute.
+  #
+  # `form-action 'self'` keeps the contact form posting where it was written to
+  # post, and `base-uri 'none'` stops an injected `<base>` from re-pointing every
+  # relative URL on the page at once.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests
+
+# Next puts a content hash in every filename under this path, so the file at a
+# given URL can never change. A year, immutable: the browser is told it never
+# needs to ask again, and a deploy that changes a file changes its URL too.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The link preview card. Not hashed, so it gets a day — long enough that the
+# crawlers are not refetching it, short enough that replacing it takes effect.
+/og.png
+  Cache-Control: public, max-age=86400

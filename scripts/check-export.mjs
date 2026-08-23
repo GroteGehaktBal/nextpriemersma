@@ -17,6 +17,10 @@
  *     filesystem — a link to `/en/work/x` when the file is `en/work/x.html`.
  *  3. A redirect rule pointing at a page that no longer exists, which turns a
  *     recovered URL back into a 404 without anyone noticing.
+ *  4. A page that starts loading something from another origin. `public/_headers`
+ *     tells browsers that everything comes from this site; the moment that stops
+ *     being true, the browser enforces the header rather than the intention, and
+ *     the page breaks in production and nowhere else.
  */
 
 import { access, readFile, readdir } from 'node:fs/promises';
@@ -49,7 +53,11 @@ const REQUIRED = [
   'sitemap.xml',
   'og.png',
   '_redirects',
+  '_headers',
 ];
+
+/** The site's own origin, as the canonical tags and the sitemap write it. */
+const ORIGIN = 'https://priemersma.nl';
 
 const problems = [];
 
@@ -139,8 +147,66 @@ for (const [from, to] of redirects) {
   if (!(await resolves(target))) problems.push(`redirect ${from} points at ${to}, which is not there`);
 }
 
+// 4. What the pages load, against what the headers say they load.
+//
+// Only the resources a browser fetches and executes or renders are checked. An
+// `<a href>` to GitHub is a link, not a load, and no policy here restricts one.
+const headers = await readFile(path.join(OUT, '_headers'), 'utf-8');
+const policy = /^\s*Content-Security-Policy:\s*(.+)$/m.exec(headers)?.[1] ?? '';
+
+if (policy === '') {
+  problems.push('_headers carries no Content-Security-Policy');
+} else if (!policy.includes("default-src 'self'")) {
+  // The check below is only meaningful while this is what the policy claims.
+  problems.push("the Content-Security-Policy no longer says default-src 'self'");
+}
+
+const LOADS = [
+  /<script[^>]+src="([^"]+)"/g,
+  /<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g,
+  /<img[^>]+src="([^"]+)"/g,
+  /<img[^>]+srcset="([^"]+)"/g,
+  /<(?:iframe|embed|object)[^>]+(?:src|data)="([^"]+)"/g,
+];
+
+/** Whether a URL a page loads would survive `default-src 'self'`. */
+function sameOrigin(url) {
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(url)) return true; // relative
+  return url.startsWith(`${ORIGIN}/`) || url === ORIGIN;
+}
+
+const foreign = new Map();
+
+for (const page of pages) {
+  const html = await readFile(page, 'utf-8');
+
+  for (const pattern of LOADS) {
+    for (const match of html.matchAll(pattern)) {
+      for (const url of match[1].split(',').map((part) => part.trim().split(/\s+/)[0])) {
+        if (url !== '' && !sameOrigin(url)) foreign.set(url, path.relative(OUT, page));
+      }
+    }
+  }
+}
+
+// Stylesheets can pull in a font or an image of their own.
+for (const stylesheet of (await walk(OUT)).filter((file) => file.endsWith('.css'))) {
+  const css = await readFile(stylesheet, 'utf-8');
+  for (const match of css.matchAll(/url\(\s*['"]?([^'")]+)['"]?\s*\)/g)) {
+    const url = match[1];
+    if (!url.startsWith('data:') && !sameOrigin(url)) {
+      foreign.set(url, path.relative(OUT, stylesheet));
+    }
+  }
+}
+
+for (const [url, source] of foreign) {
+  problems.push(`${source} loads ${url} from another origin, which the CSP blocks`);
+}
+
 console.log(
-  `checked ${pages.length} pages, ${links.size} internal links, ${redirects.length} redirect rules`
+  `checked ${pages.length} pages, ${links.size} internal links, ` +
+    `${redirects.length} redirect rules, and every resource they load`
 );
 
 if (problems.length > 0) {
