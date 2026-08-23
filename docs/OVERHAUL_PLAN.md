@@ -373,12 +373,15 @@ the bundle, but whether the page needs it before it can be read.
 - **No icon library.** `react-icons` pulls from three separate families. The site uses
   about a dozen icons; they become inline SVG components. One dependency removed, and
   each icon costs roughly 200 bytes instead of a module graph.
-- **Static Open Graph images.** `/og` is currently a dynamic route rendering a
-  1920×1080 image on every request — a serverless invocation for every crawl, at four
-  times the pixels any platform displays. Moving to `opengraph-image.tsx` generates
-  1200×630 PNGs at build time, served from the CDN, costing zero runtime.
-- **Self-hosted subset fonts.** `next/font/local` with a Latin subset, `font-display:
-  swap`, and size-adjust metrics to make the fallback match — eliminating the shift.
+- **Static Open Graph images.** ✅ Done, though not as planned here. `/og` was a
+  dynamic route rendering a 1920×1080 image on every request — a serverless invocation
+  for every crawl, at four times the pixels any platform displays. It was also broken:
+  satori cannot read WOFF2, and WOFF2 was the only font the route had, so every request
+  returned a 500. It is now a single 1200×630 PNG in `public/`, rendered once from
+  `scripts/og-card.html` by a script that is not part of the build.
+- **Self-hosted fonts.** ✅ Done by `next/font/google`, which downloads and self-hosts
+  at build time — there is no request to Google at runtime. Two families at 68.8 KB
+  gzipped is the remaining cost, and subsetting is what would reduce it.
 - **Modern image pipeline.** AVIF with WebP fallback, explicit dimensions on every
   image, `priority` only on the true LCP element, and `sizes` that match the real layout.
 - **Fewer runtime surfaces.** The two Pages Router API routes go. The proxy shrinks to
@@ -541,10 +544,13 @@ results are specific, and one of them is a trap.
 
 | Blocker | Why | Resolution |
 | --- | --- | --- |
-| `src/app/og/route.tsx` | Dynamic route handler; `ImageResponse` cannot be exported | Already scheduled: becomes a build-time `opengraph-image.tsx` (§6.1) |
-| `src/pages/api/*` | Pages Router API routes cannot be exported | Already scheduled for removal (§3) |
-| `src/middleware.ts` | Middleware does not exist in a static export | Removed — see the URL problem below |
+| `src/app/og/route.tsx` | Dynamic route handler; `ImageResponse` cannot be exported | ✅ Deleted. The card is a static PNG in `public/` (§6.1) |
+| `src/pages/api/*` | Pages Router API routes cannot be exported | ✅ Deleted along with the route guard that called them |
+| `src/proxy.ts` | Middleware does not exist in a static export | Still here, and the last one. Becomes `_redirects` — see below |
 | `robots.ts`, `sitemap.ts` | Need `export const dynamic = 'force-static'` | One line each |
+
+Three of the four are cleared. The build output now lists exactly one dynamic
+entry, the locale proxy; every page and both metadata routes are static.
 
 With those handled, the export succeeds and emits both locale trees in full:
 `out/en/about.html`, `out/nl/about.html` and so on for every page.
@@ -623,9 +629,11 @@ Phase 1 is where most of the measured gain lands. Phases 4 and 5 are where most 
 
 ## 12. Where the branch stands
 
-**Shipped.** The design is the site. `/preview` is gone; home, about and work run
-on the new system in both languages, and `RouteGuard` and the requestAnimationFrame
-background are deleted — page content is in the pre-rendered HTML.
+**Shipped.** The design is the site, in both languages, and the template it grew
+out of is gone. Home, about, work and the four case studies all run on the token
+layer and the section components; `RouteGuard`, the requestAnimationFrame
+background and the vendored Once UI design system are deleted. Page content is in
+the pre-rendered HTML on every route.
 
 Live at the pull request preview:
 **https://nextpriemersma-git-claude-portf-c76459-grotegehaktbals-projects.vercel.app/en**
@@ -636,20 +644,34 @@ Live at the pull request preview:
 | | main | now |
 | --- | --- | --- |
 | Content in the served HTML | none | all of it |
-| HTML | 8.9 KB | 6.7 KB |
-| JS | 226.4 KB | 210.0 KB |
-| CSS | 19.8 KB | 24.4 KB |
+| HTML (`/about`) | 8.9 KB | 8.0 KB |
+| JS | 226.4 KB | **131.8 KB** |
+| CSS | 19.8 KB | **5.9 KB** |
 
-CSS is *up*, and honestly so: Once UI's stylesheets are still imported because
-`/work/[slug]` has not been migrated off its components. That is the next job, and
-it takes both JS and CSS down substantially.
+The JS figure is now almost entirely the React and App Router runtime; the CSS is
+the whole design language, tokens included. Removing Once UI is what moved both.
+
+**What that cost in code:** 21,810 lines deleted against 6,129 added, and the
+dependency list went from 22 packages to 6 — `next`, `react`, `react-dom`,
+`next-intl`, `next-mdx-remote`, `gray-matter`. No icon library, no CSS-in-JS, no
+Sass, no PostCSS configuration, no image pipeline.
+
+**Verified**, on a production build, in both languages and both colour schemes:
+every route returns 200 with the right `lang`, every internal link resolves,
+exactly one `h1` per page with no skipped heading levels, no horizontal overflow
+between 320 px and 1920 px, no JavaScript errors, and zero axe violations at
+WCAG 2.1 AA. Lint, typecheck and `npm audit` are clean.
 
 **Outstanding, in order:**
 
-1. **Case-study pages off Once UI**, then delete the vendored design system —
-   roughly 11,950 lines, ~14 KB of gzipped CSS, and whatever client JavaScript
-   comes with it.
-2. **Self-host the fonts** (`next/font/local`), removing the build-time fetch.
-3. **Static Open Graph images**, replacing the dynamic `/og` route.
-4. **CI**: typecheck, lint, build and a size budget on every pull request.
-5. **Then** §9: static export and the move to Cloudflare Pages.
+1. **CI**: typecheck, lint, build and a size budget on every pull request.
+2. **Static export and the move to Cloudflare Pages** (§9). Only the locale proxy
+   is left to replace, with a `_redirects` file.
+3. **Font payload.** 68.8 KB gzipped for Inter and Source Code Pro is now the
+   single largest asset on a page. Subsetting, or dropping to one weight of the
+   mono face, is the remaining win.
+4. **Case-study copy.** `pyxels` and `riemersmaict` have one line of body text
+   each; the page carries them on the summary, stack and outcome from the content
+   model, but they deserve a few paragraphs.
+5. **Licence.** CC BY-NC 4.0 is inherited from the template, and none of the
+   template's code remains. Peter's decision.

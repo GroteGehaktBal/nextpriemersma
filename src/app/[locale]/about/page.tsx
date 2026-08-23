@@ -8,7 +8,7 @@ import {
   SectionHead,
   Timeline,
 } from '@/components/site/sections';
-import { localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
 import styles from '@/components/site/site.module.css';
 
 /**
@@ -33,6 +33,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
       type: 'profile',
       locale: locale === 'nl' ? 'nl_NL' : 'en_US',
       url: localeUrl(locale, '/about'),
+      images: [OG_IMAGE],
     },
   };
 }
@@ -73,7 +74,7 @@ export default async function About(props: { params: Promise<{ locale: string }>
           title={ui.sections.capabilities.title}
           lead={ui.sections.capabilities.lead}
         />
-        <CapabilityList capabilities={capabilities} />
+        <CapabilityList capabilities={capabilities} headingLevel="h2" />
       </section>
 
       <section id="background" className={`${styles.container} ${styles.section}`}>

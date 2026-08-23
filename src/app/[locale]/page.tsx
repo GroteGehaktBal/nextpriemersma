@@ -2,7 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { getContent } from '@/content';
 import { ContactCta, Hero, ProjectList, SectionHead } from '@/components/site/sections';
-import { localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
 import { routing } from '@/i18n/routing';
 import styles from '@/components/site/site.module.css';
 
@@ -31,8 +31,14 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
       url: localeUrl(locale, ''),
       siteName: profile.name,
       alternateLocale: routing.locales.filter((l) => l !== locale),
+      images: [OG_IMAGE],
     },
-    twitter: { card: 'summary_large_image' as const, title, description: ui.sections.work.lead },
+    twitter: {
+      card: 'summary_large_image' as const,
+      title,
+      description: ui.sections.work.lead,
+      images: [OG_IMAGE.url],
+    },
   };
 }
 

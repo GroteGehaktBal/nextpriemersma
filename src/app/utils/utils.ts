@@ -2,20 +2,24 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
+/** A collaborator credited in a project's frontmatter. */
 type Team = {
     name: string;
     role: string;
-    avatar: string;
     linkedIn: string;
 };
 
+/**
+ * Frontmatter of a case study.
+ *
+ * `image`, `images` and `tag` were dropped along with the hero image the case
+ * studies used to open with. `summary` stays because it is the fallback for a
+ * project that has no entry in the content model.
+ */
 type Metadata = {
     title: string;
     publishedAt: string;
     summary: string;
-    image?: string;
-    images: string[];
-    tag?: string;
     team: Team[];
 };
 
@@ -39,9 +43,6 @@ function readMDXFile(filePath: string) {
         title: data.title || '',
         publishedAt: data.publishedAt,
         summary: data.summary || '',
-        image: data.image || '',
-        images: data.images || [],
-        tag: data.tag || [],
         team: data.team || [],
     };
 

@@ -5,17 +5,9 @@ import '@/styles/tokens.css';
 import '@/styles/base.css';
 import '@/styles/motion.css';
 
-/*
- * Once UI's stylesheets, still imported because the case-study pages have not
- * been migrated off its components yet. They go when those do (phase 3), taking
- * roughly 14 KB of gzipped CSS with them.
- */
-import '@/once-ui/styles/index.scss';
-import '@/once-ui/tokens/index.scss';
-
 import { getContent } from '@/content';
 import { routing } from '@/i18n/routing';
-import { ORIGIN, localeAlternates } from '@/i18n/urls';
+import { OG_IMAGE, ORIGIN, localeAlternates } from '@/i18n/urls';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
 
@@ -31,8 +23,8 @@ import { Header } from '@/components/site/Header';
  *  - `<Background>`, which registered a mousemove listener and a
  *    requestAnimationFrame loop calling React setState on every frame, forever,
  *    to move a decorative gradient. The ambient wash is CSS now: painted once.
- *  - The dozen `data-*` theme attributes Once UI switched on. Theme is CSS custom
- *    properties following `prefers-color-scheme`.
+ *  - The dozen `data-*` theme attributes Once UI switched on, along with Once
+ *    UI itself. Theme is CSS custom properties following `prefers-color-scheme`.
  */
 
 const sans = Inter({
@@ -65,6 +57,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
       siteName: profile.name,
       locale: locale === 'nl' ? 'nl_NL' : 'en_US',
       type: 'website',
+      images: [OG_IMAGE],
     },
     robots: {
       index: true,
@@ -96,6 +89,9 @@ export default async function RootLayout(props: {
   return (
     <html lang={locale} className={`${sans.variable} ${mono.variable}`}>
       <body>
+        <a className="skipLink" href="#main">
+          {content.ui.skipToContent}
+        </a>
         <div className="siteShell">
           <div className="siteAmbient" aria-hidden="true">
             <div className="siteAmbientGrid" />

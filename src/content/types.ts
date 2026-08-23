@@ -80,7 +80,6 @@ export interface Certification {
  * half-translated page. If a string is visible, it belongs here.
  */
 export interface Ui {
-  notice: { badge: string; text: string };
   nav: { work: string; capabilities: string; background: string; contact: string };
   actions: { seeWork: string; getInTouch: string };
   sections: {
@@ -94,6 +93,23 @@ export interface Ui {
     education: string;
     certifications: string;
     certificationsLead: string;
+  };
+  /** Skip link, the first thing a keyboard or screen-reader user reaches. */
+  skipToContent: string;
+  /**
+   * The 404 line, phrased as the link itself: "Back to the home page". The page
+   * renders one per locale, so each has to stand on its own without a heading
+   * above it naming the language.
+   */
+  notFound: string;
+  /** Copy that appears only on a case-study page. */
+  caseStudy: {
+    /** Back link to the work index, shown above the title. */
+    back: string;
+    /** Introduces the people a project was built with. */
+    withLabel: string;
+    /** Closing link at the foot of a case study. */
+    more: string;
   };
   languageLabel: string;
 }

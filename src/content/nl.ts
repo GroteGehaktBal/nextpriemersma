@@ -23,7 +23,6 @@ import type {
  */
 
 const ui: Ui = {
-  notice: { badge: 'Proof of concept', text: 'Ontwerpvoorstel — niet de live site' },
   nav: {
     work: 'Werk',
     capabilities: 'Vakgebieden',
@@ -50,7 +49,7 @@ const ui: Ui = {
     contact: {
       index: '04 / Contact',
       title: 'Een netwerk of een huis dat aandacht nodig heeft?',
-      text: 'Beschikbaar voor stages, freelance opdrachten en domoticaprojecten in Friesland en de rest van Noord-Nederland.',
+      text: 'Beschikbaar voor freelance opdrachten en domoticaprojecten in Friesland en de rest van Noord-Nederland.',
     },
   },
   background: {
@@ -58,6 +57,13 @@ const ui: Ui = {
     education: 'Opleidingen',
     certifications: 'Certificeringen',
     certificationsLead: 'Cisco CCNA eerst, daarna de rest volledig.',
+  },
+  skipToContent: 'Naar de inhoud',
+  notFound: 'Deze pagina bestaat niet — terug naar de homepagina',
+  caseStudy: {
+    back: 'Alle projecten',
+    withLabel: 'Samen met',
+    more: 'Bekijk alle projecten',
   },
   languageLabel: 'Taal',
 };
@@ -72,7 +78,7 @@ const profile: Profile = {
   },
   subline:
     'Student Network & Security Engineering aan de Hanzehogeschool, mede-eigenaar van pyxels en freelancer bij Riemersma ICT. CCNA-gecertificeerd, en acht maanden lang hield ik het datacenter van Google in de Eemshaven draaiende.',
-  availability: 'Open voor stages en freelance opdrachten',
+  availability: 'Open voor freelance- en domoticaopdrachten',
   email: 'peter@riemersmaict.nl',
   phone: '+31 6 15 93 90 10',
   github: 'https://github.com/grotegehaktbal',
@@ -93,7 +99,7 @@ const projects: Project[] = [
     title: 'Domotica bij pyxels',
     summary:
       'Mede-oprichter van een studio die complete smart home-systemen ontwerpt en installeert: verlichting, klimaat en beveiliging, op een netwerk dat ervoor gebouwd is. Elke installatie begint bij de infrastructuur, want automatisering is nooit betrouwbaarder dan de verbinding eronder.',
-    stack: ['Home Assistant', 'Wi-Fi 7', '2.5GbE', 'Zigbee', 'KNX'],
+    stack: ['Home Assistant', 'Wi-Fi 7', '2.5GbE', 'Zigbee', 'ESPHome'],
     outcome: 'Installaties van bekabeling tot dashboard, in meerdere ruimtes tegelijk',
     year: '2024',
   },

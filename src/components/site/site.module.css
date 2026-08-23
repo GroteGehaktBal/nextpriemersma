@@ -1,5 +1,5 @@
 /*
- * Proof-of-concept page styles.
+ * Interface styles.
  *
  * Every value here resolves to a token from `src/styles/tokens.css`. There are no
  * literal colours, sizes or durations below, which is what makes the design
@@ -8,46 +8,6 @@
  * Written flat, without CSS nesting, so the output needs no PostCSS transform to
  * be understood in DevTools.
  */
-
-/* ---------------------------------------------------------------------------
- * Shell and ambient background
- * ------------------------------------------------------------------------ */
-
-.page {
-  position: relative;
-  min-height: 100dvh;
-  isolation: isolate;
-  overflow-x: clip;
-}
-
-/*
- * The ambient wash. Two soft radial gradients over a fine dot grid, masked so the
- * grid fades out toward the bottom of the first screen.
- *
- * This replaces the cursor-tracking background in the current site. It is painted
- * once, is fixed to the viewport, and never re-renders — no listeners, no
- * requestAnimationFrame, no React state.
- */
-.ambient {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(60rem 40rem at 15% -10%, var(--ambient-a), transparent 65%),
-    radial-gradient(50rem 35rem at 92% 8%, var(--ambient-b), transparent 62%);
-}
-
-.ambientGrid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 4.5rem 4.5rem;
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
-  mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
-}
 
 /* ---------------------------------------------------------------------------
  * Header
@@ -894,4 +854,157 @@
   background-color: var(--accent);
   color: var(--accent-contrast);
   font-weight: var(--weight-medium);
+}
+
+/* ---------------------------------------------------------------------------
+ * Case study
+ *
+ * The header repeats the card that links here — eyebrow, title, summary, tags,
+ * outcome — and the body follows in a single measure-wide column. There is no
+ * hero image: the projects on this site are networks and automations, and a
+ * stock-looking logo plate above the text was decoration standing in for
+ * evidence. The specifics carry the page instead.
+ * ------------------------------------------------------------------------ */
+
+.caseHeader {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  /*
+   * Clears the sticky header. Without the first value the title starts under the
+   * translucent bar and reads through it.
+   */
+  padding-block: clamp(2.5rem, 1.5rem + 5vw, 5rem) var(--space-6);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.backLink:hover {
+  color: var(--text-primary);
+}
+
+.backArrow {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.backLink:hover .backArrow {
+  transform: translateX(-3px);
+}
+
+/*
+ * The meta row is a flex line inside a grid whose items are start-aligned, so it
+ * has to opt back into the full column width — `justify-self`, the inline axis —
+ * or the hairline rule between the eyebrow and the year has no room to draw.
+ */
+.caseMeta {
+  justify-self: stretch;
+  margin-top: var(--space-2);
+}
+
+.caseTitle {
+  max-width: 20ch;
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-display);
+}
+
+.caseLead {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+  font-size: var(--text-md);
+}
+
+.caseOutcome {
+  justify-self: stretch;
+  max-width: var(--measure);
+  margin-top: var(--space-2);
+}
+
+.caseCredit {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.caseCreditLabel {
+  margin-right: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+}
+
+.caseCreditLink {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 0.2em;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.caseCreditLink:hover {
+  color: var(--accent);
+}
+
+.caseBody {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-8);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.caseFooter {
+  padding-bottom: var(--section-gap);
+}
+
+@media (min-width: 64rem) {
+  .caseTitle {
+    font-size: var(--text-3xl);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 404 and error
+ * ------------------------------------------------------------------------ */
+
+.notFound {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+}
+
+.notFoundCode {
+  font-family: var(--font-mono);
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-display);
+  color: var(--accent);
+}
+
+.notFoundLine {
+  font-size: var(--text-md);
+  color: var(--text-secondary);
+}
+
+.notFoundLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.notFoundLink:hover {
+  color: var(--accent);
+}
+
+.notFoundLink:hover .buttonArrow {
+  transform: translateX(3px);
 }

@@ -19,7 +19,6 @@ import type {
  */
 
 const ui: Ui = {
-  notice: { badge: 'Proof of concept', text: 'Design proposal — not the live site' },
   nav: {
     work: 'Work',
     capabilities: 'Capabilities',
@@ -46,7 +45,7 @@ const ui: Ui = {
     contact: {
       index: '04 / Contact',
       title: 'Got a network or a house that needs thinking about?',
-      text: 'Available for internships, freelance work and smart-home projects across Friesland and the north of the Netherlands.',
+      text: 'Available for freelance work and smart-home projects across Friesland and the north of the Netherlands.',
     },
   },
   background: {
@@ -54,6 +53,13 @@ const ui: Ui = {
     education: 'Education',
     certifications: 'Certifications',
     certificationsLead: 'Cisco CCNA first, then the rest in full.',
+  },
+  skipToContent: 'Skip to content',
+  notFound: 'This page does not exist — back to the home page',
+  caseStudy: {
+    back: 'All work',
+    withLabel: 'Together with',
+    more: 'See every project',
   },
   languageLabel: 'Language',
 };
@@ -69,7 +75,7 @@ const profile: Profile = {
   },
   subline:
     'Network & Security Engineering student at Hanze University, co-owner of pyxels, and freelance at Riemersma ICT. CCNA-certified, and I spent eight months keeping Google’s Eemshaven data centre running.',
-  availability: 'Open to internships and freelance work',
+  availability: 'Open to freelance and smart-home work',
   email: 'peter@riemersmaict.nl',
   phone: '+31 6 15 93 90 10',
   github: 'https://github.com/grotegehaktbal',
@@ -90,7 +96,7 @@ const projects: Project[] = [
     title: 'Smart home automation at pyxels',
     summary:
       'Co-founded a studio that designs and installs complete smart-home systems: lighting, climate and security, running on a network built to carry them. Every install starts with the infrastructure, because automation is only as reliable as the link underneath it.',
-    stack: ['Home Assistant', 'Wi-Fi 7', '2.5GbE', 'Zigbee', 'KNX'],
+    stack: ['Home Assistant', 'Wi-Fi 7', '2.5GbE', 'Zigbee', 'ESPHome'],
     outcome: 'Multi-room installations delivered end to end, from cabling to dashboard',
     year: '2024',
   },

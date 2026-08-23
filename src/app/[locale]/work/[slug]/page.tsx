@@ -1,180 +1,124 @@
-import { use } from "react";
-import { notFound } from 'next/navigation'
-import { CustomMDX } from '@/components/mdx'
-import { getPosts } from '@/app/utils/utils'
-import { AvatarGroup, Button, Flex, Heading, SmartImage, Text } from '@/once-ui/components'
-import { baseURL } from '@/app/resources';
-import { renderContent } from '@/app/resources/renderContent';
-import { routing } from '@/i18n/routing';
+import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
-import { formatDate } from '@/app/utils/formatDate';
-import ScrollToHash from '@/components/ScrollToHash';
+
+import { getPosts } from '@/app/utils/utils';
+import { getContent } from '@/content';
+import { routing } from '@/i18n/routing';
+import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { CaseStudyFooter, CaseStudyHeader, ContactCta, type Credit } from '@/components/site/sections';
+import { Prose } from '@/components/site/Prose';
+import styles from '@/components/site/site.module.css';
 
 interface WorkParams {
-    params: Promise<{
-        slug: string;
-		locale: string;
-    }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
-export async function generateStaticParams(): Promise<{ slug: string; locale: string }[]> {
-	const locales = routing.locales;
-    
-    // Create an array to store all posts from all locales
-    const allPosts: { slug: string; locale: string }[] = [];
+/**
+ * A case study.
+ *
+ * Two sources meet here. The MDX file in `work/projects/<locale>/` holds the
+ * body; `src/content/<locale>.ts` holds the summary, stack and outcome that the
+ * card on `/work` shows. The page renders both, which is what keeps a project's
+ * description identical wherever it appears — previously the card and the page
+ * carried separate copies of the same claim, and they had already drifted.
+ */
 
-    // Fetch posts for each locale
-    for (const locale of locales) {
-        const posts = getPosts('work/projects', locale);
-        allPosts.push(...posts.map(post => ({
-            slug: post.slug,
-            locale: locale,
-        })));
-    }
+/** Reads one project's MDX file, or undefined when the slug has none. */
+function getPost(locale: string, slug: string) {
+  return getPosts('work/projects', locale).find((post) => post.slug === slug);
+}
 
-    return allPosts;
+export function generateStaticParams(): { slug: string; locale: string }[] {
+  return routing.locales.flatMap((locale) =>
+    getPosts('work/projects', locale).map((post) => ({ slug: post.slug, locale }))
+  );
 }
 
 export async function generateMetadata(props: WorkParams) {
-    const params = await props.params;
+  const { slug, locale } = await props.params;
+  const post = getPost(locale, slug);
 
-    const {
-        slug,
-        locale
-    } = params;
+  if (!post) return {};
 
-    let post = getPosts('work/projects', locale).find((post) => post.slug === slug)
+  const { projects } = getContent(locale);
+  const project = projects.find((entry) => entry.slug === slug);
+  const title = project?.title ?? post.metadata.title;
+  const description = project?.summary ?? post.metadata.summary;
 
-    if (!post) {
-		return
-	}
-
-    let {
-		title,
-		publishedAt: publishedTime,
-		summary: description,
-		images,
-		image,
-		team,
-	} = post.metadata
-    let ogImage = image
-		? `https://${baseURL}${image}`
-		: `https://${baseURL}/og?title=${title}`;
-
-    return {
-		title,
-		description,
-		images,
-		team,
-		openGraph: {
-			title,
-			description,
-			type: 'article',
-			publishedTime,
-			url: `https://${baseURL}/${locale}/work/${post.slug}`,
-			images: [
-				{
-					url: ogImage,
-				},
-			],
-		},
-		twitter: {
-			card: 'summary_large_image',
-			title,
-			description,
-			images: [ogImage],
-		},
-	}
+  return {
+    title,
+    description,
+    alternates: localeAlternates(locale, `/work/${slug}`),
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      publishedTime: post.metadata.publishedAt,
+      url: localeUrl(locale, `/work/${slug}`),
+      locale: locale === 'nl' ? 'nl_NL' : 'en_US',
+      images: [OG_IMAGE],
+    },
+    twitter: { card: 'summary_large_image' as const, title, description, images: [OG_IMAGE.url] },
+  };
 }
 
-export default function Project(props: WorkParams) {
-    const params = use(props.params);
-    setRequestLocale(params.locale);
-    let post = getPosts('work/projects', params.locale).find((post) => post.slug === params.slug)
+export default async function Project(props: WorkParams) {
+  const { slug, locale } = await props.params;
+  setRequestLocale(locale);
 
-    if (!post) {
-		notFound()
-	}
+  const post = getPost(locale, slug);
+  if (!post) notFound();
 
-    const t = useTranslations();
-    const { person } = renderContent(t);
+  const content = getContent(locale);
+  const project = content.projects.find((entry) => entry.slug === slug);
+  const title = project?.title ?? post.metadata.title;
 
-    const avatars = post.metadata.team?.map((person) => ({
-        src: person.avatar,
-    })) || [];
+  /*
+   * Everyone on the project except its owner: this is Peter's site, so his own
+   * name above his own case study is noise. Collaborators are named because they
+   * did the work with him.
+   */
+  const credits: Credit[] = (post.metadata.team ?? [])
+    .filter((member) => member.name !== content.profile.name)
+    .map((member) => ({ name: member.name, url: member.linkedIn }));
 
-    return (
-		<Flex as="section"
-			fillWidth maxWidth="m"
-			direction="column" alignItems="center"
-			gap="l">
-			<script
-				type="application/ld+json"
-				suppressHydrationWarning
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify({
-						'@context': 'https://schema.org',
-						'@type': 'BlogPosting',
-						headline: post.metadata.title,
-						datePublished: post.metadata.publishedAt,
-						dateModified: post.metadata.publishedAt,
-						description: post.metadata.summary,
-						image: post.metadata.image
-							? `https://${baseURL}${post.metadata.image}`
-							: `https://${baseURL}/og?title=${post.metadata.title}`,
-							url: `https://${baseURL}/${params.locale}/work/${post.slug}`,
-						author: {
-							'@type': 'Person',
-							name: person.name,
-						},
-					}),
-				}}
-			/>
-			<Flex
-				fillWidth maxWidth="xs" gap="16"
-				direction="column">
-				<Button
-					href={`/${params.locale}/work`}
-					variant="tertiary"
-					size="s"
-					prefixIcon="chevronLeft">
-					Projects
-				</Button>
-				<Heading
-					variant="display-strong-s">
-					{post.metadata.title}
-				</Heading>
-			</Flex>
-			{post.metadata.images.length > 0 && (
-				<SmartImage
-					aspectRatio="16 / 9"
-					radius="m"
-					alt="image"
-					src={post.metadata.images[0]}/>
-			)}
-			<Flex style={{margin: 'auto'}}
-				as="article"
-				maxWidth="xs" fillWidth
-				direction="column">
-				<Flex
-					gap="12" marginBottom="24"
-					alignItems="center">
-					{ post.metadata.team && (
-						<AvatarGroup
-							reverseOrder
-							avatars={avatars}
-							size="m"/>
-					)}
-					<Text
-						variant="body-default-s"
-						onBackground="neutral-weak">
-						{formatDate(post.metadata.publishedAt)}
-					</Text>
-				</Flex>
-				<CustomMDX source={post.content} />
-			</Flex>
-			<ScrollToHash />
-		</Flex>
-	)
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: title,
+            description: project?.summary ?? post.metadata.summary,
+            datePublished: post.metadata.publishedAt,
+            inLanguage: locale,
+            url: localeUrl(locale, `/work/${slug}`),
+            author: { '@type': 'Person', name: content.profile.name, url: localeUrl(locale, '/about') },
+            about: project?.stack,
+          }),
+        }}
+      />
+
+      <CaseStudyHeader
+        content={content}
+        locale={locale}
+        title={title}
+        project={project}
+        credits={credits}
+      />
+
+      <section className={`${styles.container} ${styles.caseBody}`}>
+        <div className="reveal">
+          <Prose source={post.content} />
+        </div>
+      </section>
+
+      <CaseStudyFooter content={content} locale={locale} />
+
+      <ContactCta content={content} />
+    </>
+  );
 }

@@ -1,0 +1,250 @@
+/*
+ * Long-form body copy.
+ *
+ * Everything a case study's MDX can produce is styled here, and nowhere else. It
+ * replaces the Once UI `Text`/`Heading` components the MDX used to render into,
+ * which meant every paragraph carried inline styles and a component wrapper for
+ * what is one CSS rule.
+ *
+ * Rules are scoped to `.prose` and target bare elements, because MDX emits bare
+ * elements. That is the one place in this codebase where element selectors are
+ * the right tool: the markup is authored in Markdown, so there is no class to
+ * hang a style on.
+ */
+
+.prose {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+}
+
+.prose > * + * {
+  margin-top: var(--space-4);
+}
+
+/* ---------------------------------------------------------------------------
+ * Headings
+ *
+ * A case study's title is the page's h1, so the MDX starts at h2. Each heading
+ * carries an id and opens a new block, with more space above than below so it
+ * binds to the text it introduces rather than floating between two paragraphs.
+ * ------------------------------------------------------------------------ */
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-heading);
+  text-wrap: balance;
+}
+
+.prose > h2 {
+  margin-top: var(--space-8);
+  font-size: var(--text-lg);
+}
+
+.prose > h3 {
+  margin-top: var(--space-7);
+  font-size: var(--text-md);
+}
+
+.prose > h4 {
+  margin-top: var(--space-6);
+  font-size: var(--text-base);
+}
+
+.prose > h2 + *,
+.prose > h3 + *,
+.prose > h4 + * {
+  margin-top: var(--space-3);
+}
+
+/*
+ * The accent rule under a section heading. Drawn with a pseudo-element rather
+ * than a border so it can be short and left-aligned without affecting layout.
+ */
+.prose > h2::after {
+  content: '';
+  display: block;
+  width: var(--space-6);
+  height: 2px;
+  margin-top: var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+ * Lists
+ *
+ * The base reset strips markers from every list, because the interface uses
+ * lists for things that are not prose — tag rows, navigation, card grids. Prose
+ * lists need them back, so they are drawn here: a small accent dash, aligned to
+ * the first line of the item.
+ * ------------------------------------------------------------------------ */
+
+.prose ul,
+.prose ol {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.prose li {
+  position: relative;
+  padding-left: var(--space-5);
+}
+
+.prose ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  /* Centres the dash on the first line's x-height at the current line height. */
+  top: 0.72em;
+  width: var(--space-3);
+  height: 1px;
+  background-color: var(--accent);
+}
+
+.prose ol {
+  counter-reset: prose-list;
+}
+
+.prose ol > li {
+  counter-increment: prose-list;
+}
+
+.prose ol > li::before {
+  content: counter(prose-list) '.';
+  position: absolute;
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--accent);
+}
+
+.prose li > ul,
+.prose li > ol {
+  margin-top: var(--space-3);
+}
+
+/* ---------------------------------------------------------------------------
+ * Inline
+ * ------------------------------------------------------------------------ */
+
+.prose strong {
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.prose em {
+  font-style: italic;
+}
+
+/*
+ * Links are underlined, not just coloured. Colour alone is not a distinguishing
+ * mark for a reader who cannot see it, and inside a paragraph there is no other
+ * cue that a word is a link.
+ */
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.prose a:hover {
+  color: var(--accent-strong);
+}
+
+.prose code {
+  padding: 0.15em 0.4em;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  background-color: var(--raised);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  color: var(--text-primary);
+}
+
+.prose pre {
+  /*
+   * Code blocks scroll inside their own box. Without this a long line widens the
+   * page itself, and the whole layout scrolls sideways on a phone.
+   */
+  overflow-x: auto;
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.prose pre code {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: inherit;
+}
+
+.prose blockquote {
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--accent-border);
+  color: var(--text-primary);
+}
+
+.prose hr {
+  height: var(--border-width);
+  margin-block: var(--space-7);
+  border: none;
+  background-color: var(--border-subtle);
+}
+
+.prose img {
+  width: 100%;
+  height: auto;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.prose figure {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.prose figcaption {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------------------
+ * Tables
+ * ------------------------------------------------------------------------ */
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.prose th,
+.prose td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width) solid var(--border-subtle);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: var(--weight-regular);
+}

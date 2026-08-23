@@ -128,7 +128,14 @@
 
   --text-primary: #f2f4f7;
   --text-secondary: #a8b0bd;
-  --text-muted: #6b7482;
+  /*
+   * Metadata grey. Chosen for contrast, not for looks: it is used at 11px on the
+   * raised surface — tags, timeline periods, the footer — and the previous value
+   * (#6b7482) resolved to 3.9:1 there, under the 4.5:1 that text this size needs.
+   * This clears it on every surface in the theme, the lightest of which is
+   * `--raised`, at 4.9:1.
+   */
+  --text-muted: #7d8695;
   --text-inverse: #08090b;
 
   --border-subtle: rgb(255 255 255 / 0.07);
@@ -170,21 +177,29 @@
 
     --text-primary: #14161a;
     --text-secondary: #4a5058;
-    --text-muted: #7b828c;
+    /* Same rule as in the dark theme, in the other direction: 5.0:1 on `--raised`. */
+    --text-muted: #626a75;
     --text-inverse: #ffffff;
 
     --border-subtle: rgb(20 22 26 / 0.07);
     --border-default: rgb(20 22 26 / 0.12);
     --border-strong: rgb(20 22 26 / 0.2);
 
-    --accent: #05875e;
+    /*
+     * The accent carries small mono labels — section numbers, the eyebrow on a
+     * card — at 11px, so it has to clear 4.5:1 against the lightest surface it
+     * sits on. The first value chosen here (#05875e) came to 4.37:1 on the page
+     * background: right on the line, and under it. This is 5.3:1 there and
+     * 4.9:1 on `--raised`.
+     */
+    --accent: #047953;
     --accent-strong: #046b4b;
-    --accent-muted: rgb(5 135 94 / 0.09);
-    --accent-border: rgb(5 135 94 / 0.28);
-    --accent-glow: rgb(5 135 94 / 0.12);
+    --accent-muted: rgb(4 121 83 / 0.09);
+    --accent-border: rgb(4 121 83 / 0.28);
+    --accent-glow: rgb(4 121 83 / 0.12);
     --accent-contrast: #ffffff;
 
-    --ambient-a: rgb(5 135 94 / 0.07);
+    --ambient-a: rgb(4 121 83 / 0.07);
     --ambient-b: rgb(64 120 255 / 0.05);
     --grid-line: rgb(20 22 26 / 0.035);
 

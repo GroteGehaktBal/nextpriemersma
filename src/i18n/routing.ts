@@ -1,7 +1,5 @@
 import { defineRouting } from 'next-intl/routing';
 
-import { i18nOptions } from '@/app/resources/config';
-
 /**
  * Routing configuration.
  *
@@ -12,8 +10,8 @@ import { i18nOptions } from '@/app/resources/config';
  * all. The old header was its only consumer, and it is gone.
  */
 export const routing = defineRouting({
-  locales: i18nOptions.locales,
-  defaultLocale: i18nOptions.defaultLocale,
+  locales: ['en', 'nl'],
+  defaultLocale: 'en',
 
   /*
    * Every locale is prefixed, including the default.

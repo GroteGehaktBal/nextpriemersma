@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 
 import type { Capability, Certification, Content, Project, TimelineEntry } from '@/content';
-import { ArrowRight, Check, Mail } from '@/components/ui/icons';
+import { ArrowLeft, ArrowRight, Check, Mail } from '@/components/ui/icons';
 import { localePath } from '@/i18n/urls';
 
 import styles from './site.module.css';
@@ -93,11 +93,22 @@ export function ProjectList({
   projects,
   locale,
   featureCount = 2,
+  headingLevel: Title = 'h3',
 }: {
   projects: Project[];
   locale: string;
   /** How many entries get the full-width treatment with an outcome line. */
   featureCount?: number;
+  /**
+   * Level for the card titles.
+   *
+   * A page's headings have to descend one level at a time to be navigable: on
+   * the home page the section head above this list is an h2, so the cards are
+   * h3; on /work the section head is the page's h1, so they are h2. Hard-coding
+   * h3 made /work jump from h1 straight to h3, which is what a screen reader
+   * reports as a missing level.
+   */
+  headingLevel?: 'h2' | 'h3';
 }) {
   return (
     <div className={styles.projectList}>
@@ -113,11 +124,11 @@ export function ProjectList({
             <span>{project.year}</span>
           </div>
 
-          <h3 className={styles.projectTitle}>
+          <Title className={styles.projectTitle}>
             <a className={styles.projectLink} href={localePath(locale, `/work/${project.slug}`)}>
               {project.title}
             </a>
-          </h3>
+          </Title>
 
           <p className={styles.projectSummary}>{project.summary}</p>
 
@@ -141,7 +152,14 @@ export function ProjectList({
   );
 }
 
-export function CapabilityList({ capabilities }: { capabilities: Capability[] }) {
+export function CapabilityList({
+  capabilities,
+  headingLevel: Title = 'h3',
+}: {
+  capabilities: Capability[];
+  /** As on `ProjectList`: one level below the section head above this list. */
+  headingLevel?: 'h2' | 'h3';
+}) {
   return (
     <div className={styles.capabilityList}>
       {capabilities.map((capability, index) => (
@@ -150,7 +168,7 @@ export function CapabilityList({ capabilities }: { capabilities: Capability[] })
           className={`${styles.capability} revealItem`}
           style={revealOffset(index % 2)}
         >
-          <h3 className={styles.capabilityTitle}>{capability.title}</h3>
+          <Title className={styles.capabilityTitle}>{capability.title}</Title>
           <div className={`${styles.capabilityRule} revealRule`} aria-hidden="true" />
           <p className={styles.capabilityText}>{capability.description}</p>
           <p className={styles.capabilityKeywords}>{capability.keywords.join('  ·  ')}</p>
@@ -230,5 +248,117 @@ export function ContactCta({ content }: { content: Content }) {
         </a>
       </div>
     </section>
+  );
+}
+
+/**
+ * A person credited on a case study, read from the MDX frontmatter.
+ *
+ * They used to render as a row of avatar images. Two 40px photographs of people
+ * the reader has never met communicate nothing that their names do not, and cost
+ * two image requests on a page that otherwise makes none.
+ */
+export interface Credit {
+  name: string;
+  url?: string;
+}
+
+/**
+ * Header of a case study.
+ *
+ * Deliberately built from the same parts as the card that links here — the same
+ * eyebrow, the same tags, the same outcome line — so arriving on the page feels
+ * like the card opening rather than a jump to an unrelated layout. The lead and
+ * the tags come from the content model, which is what keeps the two in step: the
+ * MDX file holds the body, the content model holds the summary.
+ */
+export function CaseStudyHeader({
+  content,
+  locale,
+  title,
+  project,
+  credits = [],
+}: {
+  content: Content;
+  locale: string;
+  /** Falls back to the MDX title when the slug has no entry in the model. */
+  title: string;
+  project?: Project;
+  credits?: Credit[];
+}) {
+  const { ui } = content;
+
+  return (
+    <header className={`${styles.container} ${styles.caseHeader}`}>
+      <a className={`${styles.backLink} enter`} style={enterIndex(0)} href={localePath(locale, '/work')}>
+        <ArrowLeft className={styles.backArrow} />
+        {ui.caseStudy.back}
+      </a>
+
+      {project && (
+        <p className={`${styles.projectMeta} ${styles.caseMeta} enter`} style={enterIndex(1)}>
+          <span className={styles.projectKind}>{project.kind}</span>
+          <span className={styles.projectMetaRule} aria-hidden="true" />
+          <span>{project.year}</span>
+        </p>
+      )}
+
+      <h1 className={`${styles.caseTitle} enter`} style={enterIndex(2)}>
+        {title}
+      </h1>
+
+      {project && (
+        <p className={`${styles.caseLead} enter`} style={enterIndex(3)}>
+          {project.summary}
+        </p>
+      )}
+
+      {project && project.stack.length > 0 && (
+        <ul className={`${styles.tagRow} enter`} style={enterIndex(4)}>
+          {project.stack.map((item) => (
+            <li key={item} className={styles.tag}>
+              {item}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {project?.outcome && (
+        <p className={`${styles.projectOutcome} ${styles.caseOutcome} enter`} style={enterIndex(5)}>
+          <Check className={styles.projectOutcomeIcon} />
+          {project.outcome}
+        </p>
+      )}
+
+      {credits.length > 0 && (
+        <p className={`${styles.caseCredit} enter`} style={enterIndex(6)}>
+          <span className={styles.caseCreditLabel}>{ui.caseStudy.withLabel}</span>
+          {credits.map((credit, index) => (
+            <span key={credit.name}>
+              {index > 0 && ', '}
+              {credit.url ? (
+                <a className={styles.caseCreditLink} href={credit.url} target="_blank" rel="noopener noreferrer">
+                  {credit.name}
+                </a>
+              ) : (
+                credit.name
+              )}
+            </span>
+          ))}
+        </p>
+      )}
+    </header>
+  );
+}
+
+/** Closing link at the foot of a case study, back to the full list. */
+export function CaseStudyFooter({ content, locale }: { content: Content; locale: string }) {
+  return (
+    <div className={`${styles.container} ${styles.caseFooter}`}>
+      <a className={`${styles.button} ${styles.buttonSecondary} reveal`} href={localePath(locale, '/work')}>
+        <ArrowLeft />
+        {content.ui.caseStudy.more}
+      </a>
+    </div>
   );
 }

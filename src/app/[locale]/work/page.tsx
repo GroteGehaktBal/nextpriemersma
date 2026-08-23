@@ -2,7 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { getContent } from '@/content';
 import { ContactCta, ProjectList, SectionHead } from '@/components/site/sections';
-import { localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
 import styles from '@/components/site/site.module.css';
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }) {
@@ -20,6 +20,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
       type: 'website',
       locale: locale === 'nl' ? 'nl_NL' : 'en_US',
       url: localeUrl(locale, '/work'),
+      images: [OG_IMAGE],
     },
   };
 }
@@ -40,7 +41,7 @@ export default async function Work(props: { params: Promise<{ locale: string }> 
           title={ui.sections.work.title}
           lead={ui.sections.work.lead}
         />
-        <ProjectList projects={projects} locale={locale} featureCount={2} />
+        <ProjectList projects={projects} locale={locale} featureCount={2} headingLevel="h2" />
       </section>
 
       <ContactCta content={content} />
