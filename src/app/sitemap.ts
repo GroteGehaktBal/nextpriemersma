@@ -1,33 +1,31 @@
-import { getPosts } from '@/app/utils/utils'
-import { baseURL, routes as routesConfig } from '@/app/resources'
-import { routing } from '@/i18n/routing'
+import { getCaseStudies } from '@/content/case-studies';
+import { routing } from '@/i18n/routing';
+import { SITE_PAGES, localeUrl } from '@/i18n/urls';
 
-export default async function sitemap() {
-    const locales = routing.locales;
-    const includeLocalePrefix = locales.length > 1;
+/**
+ * Sitemap for both locales.
+ *
+ * Every URL is absolute and locale-prefixed, which is what `localeUrl` is for:
+ * this file used to interpolate a bare host, so each entry read
+ * `priemersma.nl/about` rather than `https://priemersma.nl/en/about`, and search
+ * engines discard entries that are not absolute URLs.
+ */
+export default function sitemap() {
+  const today = new Date().toISOString().split('T')[0];
 
-    let blogs = locales.flatMap((locale) => 
-        getPosts(['src', 'app', '[locale]', 'blog', 'posts', locale]).map((post) => ({
-            url: `${baseURL}${includeLocalePrefix ? `/${locale}` : ''}/blog/${post.slug}`,
-            lastModified: post.metadata.publishedAt,
-        }))
-    );
+  const pages = routing.locales.flatMap((locale) =>
+    SITE_PAGES.map((path) => ({
+      url: localeUrl(locale, path),
+      lastModified: today,
+    }))
+  );
 
-    let works = locales.flatMap((locale) => 
-        getPosts(['src', 'app', '[locale]', 'work', 'projects', locale]).map((post) => ({
-            url: `${baseURL}${includeLocalePrefix ? `/${locale}` : ''}/work/${post.slug}`,
-            lastModified: post.metadata.publishedAt,
-        }))
-    );
+  const caseStudies = routing.locales.flatMap((locale) =>
+    getCaseStudies(locale).map((study) => ({
+      url: localeUrl(locale, `/work/${study.slug}`),
+      lastModified: study.publishedAt,
+    }))
+  );
 
-    const activeRoutes = Object.keys(routesConfig).filter((route) => routesConfig[route]);
-
-    let routes = locales.flatMap((locale)=> 
-        activeRoutes.map((route) => ({
-            url: `${baseURL}${includeLocalePrefix ? `/${locale}` : ''}${route !== '/' ? route : ''}`,
-            lastModified: new Date().toISOString().split('T')[0],
-        }))
-    );
-
-    return [...routes, ...blogs, ...works]
+  return [...pages, ...caseStudies];
 }

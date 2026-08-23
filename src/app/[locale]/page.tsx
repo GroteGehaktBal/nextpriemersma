@@ -1,166 +1,87 @@
-import React, { use } from 'react';
+import { setRequestLocale } from 'next-intl/server';
 
-import { Heading, Flex, Text, Button,  Avatar, RevealFx, Arrow } from '@/once-ui/components';
-import { Projects } from '@/components/work/Projects';
+import { getContent } from '@/content';
+import { ContactCta, Hero, ProjectList, SectionHead } from '@/components/site/sections';
+import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { routing } from '@/i18n/routing';
+import styles from '@/components/site/site.module.css';
 
-import { baseURL, routes } from '@/app/resources'; 
-import { renderContent } from '@/app/resources/renderContent'; 
-import { Mailchimp } from '@/components';
-import { Posts } from '@/components/blog/Posts';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
+/**
+ * Home.
+ *
+ * Positioning in one screen, then the work, then a way to get in touch. The
+ * longer story — capabilities, history, certifications — lives on /about, so
+ * this page stays scannable.
+ */
 
-export async function generateMetadata(props: { params: Promise<{ locale: string }>}) {
-    const params = await props.params;
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }) {
+  const { locale } = await props.params;
+  const { profile, ui } = getContent(locale);
+  const title = `${profile.name} — ${profile.role}`;
 
-    const {
-        locale
-    } = params;
-
-    const t = await getTranslations();
-    const { home } = renderContent(t);
-    const title = home.title;
-    const description = home.description;
-    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
-
-    return {
-		title,
-		description,
-		openGraph: {
-			title,
-			description,
-			type: 'website',
-			url: `https://${baseURL}/${locale}`,
-			images: [
-				{
-					url: ogImage,
-					alt: title,
-				},
-			],
-		},
-		twitter: {
-			card: 'summary_large_image',
-			title,
-			description,
-			images: [ogImage],
-		},
-	};
+  return {
+    title,
+    description: profile.subline,
+    alternates: localeAlternates(locale, ''),
+    openGraph: {
+      title,
+      description: profile.subline,
+      type: 'website',
+      locale: locale === 'nl' ? 'nl_NL' : 'en_US',
+      url: localeUrl(locale, ''),
+      siteName: profile.name,
+      alternateLocale: routing.locales.filter((l) => l !== locale),
+      images: [OG_IMAGE],
+    },
+    twitter: {
+      card: 'summary_large_image' as const,
+      title,
+      description: ui.sections.work.lead,
+      images: [OG_IMAGE.url],
+    },
+  };
 }
 
-export default function Home(props: { params: Promise<{ locale: string }>}) {
-    const params = use(props.params);
+export default async function Home(props: { params: Promise<{ locale: string }> }) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
 
-    const {
-        locale
-    } = params;
+  const content = getContent(locale);
+  const { ui, profile, projects } = content;
 
-    setRequestLocale(locale);
-    const t = useTranslations();
-    const { home, about, person, newsletter } = renderContent(t);
-    return (
-		<Flex
-			maxWidth="m" fillWidth gap="xl"
-			direction="column" alignItems="center">
-			<script
-				type="application/ld+json"
-				suppressHydrationWarning
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify({
-						'@context': 'https://schema.org',
-						'@type': 'WebPage',
-						name: home.title,
-						description: home.description,
-						url: `https://${baseURL}`,
-						image: `${baseURL}/og?title=${encodeURIComponent(home.title)}`,
-						publisher: {
-							'@type': 'Person',
-							name: person.name,
-							image: {
-								'@type': 'ImageObject',
-								url: `${baseURL}${person.avatar}`,
-							},
-						},
-					}),
-				}}
-			/>
-			<Flex
-				fillWidth
-				direction="column"
-				paddingY="l" gap="m">
-					<Flex
-						direction="column"
-						fillWidth maxWidth="s">
-						<RevealFx
-							translateY="4" fillWidth justifyContent="flex-start" paddingBottom="m"
-							revealedByDefault={true}>
-							<Heading
-								wrap="balance"
-								variant="display-strong-l">
-								{home.headline}
-							</Heading>
-						</RevealFx>
-						<RevealFx
-							translateY="8" delay={0.2} fillWidth justifyContent="flex-start" paddingBottom="m">
-							<Text
-								wrap="balance"
-								onBackground="neutral-weak"
-								variant="heading-default-xl">
-								{home.subline}
-							</Text>
-						</RevealFx>
-						<RevealFx translateY="12" delay={0.4}>
-							<Flex fillWidth>
-								<Button
-									id="about"
-									data-border="rounded"
-									href={`/${locale}/about`}
-									variant="tertiary"
-									size="m">
-									<Flex
-										gap="8"
-										alignItems="center">
-										{about.avatar.display && (
-											<Avatar
-												style={{marginLeft: '-0.75rem', marginRight: '0.25rem'}}
-												src={person.avatar}
-												size="m"
-                                                priority // Prioritize loading this LCP candidate
-                                                />
-											)}
-											{t("about.title")}
-											<Arrow trigger="#about"/>
-									</Flex>
-								</Button>
-							</Flex>
-						</RevealFx>
-					</Flex>
-				
-			</Flex>
-			<RevealFx translateY="16" delay={0.6}>
-				<Projects range={[1,1]} locale={locale}/>
-			</RevealFx>
-			{routes['/blog'] && (
-				<Flex
-					fillWidth gap="24"
-					mobileDirection="column">
-					<Flex flex={1} paddingLeft="l">
-						<Heading
-							as="h2"
-							variant="display-strong-xs"
-							wrap="balance">
-							Latest from the blog
-						</Heading>
-					</Flex>
-					<Flex
-						flex={3} paddingX="20">
-						<Posts range={[1,2]} columns="2" locale={locale}/>
-					</Flex>
-				</Flex>
-			)}
-			<Projects range={[2]} locale={locale}/>
-			{ newsletter.display &&
-				<Mailchimp newsletter={newsletter} />
-			}
-		</Flex>
-	);
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: profile.name,
+            jobTitle: profile.role,
+            description: profile.subline,
+            email: `mailto:${profile.email}`,
+            url: localeUrl(locale, ''),
+            sameAs: [profile.github, profile.linkedin],
+            knowsLanguage: ['nl', 'en'],
+          }),
+        }}
+      />
+
+      <Hero content={content} locale={locale} />
+
+      <section id="work" className={`${styles.container} ${styles.section}`}>
+        <SectionHead
+          index={ui.sections.work.index}
+          title={ui.sections.work.title}
+          lead={ui.sections.work.lead}
+        />
+        {/* Two on the home page; the rest live on /work. */}
+        <ProjectList projects={projects.slice(0, 2)} locale={locale} featureCount={2} />
+      </section>
+
+      <ContactCta content={content} />
+    </>
+  );
 }

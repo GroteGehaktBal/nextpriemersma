@@ -1,0 +1,136 @@
+/*
+ * Motion system
+ *
+ * Every animation on the site is defined here, and every one of them costs zero
+ * JavaScript. Two mechanisms are used:
+ *
+ *   1. Entrance animations on page load, driven by `animation-delay`.
+ *   2. Reveal-on-scroll, driven by `animation-timeline: view()`.
+ *
+ * The second replaces the usual IntersectionObserver pattern. That pattern forces
+ * a component to become a client component, which pulls it — and everything it
+ * renders — across the hydration boundary. A CSS scroll timeline keeps the whole
+ * tree as server components.
+ *
+ * Progressive enhancement is the point of the structure below. The default state
+ * of every animated element is its FINAL state: fully visible, untransformed. The
+ * animations are then layered on inside a feature query. A browser without scroll
+ * timelines, or a user with reduced motion enabled, gets the finished page
+ * immediately — never a blank one waiting for an animation that will not run.
+ *
+ * Only `opacity` and `transform` are animated, so every animation is handled by
+ * the compositor and none of them trigger layout or paint.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Keyframes
+ * ------------------------------------------------------------------------ */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.75rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Used for the hairline rule that draws itself as a section scrolls into view. */
+@keyframes draw-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Entrance — above the fold
+ *
+ * Content in the first viewport cannot use a scroll timeline, because it is
+ * already in view before any scrolling happens. It animates on load instead,
+ * staggered by an index set inline as `--enter-index`.
+ *
+ * `backwards` fill is essential: it applies the `from` state during the delay,
+ * so a staggered element does not flash at full opacity before its turn.
+ * ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation: rise var(--duration-slow) var(--ease-out) backwards;
+    animation-delay: calc(var(--enter-index, 0) * 70ms);
+  }
+
+  .enterFade {
+    animation: fade var(--duration-slow) var(--ease-out) backwards;
+    animation-delay: calc(var(--enter-index, 0) * 70ms);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reveal — below the fold
+ *
+ * `animation-range: entry 5% cover 22%` starts the animation just after the
+ * element's top edge crosses into the viewport and finishes it well before the
+ * element is centred. Reading never has to wait for an animation to catch up.
+ * ------------------------------------------------------------------------ */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 22%;
+    }
+
+    /*
+     * Staggered children. Each child carries its own scroll timeline, so items
+     * in a grid resolve in sequence as the grid scrolls past rather than all at
+     * once. The range is nudged per item via `--reveal-offset`.
+     */
+    .revealItem {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry calc(2% + var(--reveal-offset, 0) * 4%) cover
+        calc(20% + var(--reveal-offset, 0) * 4%);
+    }
+
+    .revealRule {
+      transform-origin: left center;
+      animation: draw-x linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 18%;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion
+ *
+ * A blanket override rather than a set of opt-outs, so an animation added later
+ * without thinking about accessibility is still neutralised. `!important` is
+ * justified here: this rule must win against anything, including inline styles.
+ * ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

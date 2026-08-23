@@ -1,0 +1,1010 @@
+/*
+ * Interface styles.
+ *
+ * Every value here resolves to a token from `src/styles/tokens.css`. There are no
+ * literal colours, sizes or durations below, which is what makes the design
+ * language changeable from one file.
+ *
+ * Written flat, without CSS nesting, so the output needs no PostCSS transform to
+ * be understood in DevTools.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Header
+ * ------------------------------------------------------------------------ */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--gutter);
+  background-color: var(--overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: var(--border-width) solid var(--border-subtle);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.wordmarkDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: var(--radius-full);
+  background-color: var(--accent);
+  /* Aligns the dot with the cap-height of the mono text beside it. */
+  transform: translateY(-0.1em);
+}
+
+.nav {
+  display: none;
+  align-items: center;
+  gap: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.navLink {
+  position: relative;
+  padding-block: var(--space-1);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.navLink:hover {
+  color: var(--text-primary);
+}
+
+/*
+ * The underline sweep. A pseudo-element scaled from zero on the X axis, with its
+ * origin swapped on hover so it grows in from the left and retracts to the right.
+ */
+.navLink::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.navLink:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.localeSwitch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+}
+
+.localeOption {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.localeOptionActive {
+  color: var(--text-primary);
+  background-color: var(--raised);
+}
+
+@media (min-width: 48rem) {
+  .nav {
+    display: flex;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Layout primitives
+ * ------------------------------------------------------------------------ */
+
+.container {
+  width: 100%;
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-gap);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+/*
+ * Section header with the left rail. Below 64rem the rail collapses and the
+ * number sits inline above the title, so nothing is lost on mobile.
+ */
+.sectionHead {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.sectionIndex {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-display);
+}
+
+.sectionLead {
+  max-width: var(--measure);
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-md);
+}
+
+@media (min-width: 64rem) {
+  .sectionHead {
+    grid-template-columns: var(--rail-width) 1fr;
+    column-gap: var(--space-5);
+    align-items: start;
+  }
+
+  .sectionIndex {
+    /* Optically aligns the mono label with the cap-height of the heading beside it. */
+    padding-top: 0.65em;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Hero
+ * ------------------------------------------------------------------------ */
+
+.hero {
+  padding-block: clamp(3.5rem, 2rem + 8vw, 8rem) var(--section-gap);
+}
+
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
+  border: var(--border-width) solid var(--accent-border);
+  border-radius: var(--radius-full);
+  background-color: var(--accent-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.statusDot {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--accent);
+  flex: none;
+}
+
+/*
+ * A slow pulse on the availability dot — the one looping animation on the page.
+ * It animates only `transform` and `opacity` on a pseudo-element, so it stays on
+ * the compositor, and it is inside a reduced-motion guard.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .statusDot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    background-color: var(--accent);
+    animation: statusPulse 2.6s var(--ease-out) infinite;
+  }
+}
+
+@keyframes statusPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.heroTitle {
+  max-width: 18ch;
+  margin-top: var(--space-5);
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
+}
+
+/* The clause the eye should land on. */
+.heroAccent {
+  color: var(--accent);
+}
+
+.heroSubline {
+  max-width: 54ch;
+  margin-top: var(--space-5);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-heading);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+}
+
+/* ---------------------------------------------------------------------------
+ * Buttons
+ * ------------------------------------------------------------------------ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid transparent;
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.buttonPrimary {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.buttonPrimary:hover {
+  background-color: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 6px var(--accent-glow);
+}
+
+.buttonSecondary {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.buttonSecondary:hover {
+  border-color: var(--border-strong);
+  background-color: var(--raised);
+  transform: translateY(-1px);
+}
+
+/* The arrow that nudges forward on hover — a 2px move, and no more. */
+.buttonArrow {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.button:hover .buttonArrow {
+  transform: translateX(3px);
+}
+
+/* ---------------------------------------------------------------------------
+ * Fact strip
+ * ------------------------------------------------------------------------ */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-4);
+  margin-top: var(--space-10);
+  padding-top: var(--space-6);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.factLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.factValue {
+  margin-top: var(--space-2);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-heading);
+}
+
+@media (min-width: 48rem) {
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Work
+ * ------------------------------------------------------------------------ */
+
+.projectList {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.project {
+  position: relative;
+  display: grid;
+  /*
+   * Grid rows default to `align-content: normal`, which stretches auto rows to
+   * fill a container taller than its content. Cards in a row are stretched to
+   * equal height, so a card with less content had its leftover height shared out
+   * across every row — visibly inflating the tag row. Collect it at the bottom
+   * instead, where it is invisible.
+   */
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.project:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+/*
+ * The whole card is clickable, but only the title is a link. Stretching the
+ * title's hit area over the card keeps the accessibility tree correct — one link
+ * with a meaningful name — instead of wrapping a heading inside an anchor.
+ */
+.projectLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.projectMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.projectKind {
+  color: var(--accent);
+}
+
+.projectMetaRule {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-subtle);
+}
+
+.projectTitle {
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-display);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.project:hover .projectTitle {
+  color: var(--accent);
+}
+
+.projectSummary {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+}
+
+.projectOutcome {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.projectOutcomeIcon {
+  flex: none;
+  margin-top: 0.15em;
+  color: var(--accent);
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  /*
+   * Without this, flex children stretch to the line height and the pills grow
+   * vertically whenever their row is taller than they are — 50px tall instead of
+   * 27px, at an unchanged font size.
+   */
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.tag {
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  background-color: var(--raised);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-muted);
+}
+
+@media (min-width: 64rem) {
+  .projectList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The two lead case studies get the full width; the rest sit side by side. */
+  .projectFeatured {
+    grid-column: 1 / -1;
+  }
+
+  .project {
+    padding: var(--space-7);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Capabilities
+ * ------------------------------------------------------------------------ */
+
+.capabilityList {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.capability {
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-base) var(--ease-out);
+}
+
+.capability:hover {
+  border-color: var(--border-default);
+}
+
+.capabilityTitle {
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-heading);
+}
+
+/*
+ * The accent rule under each capability title. It draws itself as the card
+ * scrolls into view via the shared `.revealRule` class in motion.css.
+ */
+.capabilityRule {
+  width: 2.5rem;
+  height: 2px;
+  margin-block: var(--space-3) var(--space-4);
+  background-color: var(--accent);
+  border-radius: var(--radius-full);
+}
+
+.capabilityText {
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+}
+
+.capabilityKeywords {
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+@media (min-width: 48rem) {
+  .capabilityList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Timeline
+ * ------------------------------------------------------------------------ */
+
+.timeline {
+  display: grid;
+  gap: 0;
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-6);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.entry:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.entryPeriod {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.entryRole {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-heading);
+}
+
+.entryOrg {
+  color: var(--accent);
+  font-size: var(--text-base);
+}
+
+.entryText {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+}
+
+@media (min-width: 64rem) {
+  .entry {
+    grid-template-columns: var(--timeline-rail) 1fr;
+    column-gap: var(--space-6);
+    /* Without this the stretched row vertically centres the period against the body. */
+    align-items: start;
+  }
+
+  .entryPeriod {
+    /*
+     * The period is a single unit — "2024 — NOW" must never break across lines,
+     * and the status dot must stay on the same line as the text beside it.
+     */
+    white-space: nowrap;
+    padding-top: 0.35em;
+  }
+
+  .entryBody {
+    display: grid;
+    gap: var(--space-2);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Sub-headings within a section
+ *
+ * Background carries three lists — experience, education, certifications — under
+ * one section number. These separate them without inflating each into a section
+ * of its own, which would make the page read as longer than it is.
+ * ------------------------------------------------------------------------ */
+
+.subHead {
+  margin-block: var(--space-9) var(--space-5);
+  padding-top: var(--space-5);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+/* The first sub-heading follows the section header, which already provides the
+   separation — a second rule directly beneath it would read as a mistake. */
+.subHeadFirst {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.subTitle {
+  font-size: var(--text-lg);
+  letter-spacing: var(--tracking-heading);
+}
+
+.subLead {
+  max-width: var(--measure);
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 64rem) {
+  .subHead {
+    padding-left: calc(var(--timeline-rail) + var(--space-6));
+  }
+}
+
+/*
+ * Secondary timeline entries. Real roles, but not the ones the reader is here
+ * for — dimmed and tightened so the engineering history keeps the weight.
+ */
+.entrySecondary .entryRole {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.entrySecondary .entryOrg {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.entrySecondary .entryText {
+  font-size: var(--text-sm);
+}
+
+/* ---------------------------------------------------------------------------
+ * Certifications
+ * ------------------------------------------------------------------------ */
+
+.certLead {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.cert {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--accent-border);
+  border-radius: var(--radius-md);
+  background-color: var(--accent-muted);
+}
+
+.certIssuer {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.certName {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-heading);
+}
+
+.certRest {
+  display: grid;
+  gap: 0;
+  margin-top: var(--space-5);
+}
+
+.certRestItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+  padding-block: var(--space-3);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.certRestName {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.certRestMeta {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+@media (min-width: 64rem) {
+  .certLead {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-left: calc(var(--timeline-rail) + var(--space-6));
+  }
+
+  .certRest {
+    margin-left: calc(var(--timeline-rail) + var(--space-6));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Contact
+ * ------------------------------------------------------------------------ */
+
+.contact {
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-6);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background-color: var(--surface);
+  text-align: center;
+  justify-items: center;
+}
+
+.contactTitle {
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-display);
+  max-width: 20ch;
+}
+
+.contactText {
+  max-width: 46ch;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 48rem) {
+  .contact {
+    padding: var(--space-10) var(--space-8);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Footer
+ * ------------------------------------------------------------------------ */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-6) var(--space-8);
+  border-top: var(--border-width) solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.footerLinks {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.footerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.footerLink:hover {
+  color: var(--text-primary);
+}
+
+/* ---------------------------------------------------------------------------
+ * Preview notice
+ *
+ * Only exists on this branch. It labels the page as a proposal so it can never be
+ * mistaken for the live site.
+ * ------------------------------------------------------------------------ */
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--gutter);
+  background-color: var(--raised);
+  border-bottom: var(--border-width) solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.noticeBadge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: var(--weight-medium);
+}
+
+/* ---------------------------------------------------------------------------
+ * Case study
+ *
+ * The header repeats the card that links here — eyebrow, title, summary, tags,
+ * outcome — and the body follows in a single measure-wide column. There is no
+ * hero image: the projects on this site are networks and automations, and a
+ * stock-looking logo plate above the text was decoration standing in for
+ * evidence. The specifics carry the page instead.
+ * ------------------------------------------------------------------------ */
+
+.caseHeader {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  /*
+   * Clears the sticky header. Without the first value the title starts under the
+   * translucent bar and reads through it.
+   */
+  padding-block: clamp(2.5rem, 1.5rem + 5vw, 5rem) var(--space-6);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.backLink:hover {
+  color: var(--text-primary);
+}
+
+.backArrow {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.backLink:hover .backArrow {
+  transform: translateX(-3px);
+}
+
+/*
+ * The meta row is a flex line inside a grid whose items are start-aligned, so it
+ * has to opt back into the full column width — `justify-self`, the inline axis —
+ * or the hairline rule between the eyebrow and the year has no room to draw.
+ */
+.caseMeta {
+  justify-self: stretch;
+  margin-top: var(--space-2);
+}
+
+.caseTitle {
+  max-width: 20ch;
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-display);
+}
+
+.caseLead {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+  font-size: var(--text-md);
+}
+
+.caseOutcome {
+  justify-self: stretch;
+  max-width: var(--measure);
+  margin-top: var(--space-2);
+}
+
+.caseCredit {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.caseCreditLabel {
+  margin-right: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+}
+
+.caseCreditLink {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 0.2em;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.caseCreditLink:hover {
+  color: var(--accent);
+}
+
+.caseBody {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-8);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.caseFooter {
+  padding-bottom: var(--section-gap);
+}
+
+@media (min-width: 64rem) {
+  .caseTitle {
+    font-size: var(--text-3xl);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 404 and error
+ * ------------------------------------------------------------------------ */
+
+.notFound {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  padding-block: clamp(4rem, 2rem + 10vw, 9rem);
+}
+
+.notFoundCode {
+  font-family: var(--font-mono);
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-display);
+  color: var(--accent);
+}
+
+.notFoundLine {
+  font-size: var(--text-md);
+  color: var(--text-secondary);
+}
+
+.notFoundLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.notFoundLink:hover {
+  color: var(--accent);
+}
+
+.notFoundLink:hover .buttonArrow {
+  transform: translateX(3px);
+}

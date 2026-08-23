@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Open Graph card</title>
+    <!--
+      Source for public/og.png, the card shown when a link to this site is shared.
+
+      It is rendered to a PNG once, by hand, rather than generated per request.
+      The route that used to do that (`/og`) is gone: it built the card with
+      satori at request time, which meant a serverless function, a font file
+      loaded on every render, and — as it turned out — a 500, because satori
+      cannot read WOFF2 and the file it was handed was WOFF2. A static image has
+      none of those failure modes, costs nothing to serve, and is one of the
+      things that has to be true before the site can be exported statically.
+
+      To regenerate after a change here, from the repository root:
+
+        node scripts/generate-og.mjs
+
+      The colours below are the dark-theme values from src/styles/tokens.css.
+      They are literals because this file is rendered outside the app, where the
+      token stylesheet is not loaded; if the palette changes, change them here
+      too and re-render.
+    -->
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        src: url('../public/fonts/Inter.woff2') format('woff2');
+        font-weight: 100 900;
+        font-display: block;
+      }
+
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 1200px;
+        height: 630px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 72px;
+        background-color: #08090b;
+        background-image:
+          radial-gradient(600px 400px at 12% -10%, rgb(52 216 160 / 0.16), transparent 65%),
+          radial-gradient(500px 350px at 95% 10%, rgb(64 120 255 / 0.1), transparent 62%),
+          linear-gradient(to right, rgb(255 255 255 / 0.03) 1px, transparent 1px),
+          linear-gradient(to bottom, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+        background-size: auto, auto, 72px 72px, 72px 72px;
+        color: #f2f4f7;
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .wordmark {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 22px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #a8b0bd;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background-color: #34d8a0;
+      }
+
+      .headline {
+        /* Sized so the two authored lines each fit the 1056px content width. */
+        font-size: 64px;
+        line-height: 1.14;
+        letter-spacing: -0.035em;
+        font-weight: 600;
+      }
+
+      .accent {
+        color: #34d8a0;
+      }
+
+      .foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 32px;
+        border-top: 1px solid rgb(255 255 255 / 0.09);
+      }
+
+      .who {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .portrait {
+        width: 84px;
+        height: 84px;
+        border-radius: 999px;
+        object-fit: cover;
+        border: 1px solid rgb(255 255 255 / 0.14);
+      }
+
+      .role {
+        font-size: 30px;
+        color: #a8b0bd;
+      }
+
+      .site {
+        font-size: 26px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #6b7482;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wordmark"><span class="dot"></span>Peter Riemersma</div>
+
+    <p class="headline">
+      Networks that stay up,<br />
+      homes that <span class="accent">think for themselves.</span>
+    </p>
+
+    <div class="foot">
+      <div class="who">
+        <img class="portrait" src="../public/images/avatar.jpg" alt="" />
+        <span class="role">Network &amp; Security Engineering</span>
+      </div>
+      <span class="site">priemersma.nl</span>
+    </div>
+  </body>
+</html>

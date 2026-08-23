@@ -1,0 +1,212 @@
+/*
+ * Design tokens — "Signal"
+ *
+ * The single source of truth for colour, type, space, radius, elevation and motion.
+ * Every value used anywhere in the interface resolves to a token defined here, so a
+ * change to the design language is a change to this file and nothing else.
+ *
+ * Colour is defined twice: a dark palette on :root (the default) and a light palette
+ * inside a prefers-color-scheme block. Both are complete — light is a designed theme,
+ * not an inversion of dark.
+ */
+
+:root {
+  /* ---------------------------------------------------------------------------
+   * Type families
+   *
+   * `--font-sans` and `--font-mono` are injected by next/font as CSS variables.
+   * The fallback stacks are metric-adjacent so an unstyled first paint does not
+   * shift once the webfont resolves.
+   * ------------------------------------------------------------------------ */
+  --font-sans: var(--font-primary), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-code), ui-monospace, "SF Mono", "JetBrains Mono",
+    "Fira Code", "Roboto Mono", monospace;
+
+  /* ---------------------------------------------------------------------------
+   * Type scale
+   *
+   * Fluid between a 360px and a 1280px viewport, so sizes move continuously
+   * instead of jumping at breakpoints. The preferred term of each clamp is
+   * expressed in vw with a rem base, which keeps the scale responsive to the
+   * user's own font-size setting.
+   * ------------------------------------------------------------------------ */
+  --text-2xs: 0.6875rem; /* 11px — mono eyebrows and section numbers */
+  --text-xs: 0.75rem; /* 12px — mono tags and metadata */
+  --text-sm: 0.8125rem; /* 13px — captions */
+  --text-base: clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);
+  --text-md: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1.02rem + 0.5vw, 1.375rem);
+  --text-xl: clamp(1.375rem, 1.2rem + 0.85vw, 1.875rem);
+  --text-2xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.75rem);
+  --text-3xl: clamp(2.25rem, 1.5rem + 3.2vw, 4.25rem);
+
+  --leading-tight: 1.06;
+  --leading-snug: 1.22;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  /* Negative tracking at display sizes, positive on small mono labels. */
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.02em;
+  --tracking-normal: 0em;
+  --tracking-mono: 0.08em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* ---------------------------------------------------------------------------
+   * Space — a 4px base with a modular feel at the large end
+   * ------------------------------------------------------------------------ */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+  --space-9: 4rem;
+  --space-10: 5rem;
+  --space-11: 6.5rem;
+  --space-12: 8rem;
+
+  /* Vertical rhythm between major page sections, fluid like the type scale. */
+  --section-gap: clamp(4rem, 3rem + 5vw, 7.5rem);
+
+  /* ---------------------------------------------------------------------------
+   * Layout
+   * ------------------------------------------------------------------------ */
+  --measure: 64ch; /* comfortable line length for prose */
+  --content-width: 68rem;
+  --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 3rem);
+  /*
+   * Left rail widths. Sized to the longest label each rail has to hold without
+   * wrapping — a section label such as "02 / CAPABILITIES", and a timeline period
+   * such as "2024 — NOW" — rather than to a round number.
+   */
+  --rail-width: 7.5rem;
+  --timeline-rail: 8rem;
+
+  /* ---------------------------------------------------------------------------
+   * Radius and borders
+   * ------------------------------------------------------------------------ */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+  --border-width: 1px;
+
+  /* ---------------------------------------------------------------------------
+   * Motion
+   *
+   * One easing curve and three durations. Anything that needs a fourth is a sign
+   * the interaction is too elaborate.
+   * ------------------------------------------------------------------------ */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 700ms;
+
+  /* ---------------------------------------------------------------------------
+   * Colour — dark theme (default)
+   *
+   * The canvas is a near-black with a slight cool cast. Pure #000 reads as cheap
+   * on OLED and crushes the elevation scale; a hint of blue keeps the greys alive.
+   *
+   * Surfaces are layered: canvas < surface < raised. Text runs from `primary`
+   * (headings) through `secondary` (body) to `muted` (metadata).
+   * ------------------------------------------------------------------------ */
+  --canvas: #08090b;
+  --surface: #0d0f13;
+  --raised: #13161c;
+  --overlay: rgb(8 9 11 / 0.72);
+
+  --text-primary: #f2f4f7;
+  --text-secondary: #a8b0bd;
+  /*
+   * Metadata grey. Chosen for contrast, not for looks: it is used at 11px on the
+   * raised surface — tags, timeline periods, the footer — and the previous value
+   * (#6b7482) resolved to 3.9:1 there, under the 4.5:1 that text this size needs.
+   * This clears it on every surface in the theme, the lightest of which is
+   * `--raised`, at 4.9:1.
+   */
+  --text-muted: #7d8695;
+  --text-inverse: #08090b;
+
+  --border-subtle: rgb(255 255 255 / 0.07);
+  --border-default: rgb(255 255 255 / 0.11);
+  --border-strong: rgb(255 255 255 / 0.18);
+
+  /* One accent, used as an actual signal rather than decoration. */
+  --accent: #34d8a0;
+  --accent-strong: #5ce4b5;
+  --accent-muted: rgb(52 216 160 / 0.14);
+  --accent-border: rgb(52 216 160 / 0.32);
+  --accent-glow: rgb(52 216 160 / 0.18);
+  --accent-contrast: #04140e;
+
+  /* Ambient background wash, painted once and never animated. */
+  --ambient-a: rgb(52 216 160 / 0.1);
+  --ambient-b: rgb(64 120 255 / 0.07);
+  --grid-line: rgb(255 255 255 / 0.028);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 24px 48px -16px rgb(0 0 0 / 0.6);
+
+  color-scheme: dark;
+}
+
+/*
+ * Light theme.
+ *
+ * Warm-neutral rather than white, so long-form reading stays comfortable, with the
+ * accent darkened to hold its contrast ratio against a light background.
+ */
+@media (prefers-color-scheme: light) {
+  :root {
+    --canvas: #fbfbfa;
+    --surface: #ffffff;
+    --raised: #f4f4f2;
+    --overlay: rgb(251 251 250 / 0.78);
+
+    --text-primary: #14161a;
+    --text-secondary: #4a5058;
+    /* Same rule as in the dark theme, in the other direction: 5.0:1 on `--raised`. */
+    --text-muted: #626a75;
+    --text-inverse: #ffffff;
+
+    --border-subtle: rgb(20 22 26 / 0.07);
+    --border-default: rgb(20 22 26 / 0.12);
+    --border-strong: rgb(20 22 26 / 0.2);
+
+    /*
+     * The accent carries small mono labels — section numbers, the eyebrow on a
+     * card — at 11px, so it has to clear 4.5:1 against the lightest surface it
+     * sits on. The first value chosen here (#05875e) came to 4.37:1 on the page
+     * background: right on the line, and under it. This is 5.3:1 there and
+     * 4.9:1 on `--raised`.
+     */
+    --accent: #047953;
+    --accent-strong: #046b4b;
+    --accent-muted: rgb(4 121 83 / 0.09);
+    --accent-border: rgb(4 121 83 / 0.28);
+    --accent-glow: rgb(4 121 83 / 0.12);
+    --accent-contrast: #ffffff;
+
+    --ambient-a: rgb(4 121 83 / 0.07);
+    --ambient-b: rgb(64 120 255 / 0.05);
+    --grid-line: rgb(20 22 26 / 0.035);
+
+    --shadow-sm: 0 1px 2px rgb(20 22 26 / 0.06);
+    --shadow-md: 0 4px 16px -4px rgb(20 22 26 / 0.1);
+    --shadow-lg: 0 24px 48px -16px rgb(20 22 26 / 0.14);
+
+    color-scheme: light;
+  }
+}
