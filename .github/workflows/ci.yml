@@ -1,10 +1,14 @@
 # Continuous integration.
 #
-# The three checks a contributor can run locally, run again on every push and
-# pull request, plus a size budget. The budget is the one that needs explaining:
-# this site's whole argument is that a portfolio does not need much JavaScript,
-# and a claim like that decays silently. Failing the build when a page's CSS or
-# JavaScript grows past its budget is what keeps it true.
+# Cloudflare Pages builds this repository itself, from its own Git integration,
+# and it does not wait for this workflow. So CI is not a gate in front of a
+# deployment — it is the thing that has to notice a problem before Cloudflare
+# ships it, which only works if it builds what Cloudflare builds.
+#
+# That is why the build here runs the same command the Pages project's build
+# setting names, with `CONTACT_ENDPOINT` set the way the Pages project sets it.
+# Without that variable the contact page renders an email address instead of a
+# form, and every check below would pass on a build of a site with no form in it.
 name: CI
 
 on:
@@ -19,12 +23,18 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # What the Pages project sets, so the export CI checks is the export it serves.
+  CONTACT_ENDPOINT: /api/contact
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
+      # Matches the Node version in the Cloudflare Pages build image, and the
+      # one `--experimental-strip-types` needs to run the `.ts` files directly.
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -36,6 +46,9 @@ jobs:
       # declares CSS modules and the route types is generated, and generated
       # files are not committed, so a fresh clone has no such declarations and
       # `tsc` fails on every stylesheet import.
+      #
+      # It covers `functions/` as well as `src/`, which is the only check the
+      # Pages Function gets before Cloudflare bundles it.
       - name: Typecheck
         run: npm run typecheck
 
@@ -43,25 +56,29 @@ jobs:
         run: npm run lint
 
       # The contact endpoint is the only code here that runs per request and
-      # takes input from strangers, so it is the only code with tests.
+      # takes input from strangers, so it is the only code with unit tests.
       - name: Test
         run: npm test
 
+      # `next build` and `npm run build:static` are the same command; the second
+      # name exists because it is what the Pages project's build setting says.
       - name: Build
-        run: npm run build
+        run: npm run build:static
 
       - name: Size budget
         run: npm run size
 
-      # The site is on Vercel today and Cloudflare Pages next. Building the
-      # export on every pull request is what keeps that a decision rather than a
-      # project: whatever breaks a static build breaks here, months before
-      # anybody is mid-migration and wondering why.
-      - name: Static export
-        run: npm run build:static
-
+      # Reads the export as files: every page emitted, every internal link
+      # resolvable without a server, every redirect pointing somewhere real, and
+      # nothing loaded from an origin the Content-Security-Policy forbids.
       - name: Export check
         run: npm run check:export
+
+      # Reads it as a site: serves `out/` with Cloudflare's own path resolution,
+      # redirect rules and headers, and submits the contact form through the
+      # Function. Nothing is sent — the mail provider is stubbed.
+      - name: Smoke test
+        run: npm run smoke
 
       - name: Audit
         run: npm audit --audit-level=high
