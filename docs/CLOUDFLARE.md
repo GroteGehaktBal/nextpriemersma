@@ -8,10 +8,24 @@ switch is the last step, and it is a DNS change that can be undone.
 
 ---
 
+## 0. Merge first
+
+Cloudflare builds a branch of the repository, and the build command below —
+`npm run build:static` — only exists once this work is on `main`. So the pull
+request goes first.
+
+Merging changes nothing about the Vercel deployment: it still builds with
+`npm run build`, and the contact form stays invisible there because
+`CONTACT_ENDPOINT` is only set in the Cloudflare project.
+
 ## 1. Create the Pages project
 
-Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to
-Git**, and pick `GroteGehaktBal/nextpriemersma`.
+Cloudflare dashboard → **Compute** → **Workers & Pages** → **Create** →
+**Pages** → **Connect to Git**, and pick `GroteGehaktBal/nextpriemersma`.
+
+(The 2026 dashboard groups the sidebar into Observe / Build / Compute. Cloudflare's
+own documentation still writes this as "go to Workers & Pages"; it is the same
+page, one level in.)
 
 Build settings:
 
@@ -42,11 +56,30 @@ The form needs somewhere to send mail from. [Resend](https://resend.com) is what
 the code is written against: 3,000 emails a month and 100 a day on the free plan,
 which is a contact form several times over.
 
+Cloudflare has its own **Email Sending** in the sidebar, and it is tempting to use
+the platform you are already on. It is not free: it requires the Workers Paid
+plan at $5 a month, with 3,000 messages included. That is the whole reason the
+code targets Resend instead. If the site ever moves to a paid Workers plan for
+another reason, switching is one function in `src/lib/contact.ts`.
+
 1. Create an account and add **priemersma.nl** as a domain.
 2. Resend gives you three DNS records — an MX/TXT pair for the sending subdomain
    and a DKIM key. Add them in Cloudflare DNS. **Set them to DNS-only** (grey
    cloud, not orange) — proxying mail records breaks them.
 3. Wait for the domain to verify, then create an API key with send permission.
+
+`priemersma.nl` has no SPF, DKIM or DMARC record at all today. Resend's records
+add the first two for the subdomain it sends from. A DMARC record is worth the
+two minutes it takes on top:
+
+```
+Name: _dmarc      Type: TXT
+v=DMARC1; p=none; rua=mailto:peter@riemersmaict.nl
+```
+
+`p=none` changes nothing about delivery — it asks receiving servers to report
+what is being sent in your name. Read those for a few weeks before tightening it
+to `quarantine`.
 
 ## 3. Give the Pages project its settings
 
@@ -96,6 +129,33 @@ Add `priemersma.nl` and `www.priemersma.nl` as custom domains on the Pages
 project. Because the DNS is already at Cloudflare, this rewrites the records for
 you; propagation is minutes.
 
+### The second domain
+
+`riemersmaict.nl` points at the same site today. Two domains serving identical
+pages is worse than it looks: search engines pick one and treat the other as a
+duplicate, and which one they pick is not up to you. Every canonical tag, every
+`hreflang` and the whole sitemap in this repository name `priemersma.nl`, so the
+tidy arrangement is for the other domain to say the same thing at the HTTP level.
+
+Add it as a custom domain on the Pages project as well — that is what puts it
+behind Cloudflare's proxy, which a redirect rule needs — and then:
+
+**Rules** → **Redirect Rules** → **Create rule**
+
+| Field | Value |
+| --- | --- |
+| When incoming requests match | Hostname equals `riemersmaict.nl` (add a second `or` for `www.riemersmaict.nl`) |
+| Type | Dynamic |
+| Expression | `concat("https://priemersma.nl", http.request.uri.path)` |
+| Status | 301 |
+| Preserve query string | on |
+
+The free plan's allowance of redirect rules is small but this needs exactly one.
+
+**This does not touch mail.** A redirect rule acts on HTTP; `riemersmaict.nl`'s
+MX record and everything at `peter@riemersmaict.nl` keep working exactly as they
+do now.
+
 Then, in order:
 
 1. Watch the site on the real domain for a day.
@@ -115,6 +175,7 @@ Step 3 is a pull request, not a rush. Nothing breaks if it waits.
 | Locale negotiation | `src/proxy.ts`, reads Accept-Language | `_redirects`, always English |
 | Contact form | no endpoint | `functions/api/contact.ts` |
 | Analytics | Vercel's, unused here | Cloudflare Web Analytics, free, no cookie banner |
+| Second domain | two sites, one canonical | one 301, one site |
 
 The one real loss is in that fourth row: a static redirect cannot read a
 visitor's language preference, so the bare domain always goes to English. Doing
