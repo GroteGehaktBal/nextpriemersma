@@ -32,6 +32,10 @@ jobs:
 
       - run: npm ci
 
+      # `npm run typecheck` runs `next typegen` first. It has to: the file that
+      # declares CSS modules and the route types is generated, and generated
+      # files are not committed, so a fresh clone has no such declarations and
+      # `tsc` fails on every stylesheet import.
       - name: Typecheck
         run: npm run typecheck
 
