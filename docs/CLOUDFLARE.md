@@ -1,33 +1,20 @@
-# Moving to Cloudflare Pages
+# Cloudflare Pages
 
-Everything in the repository is ready for this. What is left is account setup,
-and it is all in a browser rather than in code.
+The site runs on Cloudflare Pages, built from this repository by Cloudflare's own
+Git integration. This is what that setup consists of, and what to do when a piece
+of it needs changing.
 
-The site is deployed on Vercel today and will keep working there throughout; the
-switch is the last step, and it is a DNS change that can be undone.
+The migration this file used to describe is done. What is left is operations.
 
 ---
 
-## 0. Merge first
+## 1. The Pages project
 
-Cloudflare builds a branch of the repository, and the build command below —
-`npm run build:static` — only exists once this work is on `main`. So the pull
-request goes first.
+Cloudflare dashboard → **Compute** → **Workers & Pages** → the project.
 
-Merging changes nothing about the Vercel deployment: it still builds with
-`npm run build`, and the contact form stays invisible there because
-`CONTACT_ENDPOINT` is only set in the Cloudflare project.
-
-## 1. Create the Pages project
-
-Cloudflare dashboard → **Compute** → **Workers & Pages** → **Create** →
-**Pages** → **Connect to Git**, and pick `GroteGehaktBal/nextpriemersma`.
-
-(The 2026 dashboard groups the sidebar into Observe / Build / Compute. Cloudflare's
-own documentation still writes this as "go to Workers & Pages"; it is the same
-page, one level in.)
-
-Build settings:
+(The 2026 dashboard groups the sidebar into Observe / Build / Compute.
+Cloudflare's own documentation still writes this as "go to Workers & Pages"; it
+is the same page, one level in.)
 
 | Setting | Value |
 | --- | --- |
@@ -36,41 +23,70 @@ Build settings:
 | Build output directory | `out` |
 | Root directory | `/` |
 
-The `functions/` directory at the repository root is picked up automatically —
-that is where the contact form's endpoint lives. Cloudflare generates a
-`_routes.json` from it so that only `/api/*` invokes a Function and every other
-request is served as a static asset, which is the difference between free and
-metered:
+`build:static` and `build` are the same command. The alias exists because it is
+what this project's build setting says, and changing a live build setting to save
+one line in `package.json` is not a trade worth making. Either name produces
+`out/`.
 
-- **Static assets** — unlimited requests, on the free plan.
-- **Functions** — counted against the Workers free allowance of 100,000 requests
-  a day. A contact form will not approach that.
+Three files in that directory are not pages, and Cloudflare treats each of them
+specially:
 
-`public/_redirects` is copied into `out/` by the build and does the job
-`src/proxy.ts` does on Vercel: sends `/about` to `/en/about`, the bare domain to
-a language, and the removed `/blog` and `/gallery` URLs somewhere useful.
+- **`_redirects`** — locale prefixes and the URLs the 2026 rebuild retired.
+- **`_headers`** — the Content-Security-Policy and the cache rules.
+- **`functions/`**, from the repository root rather than the output — Cloudflare
+  bundles it and generates a `_routes.json` so that only `/api/*` invokes a
+  Function and everything else is served as a static asset. That is the
+  difference between free and metered:
+  - **Static assets** — unlimited requests, on the free plan.
+  - **Functions** — counted against the Workers free allowance of 100,000
+    requests a day.
 
-## 2. Set up the mail account for the contact form
+### Node
 
-The form needs somewhere to send mail from. [Resend](https://resend.com) is what
-the code is written against: 3,000 emails a month and 100 a day on the free plan,
-which is a contact form several times over.
+The v3 build image runs Node 22, which is what this project needs and what CI
+uses. If Cloudflare ever changes that default, the build will fail on syntax
+rather than quietly run on the wrong version — the fix is an environment variable
+`NODE_VERSION` = `22` on the project, not a change in this repository.
 
-Cloudflare has its own **Email Sending** in the sidebar, and it is tempting to use
-the platform you are already on. It is not free: it requires the Workers Paid
-plan at $5 a month, with 3,000 messages included. That is the whole reason the
-code targets Resend instead. If the site ever moves to a paid Workers plan for
-another reason, switching is one function in `src/lib/contact.ts`.
+## 2. Environment variables
 
-1. Create an account and add **priemersma.nl** as a domain.
-2. Resend gives you three DNS records — an MX/TXT pair for the sending subdomain
-   and a DKIM key. Add them in Cloudflare DNS. **Set them to DNS-only** (grey
-   cloud, not orange) — proxying mail records breaks them.
-3. Wait for the domain to verify, then create an API key with send permission.
+Project → **Settings** → **Environment variables**, for both Production and
+Preview:
 
-`priemersma.nl` has no SPF, DKIM or DMARC record at all today. Resend's records
-add the first two for the subdomain it sends from. A DMARC record is worth the
-two minutes it takes on top:
+| Name | Value | Type |
+| --- | --- | --- |
+| `CONTACT_ENDPOINT` | `/api/contact` | plain text |
+| `CONTACT_TO` | where the messages should arrive | plain text |
+| `CONTACT_FROM` | `priemersma.nl <form@priemersma.nl>` | plain text |
+| `RESEND_API_KEY` | the key from step 3 | **secret** |
+
+`RESEND_API_KEY` is a secret, not plain text. The difference is that a secret
+cannot be read back out of the dashboard afterwards — which is the point, and
+also means the only way to change it is to replace it.
+
+`CONTACT_ENDPOINT` is read at build time and decides what the contact page
+renders: set, it renders the form; unset, it renders the email address instead.
+CI sets it too, so what CI checks is what the project builds.
+
+`CONTACT_FROM` must be at a domain Resend has verified. It cannot be the
+visitor's own address — that fails SPF and lands in spam — which is why their
+address goes in `reply_to` instead, so replying still reaches them.
+
+## 3. The mail account
+
+[Resend](https://resend.com): 3,000 emails a month and 100 a day on the free
+plan.
+
+Cloudflare has its own **Email Sending** in the sidebar, and it is tempting to
+use the platform you are already on. It is not free: it requires the Workers Paid
+plan at $5 a month. That is the whole reason the code targets Resend instead. If
+the site ever moves to a paid Workers plan for another reason, switching is one
+function in `src/lib/contact.ts`.
+
+The DNS records Resend asks for live in Cloudflare DNS and must be **DNS-only**
+(grey cloud, not orange) — proxying mail records breaks them.
+
+A DMARC record is worth the two minutes it takes on top:
 
 ```
 Name: _dmarc      Type: TXT
@@ -81,64 +97,58 @@ v=DMARC1; p=none; rua=mailto:peter@riemersmaict.nl
 what is being sent in your name. Read those for a few weeks before tightening it
 to `quarantine`.
 
-## 3. Give the Pages project its settings
+## 4. Rate limiting the contact form
 
-Pages project → **Settings** → **Environment variables**, for both Production and
-Preview:
+**This one is worth doing, and it is not done by anything in this repository.**
 
-| Name | Value | Type |
-| --- | --- | --- |
-| `CONTACT_ENDPOINT` | `/api/contact` | plain text |
-| `CONTACT_TO` | where the messages should arrive | plain text |
-| `CONTACT_FROM` | `priemersma.nl <form@priemersma.nl>` | plain text |
-| `RESEND_API_KEY` | the key from step 2 | **secret** |
+The Function has no memory between requests, and the storage that would give it
+one is a paid binding. So it can refuse a malformed submission, an oversized one
+and one posted from another site — all of which it does — but it cannot notice
+that the same address has sent four hundred messages in a minute. Nothing in the
+code can.
 
-`CONTACT_ENDPOINT` is read at build time and decides what the contact page
-renders: set, it renders the form; unset, it renders the email address instead.
-That is why the form does not appear on the Vercel deployment, where there is no
-endpoint to post to.
+The number that matters is not Cloudflare's. Workers allows 100,000 requests a
+day; Resend's free plan allows **100 emails a day**. A script can spend the whole
+mail quota in under a minute and the form is then down for everyone until
+midnight, with no error anywhere except in the logs.
 
-`CONTACT_FROM` must be at a domain Resend has verified. It cannot be the
-visitor's own address — that fails SPF and lands in spam — which is why their
-address goes in `reply_to` instead, so replying still reaches them.
+The free plan includes exactly one rate limiting rule. Spend it here.
 
-## 4. Check the preview
+Dashboard → the `priemersma.nl` zone → **Security rules** → **Create rule** →
+**Rate limiting rule**:
 
-Cloudflare gives the project a `*.pages.dev` address. Before touching DNS, walk
-through it:
+| Field | Value |
+| --- | --- |
+| Rule name | `contact form` |
+| When incoming requests match | URI Path **equals** `/api/contact` |
+| … and | Request Method **equals** `POST` |
+| Characteristics | IP with NAT support (the default) |
+| Rate | 5 requests per 10 seconds — or the shortest period the plan offers |
+| Action | Block |
 
-- `/` redirects to `/en`, and `/about` to `/en/about`.
-- `/blog` and `/gallery` land on the home page rather than a 404.
-- Both languages, and the language switch staying on the same page.
-- Send yourself a message through the form, and reply to it — the reply should go
-  to the address you filled in, not to your own.
+Five in ten seconds is far above anything a person filling in a form produces and
+far below what a script needs to be worth writing. The free plan restricts which
+periods and durations are selectable, so take what the dashboard offers rather
+than matching this table exactly.
 
-The same walk can be done locally first, without an account:
+### What this does not do
 
-```bash
-CONTACT_DRY_RUN=1 CONTACT_ENDPOINT=/api/contact npm run build:static
-CONTACT_DRY_RUN=1 npm run serve:static     # http://localhost:4000
-```
+A distributed flood from many addresses walks past a per-IP limit. The honest
+answer to that is [Turnstile](https://developers.cloudflare.com/turnstile/), which
+is free and unlimited — and which needs a script tag on the contact page. This
+site ships no JavaScript at all, so adding it is a real trade rather than a free
+win. It is the right next step if the form ever actually gets abused, and not
+before.
 
-That serves `out/` with Cloudflare's own path resolution and redirect rules, runs
-the Function, and prints the email to the terminal instead of sending it.
+## 5. Domains
 
-## 5. Move the domain
+`priemersma.nl` and `www.priemersma.nl` are custom domains on the Pages project.
 
-Add `priemersma.nl` and `www.priemersma.nl` as custom domains on the Pages
-project. Because the DNS is already at Cloudflare, this rewrites the records for
-you; propagation is minutes.
-
-### The second domain
-
-`riemersmaict.nl` points at the same site today. Two domains serving identical
+`riemersmaict.nl` points at the same site, and two domains serving identical
 pages is worse than it looks: search engines pick one and treat the other as a
 duplicate, and which one they pick is not up to you. Every canonical tag, every
 `hreflang` and the whole sitemap in this repository name `priemersma.nl`, so the
-tidy arrangement is for the other domain to say the same thing at the HTTP level.
-
-Add it as a custom domain on the Pages project as well — that is what puts it
-behind Cloudflare's proxy, which a redirect rule needs — and then:
+other domain says the same thing at the HTTP level:
 
 **Rules** → **Redirect Rules** → **Create rule**
 
@@ -150,35 +160,45 @@ behind Cloudflare's proxy, which a redirect rule needs — and then:
 | Status | 301 |
 | Preserve query string | on |
 
-The free plan's allowance of redirect rules is small but this needs exactly one.
-
 **This does not touch mail.** A redirect rule acts on HTTP; `riemersmaict.nl`'s
 MX record and everything at `peter@riemersmaict.nl` keep working exactly as they
 do now.
 
-Then, in order:
+## 6. After a deploy
 
-1. Watch the site on the real domain for a day.
-2. Remove the domain from the Vercel project.
-3. Delete `src/proxy.ts` and the `redirects()` block in `next.config.mjs`, which
-   exist only for Vercel, and drop `STATIC_EXPORT` — the export becomes the only
-   build. Keep `npm run check:export` in CI.
+Almost all of this is checked before a merge — `npm run check:export` reads the
+export as files and `npm run smoke` reads it as a site, both in CI. What is worth
+looking at on the real domain is the part CI cannot have an opinion about:
 
-Step 3 is a pull request, not a rush. Nothing breaks if it waits.
+- Send yourself a message through the form, and **reply to it**. The reply should
+  go to the address you filled in, not to your own.
+- `/` lands on `/en`, and the language switch stays on the same page.
 
-## What changes for you
+The whole of the rest can be rehearsed locally, without an account:
 
-| | Vercel | Cloudflare Pages |
-| --- | --- | --- |
-| Static requests | metered by plan | unlimited, free |
-| Commercial use on the free plan | not permitted | permitted |
-| Locale negotiation | `src/proxy.ts`, reads Accept-Language | `_redirects`, always English |
-| Contact form | no endpoint | `functions/api/contact.ts` |
-| Analytics | Vercel's, unused here | Cloudflare Web Analytics, free, no cookie banner |
-| Second domain | two sites, one canonical | one 301, one site |
+```bash
+npm run build && npm run smoke     # asserts it
+npm run serve:static               # http://localhost:4000, to look at it
+```
 
-The one real loss is in that fourth row: a static redirect cannot read a
-visitor's language preference, so the bare domain always goes to English. Doing
-it properly needs a Worker in front of the site, which is worth it only if the
-analytics ever show it matters. Anyone who wants Dutch is one click away in the
-header, and every link that names a language keeps working.
+`serve:static` reads `_redirects` and `_headers` and runs the Function the way
+Cloudflare does. With `CONTACT_DRY_RUN=1` the mail is printed to the terminal
+instead of sent:
+
+```bash
+CONTACT_DRY_RUN=1 CONTACT_ENDPOINT=/api/contact npm run build
+CONTACT_DRY_RUN=1 npm run serve:static
+```
+
+## 7. What is no longer here
+
+The site was on Vercel until August 2026. Three things existed only for that and
+are gone: `src/proxy.ts`, which negotiated a locale from `Accept-Language`; the
+`redirects()` block in `next.config.mjs`, which needed a server to run in; and
+the `STATIC_EXPORT` flag that made the export optional.
+
+The one real loss is the first: a static redirect cannot read a visitor's
+language preference, so the bare domain always goes to English. Doing it properly
+needs a Worker in front of the site, which is worth it only if the analytics ever
+show it matters. Anyone who wants Dutch is one click away in the header, and
+every link that names a language keeps working.
