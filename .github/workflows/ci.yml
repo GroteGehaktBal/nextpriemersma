@@ -15,6 +15,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Cloudflare deploys on its own schedule rather than this one, so being able to
+  # re-run these checks against a branch without pushing to it is worth the line.
+  workflow_dispatch:
 
 permissions:
   contents: read
