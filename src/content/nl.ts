@@ -80,7 +80,6 @@ const profile: Profile = {
     'Student Network & Security Engineering aan de Hanzehogeschool, mede-eigenaar van pyxels en freelancer bij Riemersma ICT. CCNA-gecertificeerd, en acht maanden lang hield ik het datacenter van Google in de Eemshaven draaiende.',
   availability: 'Open voor freelance- en domoticaopdrachten',
   email: 'peter@riemersmaict.nl',
-  phone: '+31 6 15 93 90 10',
   github: 'https://github.com/grotegehaktbal',
   linkedin: 'https://www.linkedin.com/in/peter-riemersma/',
 };

@@ -146,7 +146,6 @@ export interface Profile {
   subline: string;
   availability: string;
   email: string;
-  phone: string;
   github: string;
   linkedin: string;
 }
