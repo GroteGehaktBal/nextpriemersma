@@ -19,8 +19,8 @@ import { LocaleSwitchScript } from '@/components/site/LocaleSwitchScript';
  *
  *  - `RouteGuard`, a client component that wrapped every page and started in a
  *    loading state. Because that was its initial state, the pre-rendered HTML
- *    Vercel served contained a spinner and none of the page. Disabled routes are
- *    a build-time decision now, handled by `generateStaticParams`.
+ *    contained a spinner and none of the page. Disabled routes are a build-time
+ *    decision now, handled by `generateStaticParams`.
  *  - `<Background>`, which registered a mousemove listener and a
  *    requestAnimationFrame loop calling React setState on every frame, forever,
  *    to move a decorative gradient. The ambient wash is CSS now: painted once.
