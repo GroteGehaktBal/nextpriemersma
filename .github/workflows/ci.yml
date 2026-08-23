@@ -42,6 +42,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # The contact endpoint is the only code here that runs per request and
+      # takes input from strangers, so it is the only code with tests.
+      - name: Test
+        run: npm test
+
       - name: Build
         run: npm run build
 

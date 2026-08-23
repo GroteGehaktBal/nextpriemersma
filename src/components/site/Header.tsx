@@ -18,7 +18,7 @@ export function Header({ content, locale }: { content: Content; locale: string }
   const nav = [
     { href: localePath(locale, '/work'), label: ui.nav.work },
     { href: localePath(locale, '/about'), label: ui.nav.background },
-    { href: `mailto:${profile.email}`, label: ui.nav.contact },
+    { href: localePath(locale, '/contact'), label: ui.nav.contact },
   ];
 
   return (

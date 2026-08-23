@@ -78,6 +78,17 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+/**
+ * Two locales, and nothing else.
+ *
+ * Without this, `[locale]` matches anything: a request for `/api/contact` on a
+ * server that has no such route renders the contact page with `lang="api"` and a
+ * 200, because "api" was accepted as a language. The site has exactly the pages
+ * listed above, and every other path is a 404 — which is also what it will be
+ * once the export is the only build, since a file either exists or it does not.
+ */
+export const dynamicParams = false;
+
 export default async function RootLayout(props: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;

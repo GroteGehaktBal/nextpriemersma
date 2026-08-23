@@ -150,6 +150,17 @@
   --accent-glow: rgb(52 216 160 / 0.18);
   --accent-contrast: #04140e;
 
+  /*
+   * The one colour that is not the accent.
+   *
+   * A form error rendered in the accent reads as a success message — the shape
+   * of the box and the colour both say "done". This is used for the border and a
+   * wash behind it; the text itself stays `--text-primary`, so nothing depends
+   * on this value clearing a contrast ratio.
+   */
+  --danger: #ff7a6b;
+  --danger-muted: rgb(255 122 107 / 0.12);
+
   /* Ambient background wash, painted once and never animated. */
   --ambient-a: rgb(52 216 160 / 0.1);
   --ambient-b: rgb(64 120 255 / 0.07);
@@ -198,6 +209,9 @@
     --accent-border: rgb(4 121 83 / 0.28);
     --accent-glow: rgb(4 121 83 / 0.12);
     --accent-contrast: #ffffff;
+
+    --danger: #c02a1d;
+    --danger-muted: rgb(192 42 29 / 0.08);
 
     --ambient-a: rgb(4 121 83 / 0.07);
     --ambient-b: rgb(64 120 255 / 0.05);

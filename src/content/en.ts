@@ -54,6 +54,21 @@ const ui: Ui = {
     certifications: 'Certifications',
     certificationsLead: 'Cisco CCNA first, then the rest in full.',
   },
+  contactPage: {
+    title: 'Get in touch',
+    lead: 'A network, a house, or something that stopped working the way it used to — tell me what you have and I will come back to you.',
+    nameLabel: 'Your name',
+    emailLabel: 'Your email address',
+    messageLabel: 'Your message',
+    submit: 'Send message',
+    honeypotLabel: 'Leave this field empty',
+    error:
+      'That did not go through. Check your email address and your message and try again — or email me directly at the address below.',
+    directLabel: 'Or reach me directly',
+    thanksTitle: 'Message sent',
+    thanksBody: 'Thank you — it has arrived, and I will reply as soon as I can.',
+    thanksBack: 'Back to the home page',
+  },
   skipToContent: 'Skip to content',
   notFound: 'This page does not exist — back to the home page',
   caseStudy: {

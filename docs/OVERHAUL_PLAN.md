@@ -680,12 +680,12 @@ hosting change and nothing else.
 
 1. **The move itself**: point Cloudflare Pages at the repository with
    `npm run build:static` and `out/`, check the preview, then move DNS.
-2. **A contact form**, which needs a Pages Function and an email provider — the
-   one thing on this site that cannot be a file.
-3. **Font payload.** 68.8 KB gzipped for Inter and Source Code Pro is now the
+   [`docs/CLOUDFLARE.md`](CLOUDFLARE.md) has the steps, including the accounts
+   and DNS records that cannot be done from here.
+2. **Font payload.** 68.8 KB gzipped for Inter and Source Code Pro is now the
    single largest asset on a page. Subsetting, or dropping to one weight of the
    mono face, is the remaining win.
-4. **Case-study copy.** The `pyxels` page is still one line of body text, carried
+3. **Case-study copy.** The `pyxels` page is still one line of body text, carried
    by the summary, stack and outcome from the content model. Riemersma ICT has
    been rewritten; pyxels is waiting on Peter.
 

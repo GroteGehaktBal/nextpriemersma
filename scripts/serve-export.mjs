@@ -16,6 +16,18 @@
  *  - Path resolution: the exact file, then the path with `.html` appended, then
  *    `index.html` inside the directory.
  *  - A miss serves `404.html` with a 404 status, rather than a bare error.
+ *  - `/api/contact` runs the Pages Function, so the contact form can be
+ *    submitted here exactly as it will be in production.
+ *
+ * With `CONTACT_DRY_RUN=1` the call to the mail provider is answered locally
+ * instead of sent, which makes the whole path — form, redirect, confirmation —
+ * walkable without an account or an API key:
+ *
+ *   CONTACT_DRY_RUN=1 CONTACT_ENDPOINT=/api/contact npm run build:static
+ *   CONTACT_DRY_RUN=1 npm run serve:static
+ *
+ * The stub lives here rather than in the Function, so nothing about production
+ * behaviour depends on a switch that only this file knows about.
  *
  * It is a development tool, not part of the build.
  */
@@ -24,6 +36,8 @@ import { createServer } from 'node:http';
 import { createReadStream } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
+
+import { onRequestGet, onRequestPost } from '../functions/api/contact.ts';
 
 const ROOT = path.resolve('out');
 const PORT = Number(process.env.PORT ?? 4000);
@@ -97,8 +111,49 @@ async function resolve(pathname) {
 
 const redirects = await loadRedirects();
 
+if (process.env.CONTACT_DRY_RUN === '1') {
+  const send = globalThis.fetch;
+
+  globalThis.fetch = async (input, init) => {
+    const url = typeof input === 'string' ? input : input.url;
+    if (!url.startsWith('https://api.resend.com/')) return send(input, init);
+
+    const request = typeof input === 'string' ? new Request(input, init) : input;
+    console.log('\n— dry run, this mail was not sent —');
+    console.log(await request.text());
+    return new Response(JSON.stringify({ id: 'dry-run' }), { status: 200 });
+  };
+}
+
+/** Runs the Pages Function, the way Cloudflare routes `/api/*` to it. */
+async function handleFunction(request) {
+  if (request.method === 'POST') return onRequestPost({ request, env: process.env });
+  if (request.method === 'GET') return onRequestGet();
+
+  return new Response('Method not allowed', { status: 405 });
+}
+
+/** Rebuilds the incoming Node request as a standard `Request`. */
+async function toRequest(nodeRequest) {
+  const chunks = [];
+  for await (const chunk of nodeRequest) chunks.push(chunk);
+
+  return new Request(`http://localhost${nodeRequest.url}`, {
+    method: nodeRequest.method,
+    headers: nodeRequest.headers,
+    body: chunks.length > 0 ? Buffer.concat(chunks) : undefined,
+  });
+}
+
 createServer(async (request, response) => {
   const { pathname } = new URL(request.url, 'http://localhost');
+
+  if (pathname.startsWith('/api/')) {
+    const result = await handleFunction(await toRequest(request));
+    response.writeHead(result.status, Object.fromEntries(result.headers));
+    response.end(await result.text());
+    return;
+  }
 
   for (const rule of redirects) {
     const target = match(rule, pathname);

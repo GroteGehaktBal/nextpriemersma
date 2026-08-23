@@ -102,6 +102,29 @@ export interface Ui {
    * above it naming the language.
    */
   notFound: string;
+  /**
+   * The contact page and its form.
+   *
+   * Separate from `sections.contact`, which is the closing call to action at the
+   * foot of every other page: that one invites, this one is the thing itself.
+   */
+  contactPage: {
+    title: string;
+    lead: string;
+    nameLabel: string;
+    emailLabel: string;
+    messageLabel: string;
+    submit: string;
+    /** Label on the field only a bot fills in — hidden from everyone else. */
+    honeypotLabel: string;
+    /** Shown when the form comes back marked as failed. */
+    error: string;
+    /** Introduces the direct email address under the form. */
+    directLabel: string;
+    thanksTitle: string;
+    thanksBody: string;
+    thanksBack: string;
+  };
   /** Copy that appears only on a case-study page. */
   caseStudy: {
     /** Back link to the work index, shown above the title. */

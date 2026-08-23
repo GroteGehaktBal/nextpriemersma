@@ -21,13 +21,16 @@ export const config = {
   matcher: [
     '/',
     /*
-     * Everything except Next internals, files with an extension, and `/og`.
+     * Everything except Next internals, files with an extension, and paths that
+     * have no locale of their own.
      *
-     * `/og` renders the Open Graph card and has no locale segment of its own.
-     * Without the exclusion this handler redirected it to `/en/og`, which does
-     * not exist — so every social preview for this site resolved to a 404.
+     * `/og` was the reason this list exists: it rendered the Open Graph card,
+     * and without the exclusion the handler redirected it to `/en/og`, which
+     * does not exist — so every social preview resolved to a 404. That route is
+     * gone, and `/api` has taken its place: the contact form posts there, and it
+     * is a Cloudflare Function rather than a page in either language.
      */
-    '/((?!_next|_vercel|og|.*\\..*).*)',
+    '/((?!api|_next|_vercel|og|.*\\..*).*)',
     '/(en|nl)/:path*',
   ],
 };

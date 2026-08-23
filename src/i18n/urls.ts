@@ -25,7 +25,7 @@ export const ORIGIN = 'https://priemersma.nl';
  * the guard is gone, and a disabled route is now simply a route that does not
  * exist.
  */
-export const SITE_PAGES = ['', '/about', '/work'] as const;
+export const SITE_PAGES = ['', '/about', '/work', '/contact'] as const;
 
 /**
  * The card shown when a link to this site is shared.
