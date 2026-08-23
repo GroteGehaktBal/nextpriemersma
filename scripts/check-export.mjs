@@ -24,7 +24,15 @@ import path from 'node:path';
 
 const OUT = 'out';
 
-/** Pages that must exist for the site to be servable at all. */
+/**
+ * Pages that must exist for the site to be servable at all.
+ *
+ * `contact/thanks` is on this list for a reason the others are not: nothing
+ * links to it. It is reached only by the redirect the contact Function answers
+ * with, so the link check below can never notice its absence — and the way that
+ * would surface is a visitor pressing Send and landing on a 404, having already
+ * sent the message.
+ */
 const REQUIRED = [
   'en.html',
   'nl.html',
@@ -32,6 +40,10 @@ const REQUIRED = [
   'nl/about.html',
   'en/work.html',
   'nl/work.html',
+  'en/contact.html',
+  'nl/contact.html',
+  'en/contact/thanks.html',
+  'nl/contact/thanks.html',
   '404.html',
   'robots.txt',
   'sitemap.xml',

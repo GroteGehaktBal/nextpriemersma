@@ -9,8 +9,12 @@ dependencies. About a kilobyte of page-specific JavaScript.
 
 ## Running it
 
-Requires Node.js 20 or newer. Nothing has to be configured to run the site; the
-contact form is the one part that needs settings, and it is off without them.
+Requires **Node.js 22 or newer** — `npm test` and `npm run serve:static` load
+TypeScript directly with `--experimental-strip-types`, which Node 20 does not
+have. CI runs 22 for the same reason.
+
+Nothing has to be configured to run the site; the contact form is the one part
+that needs settings, and it is off without them.
 
 ```bash
 npm install
