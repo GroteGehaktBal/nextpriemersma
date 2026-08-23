@@ -1,0 +1,38 @@
+# Redirects for Cloudflare Pages.
+#
+# A static export has no proxy, and `src/proxy.ts` is doing two jobs that have to
+# survive the move: sending a visitor from an unprefixed URL to a language, and
+# keeping the URLs this site published before the 2026 rebuild working. Every one
+# of those is a line below. `npm run check:export` fails if any destination here
+# was never built.
+#
+# Format: <from> <to> <status>. First match wins, so the specific rules come
+# before the catch-alls.
+
+# The bare domain. A 302 rather than a 301 because which language a first-time
+# visitor should get is a decision that may change — and a 301 is cached by the
+# browser forever, which would make changing it impossible for anyone who has
+# been here once.
+#
+# This is the one thing the export cannot do as well as the proxy did: static
+# rules cannot read Accept-Language, so everyone lands on English and switches
+# from the header if they want Dutch. Doing it properly needs a Worker, which is
+# worth it only if the analytics ever say it matters.
+/                    /en             302
+
+# URLs from before the rebuild, when English had no prefix. These have genuinely
+# moved, so 301.
+/about               /en/about       301
+/work                /en/work        301
+/work/*              /en/work/:splat 301
+
+# The blog and the gallery are gone. Their links are not.
+/blog                /en             301
+/blog/*              /en             301
+/gallery             /en             301
+/en/blog             /en             301
+/en/blog/*           /en             301
+/nl/blog             /nl             301
+/nl/blog/*           /nl             301
+/en/gallery          /en             301
+/nl/gallery          /nl             301

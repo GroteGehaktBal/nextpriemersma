@@ -3,6 +3,15 @@ import { routing } from '@/i18n/routing';
 import { SITE_PAGES, localeUrl } from '@/i18n/urls';
 
 /**
+ * Emitted as a file at build time.
+ *
+ * Without this, a static export refuses to build: Next cannot know whether a
+ * route handler is safe to run once at build time unless it is told, and these
+ * two read nothing that changes between requests.
+ */
+export const dynamic = 'force-static';
+
+/**
  * Sitemap for both locales.
  *
  * Every URL is absolute and locale-prefixed, which is what `localeUrl` is for:

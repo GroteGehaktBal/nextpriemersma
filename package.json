@@ -1,13 +1,21 @@
 {
   "name": "priemersma",
   "version": "3.6.1",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
-    "size": "node scripts/size-budget.mjs"
+    "size": "node scripts/size-budget.mjs",
+    "build:static": "STATIC_EXPORT=1 next build",
+    "check:export": "node scripts/check-export.mjs",
+    "serve:static": "node --experimental-strip-types scripts/serve-export.mjs",
+    "test": "node --experimental-strip-types scripts/test-contact.mjs"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

@@ -9,8 +9,12 @@ dependencies. About a kilobyte of page-specific JavaScript.
 
 ## Running it
 
-Requires Node.js 20 or newer. There is nothing to configure — no environment
-variables, no API keys, no services.
+Requires **Node.js 22 or newer** — `npm test` and `npm run serve:static` load
+TypeScript directly with `--experimental-strip-types`, which Node 20 does not
+have. CI runs 22 for the same reason.
+
+Nothing has to be configured to run the site; the contact form is the one part
+that needs settings, and it is off without them.
 
 ```bash
 npm install
@@ -24,10 +28,48 @@ npm run dev        # http://localhost:3000/en
 | `npm run start` | Serve the production build |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript, no emit |
+| `npm test` | Tests for the contact endpoint |
 | `npm run size` | Size budget, against the last build |
+| `npm run build:static` | Static export to `out/`, for Cloudflare Pages |
+| `npm run check:export` | Verifies that export: pages, links, redirects |
+| `npm run serve:static` | Serves `out/` the way Cloudflare Pages would |
 
-CI runs typecheck, lint, build, the size budget and `npm audit` on every push and
-pull request.
+CI runs typecheck, lint, build, the size budget, the static export and its check,
+and `npm audit` on every push and pull request.
+
+## Hosting
+
+The site is deployed on Vercel and builds equally well as a static export, which
+is what Cloudflare Pages will serve. The difference between the two is one file:
+`src/proxy.ts` negotiates the locale for an unprefixed URL on Vercel, and
+`public/_redirects` does the same job as static rules on Cloudflare. Both are
+built in CI, and `npm run serve:static` runs the export locally with Cloudflare's
+own path resolution and redirect handling, so the move can be rehearsed before it
+happens.
+
+[`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md) is the step-by-step for that move.
+
+## The contact form
+
+`/contact` renders a form when `CONTACT_ENDPOINT` is set, and the email address
+when it is not. That is not a feature flag so much as a fact about where the site
+is hosted: the endpoint is a Cloudflare Pages Function in `functions/api/`, and
+on Vercel it does not exist. A form posting into a 404 is worse than no form.
+
+It is a plain `<form method="post">`. The Function validates the submission,
+hands it to [Resend](https://resend.com), and answers with a redirect — to a
+confirmation page, or back to the form with `#error`, where CSS `:target` reveals
+the message. No JavaScript is involved at any point, and none is shipped.
+
+The submitter's address goes in `reply_to` rather than `from`, so replying
+reaches them while the mail is still sent from a domain that passes SPF. A
+honeypot field, hidden off-screen rather than with `type="hidden"`, catches the
+bots that fill in everything they can see; they are told the message went
+through, which teaches them nothing.
+
+`npm test` exercises all of it — including the paths that matter most, where the
+provider rejects the mail or the network fails, and the form must not claim
+success. Setup is in [`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md).
 
 ## How it is put together
 
@@ -38,10 +80,12 @@ src/
 ├── content/               # site copy: types.ts, en.ts, nl.ts, case-studies.ts
 ├── components/site/       # header, footer, page sections, MDX rendering
 ├── components/ui/         # inline SVG icons
+├── lib/                   # the contact form's logic, with no runtime of its own
 ├── styles/                # tokens.css, base.css, motion.css
 └── i18n/                  # routing config and URL construction
 
-scripts/                   # size budget, and the source of the link-preview image
+functions/api/             # Cloudflare Pages Functions — the contact endpoint
+scripts/                   # size budget, tests, tooling, the link-preview source
 ```
 
 **Content lives in `src/content`**, as typed TypeScript rather than JSON. Both

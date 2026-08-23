@@ -58,6 +58,21 @@ const ui: Ui = {
     certifications: 'Certificeringen',
     certificationsLead: 'Cisco CCNA eerst, daarna de rest volledig.',
   },
+  contactPage: {
+    title: 'Neem contact op',
+    lead: 'Een netwerk, een huis, of iets dat het niet meer doet zoals het hoort — vertel wat er speelt, dan laat ik van me horen.',
+    nameLabel: 'Je naam',
+    emailLabel: 'Je e-mailadres',
+    messageLabel: 'Je bericht',
+    submit: 'Verstuur bericht',
+    honeypotLabel: 'Laat dit veld leeg',
+    error:
+      'Het versturen is niet gelukt. Controleer je e-mailadres en je bericht en probeer het opnieuw — of mail me direct op het adres hieronder.',
+    directLabel: 'Of mail me direct',
+    thanksTitle: 'Bericht verstuurd',
+    thanksBody: 'Dank je — het is aangekomen, en ik reageer zo snel als ik kan.',
+    thanksBack: 'Terug naar de homepagina',
+  },
   skipToContent: 'Naar de inhoud',
   notFound: 'Deze pagina bestaat niet — terug naar de homepagina',
   caseStudy: {
