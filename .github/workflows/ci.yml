@@ -1,0 +1,48 @@
+# Continuous integration.
+#
+# The three checks a contributor can run locally, run again on every push and
+# pull request, plus a size budget. The budget is the one that needs explaining:
+# this site's whole argument is that a portfolio does not need much JavaScript,
+# and a claim like that decays silently. Failing the build when a page's CSS or
+# JavaScript grows past its budget is what keeps it true.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Size budget
+        run: npm run size
+
+      - name: Audit
+        run: npm audit --audit-level=high

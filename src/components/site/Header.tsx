@@ -36,6 +36,22 @@ export function Header({ content, locale }: { content: Content; locale: string }
         ))}
       </nav>
 
+      {/*
+        The language switch.
+        
+        Each link points at the other language's home page, which is what it
+        resolves to with JavaScript off. `LocaleSwitchScript` in the layout
+        rewrites the two hrefs to the current page in the other language — the
+        slugs are identical across locales, so `/nl/work/pyxels` maps to
+        `/en/work/pyxels` by swapping one segment.
+
+        Why a script and not a server computation: the header renders in the
+        layout, and a layout is not told which page is below it. The alternatives
+        were reading the request headers, which stops every page being static, or
+        rendering the header separately in each page, which is a foot-gun for the
+        next page anyone adds. This costs a few hundred bytes and degrades to a
+        working link.
+      */}
       <nav className={styles.localeSwitch} aria-label={ui.languageLabel}>
         {routing.locales.map((l) => (
           <a
@@ -44,6 +60,7 @@ export function Header({ content, locale }: { content: Content; locale: string }
             href={localePath(l)}
             hrefLang={l}
             lang={l}
+            data-locale-switch={l}
             aria-current={l === locale ? 'page' : undefined}
           >
             {l.toUpperCase()}

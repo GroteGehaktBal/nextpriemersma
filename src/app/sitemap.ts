@@ -1,4 +1,4 @@
-import { getPosts } from '@/app/utils/utils';
+import { getCaseStudies } from '@/content/case-studies';
 import { routing } from '@/i18n/routing';
 import { SITE_PAGES, localeUrl } from '@/i18n/urls';
 
@@ -21,9 +21,9 @@ export default function sitemap() {
   );
 
   const caseStudies = routing.locales.flatMap((locale) =>
-    getPosts('work/projects', locale).map((post) => ({
-      url: localeUrl(locale, `/work/${post.slug}`),
-      lastModified: post.metadata.publishedAt,
+    getCaseStudies(locale).map((study) => ({
+      url: localeUrl(locale, `/work/${study.slug}`),
+      lastModified: study.publishedAt,
     }))
   );
 

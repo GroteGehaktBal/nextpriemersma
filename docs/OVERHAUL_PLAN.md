@@ -237,7 +237,7 @@ Not a "hacker" aesthetic, not a generic startup landing page.
 
 ### 4.1 Principles
 
-1. **Evidence over adjectives.** "Deployed 2.5GbE and Wi-Fi 7 across a multi-site
+1. **Evidence over adjectives.** "Deployed 10GbE and Wi-Fi 7 across a multi-site
    network" beats "passionate about technology". The layout gives specifics the space.
 2. **Restraint is the signal.** One accent colour, one geometric shape language, one
    motion idea. Anyone can add. Knowing what to leave out is what reads as senior.

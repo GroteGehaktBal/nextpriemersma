@@ -1,16 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-.gitignore
-/priemersmavenv
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
-pnpm-lock.yaml
-
-# testing
-/coverage
 
 # next.js
 /.next/
@@ -18,6 +12,9 @@ pnpm-lock.yaml
 
 # production
 /build
+
+# testing
+/coverage
 
 # misc
 .DS_Store
@@ -30,7 +27,6 @@ yarn-error.log*
 
 # local env files
 .env*.local
-/priemersmavenv
 
 # vercel
 .vercel

@@ -85,7 +85,7 @@ const profile: Profile = {
 const facts: Fact[] = [
   { label: 'Certified', value: 'Cisco CCNA' },
   { label: 'Internship', value: 'Google, Eemshaven' },
-  { label: 'Throughput', value: '2.5GbE / Wi-Fi 7' },
+  { label: 'Throughput', value: '10GbE / Wi-Fi 7' },
   { label: 'Languages', value: 'NL / EN' },
 ];
 
@@ -96,7 +96,7 @@ const projects: Project[] = [
     title: 'Smart home automation at pyxels',
     summary:
       'Co-founded a studio that designs and installs complete smart-home systems: lighting, climate and security, running on a network built to carry them. Every install starts with the infrastructure, because automation is only as reliable as the link underneath it.',
-    stack: ['Home Assistant', 'Wi-Fi 7', '2.5GbE', 'Zigbee', 'ESPHome'],
+    stack: ['Home Assistant', 'Wi-Fi 7', '10GbE', 'Zigbee', 'ESPHome'],
     outcome: 'Multi-room installations delivered end to end, from cabling to dashboard',
     year: '2024',
   },
@@ -125,8 +125,8 @@ const projects: Project[] = [
     kind: 'Freelance',
     title: 'Riemersma ICT',
     summary:
-      'Technical support and managed network infrastructure for small businesses and private clients, with cloud identity and device management handled through Microsoft Azure.',
-    stack: ['Microsoft Azure', 'Windows Server', 'Wireless networks'],
+      'Computer help for private clients and bespoke solutions for businesses: working out why something has stopped working and putting it right, and building companies something that fits how they work rather than a package they have to work around.',
+    stack: ['Private clients', 'Businesses', 'Computer support', 'Bespoke work'],
     year: '2023',
   },
 ];
@@ -142,7 +142,7 @@ const capabilities: Capability[] = [
     title: 'Security',
     description:
       'Building infrastructure that assumes it will be attacked: segmentation, least privilege, and identity as the perimeter.',
-    keywords: ['Firewalling', 'Active Directory', 'Azure AD', 'Group Policy', 'Hardening'],
+    keywords: ['Firewalling', 'VPN', 'Network segmentation', 'Access control', 'Hardening'],
   },
   {
     title: 'Home automation',
@@ -164,7 +164,7 @@ const timeline: TimelineEntry[] = [
     role: 'Co-owner',
     organisation: 'pyxels',
     description:
-      'Secure high-speed networks with 2.5GbE and Wi-Fi 7, and complete smart-home installations covering lighting, climate control and security.',
+      'Secure high-speed networks with 10GbE and Wi-Fi 7, and complete smart-home installations covering lighting, climate control and security.',
     current: true,
   },
   {
@@ -172,7 +172,7 @@ const timeline: TimelineEntry[] = [
     role: 'ICT services, freelance',
     organisation: 'Riemersma ICT',
     description:
-      'Technical support and network infrastructure management for clients across Friesland, with cloud services delivered on Microsoft Azure.',
+      'Helping private clients with computer trouble at home, and businesses with solutions shaped around the way they work.',
     current: true,
   },
   {

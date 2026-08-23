@@ -88,7 +88,7 @@ const profile: Profile = {
 const facts: Fact[] = [
   { label: 'Gecertificeerd', value: 'Cisco CCNA' },
   { label: 'Stage', value: 'Google, Eemshaven' },
-  { label: 'Snelheid', value: '2.5GbE / Wi-Fi 7' },
+  { label: 'Snelheid', value: '10GbE / Wi-Fi 7' },
   { label: 'Talen', value: 'NL / EN' },
 ];
 
@@ -99,7 +99,7 @@ const projects: Project[] = [
     title: 'Domotica bij pyxels',
     summary:
       'Mede-oprichter van een studio die complete smart home-systemen ontwerpt en installeert: verlichting, klimaat en beveiliging, op een netwerk dat ervoor gebouwd is. Elke installatie begint bij de infrastructuur, want automatisering is nooit betrouwbaarder dan de verbinding eronder.',
-    stack: ['Home Assistant', 'Wi-Fi 7', '2.5GbE', 'Zigbee', 'ESPHome'],
+    stack: ['Home Assistant', 'Wi-Fi 7', '10GbE', 'Zigbee', 'ESPHome'],
     outcome: 'Installaties van bekabeling tot dashboard, in meerdere ruimtes tegelijk',
     year: '2024',
   },
@@ -128,8 +128,8 @@ const projects: Project[] = [
     kind: 'Freelance',
     title: 'Riemersma ICT',
     summary:
-      'Technische ondersteuning en beheer van netwerkinfrastructuur voor mkb en particulieren, met identiteits- en apparaatbeheer via Microsoft Azure.',
-    stack: ['Microsoft Azure', 'Windows Server', 'Draadloze netwerken'],
+      'Computerhulp voor particulieren en oplossingen op maat voor bedrijven: thuis uitzoeken waarom iets niet meer werkt en het verhelpen, en voor bedrijven iets bouwen dat past bij hoe zij werken in plaats van een standaardpakket.',
+    stack: ['Particulieren', 'Bedrijven', 'Computerhulp', 'Maatwerk'],
     year: '2023',
   },
 ];
@@ -145,7 +145,7 @@ const capabilities: Capability[] = [
     title: 'Security',
     description:
       'Infrastructuur bouwen die ervan uitgaat dat er aangevallen wordt: segmentatie, least privilege, en identiteit als grens.',
-    keywords: ['Firewalling', 'Active Directory', 'Azure AD', 'Group Policy', 'Hardening'],
+    keywords: ['Firewalling', 'VPN', 'Netwerksegmentatie', 'Toegangsbeheer', 'Hardening'],
   },
   {
     title: 'Domotica',
@@ -167,7 +167,7 @@ const timeline: TimelineEntry[] = [
     role: 'Mede-eigenaar',
     organisation: 'pyxels',
     description:
-      'Veilige high-speed netwerken met 2.5GbE en Wi-Fi 7, en complete domotica-installaties voor verlichting, klimaatbeheersing en beveiliging.',
+      'Veilige high-speed netwerken met 10GbE en Wi-Fi 7, en complete domotica-installaties voor verlichting, klimaatbeheersing en beveiliging.',
     current: true,
   },
   {
@@ -175,7 +175,7 @@ const timeline: TimelineEntry[] = [
     role: 'ICT-diensten, freelance',
     organisation: 'Riemersma ICT',
     description:
-      'Technische ondersteuning en beheer van netwerkinfrastructuur voor klanten in Friesland, met clouddiensten in Microsoft Azure.',
+      'Particulieren helpen met computerproblemen thuis, en bedrijven met oplossingen die zijn afgestemd op hun manier van werken.',
     current: true,
   },
   {

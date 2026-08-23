@@ -10,6 +10,7 @@ import { routing } from '@/i18n/routing';
 import { OG_IMAGE, ORIGIN, localeAlternates } from '@/i18n/urls';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
+import { LocaleSwitchScript } from '@/components/site/LocaleSwitchScript';
 
 /**
  * Root layout.
@@ -100,6 +101,7 @@ export default async function RootLayout(props: {
           <main id="main">{props.children}</main>
           <Footer content={content} />
         </div>
+        <LocaleSwitchScript />
       </body>
     </html>
   );

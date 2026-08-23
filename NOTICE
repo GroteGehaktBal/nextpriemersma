@@ -1,0 +1,26 @@
+priemersma.nl
+Copyright (c) 2026 Peter Riemersma
+
+The source code in this repository is licensed under the MIT License; see
+LICENSE.
+
+Two things that licence does not cover:
+
+1. Site content. The written copy, the photograph in `public/`, the project
+   descriptions and the CV details are Peter Riemersma's own and are not
+   licensed for reuse. Take the code, not the biography.
+
+2. The Inter and Source Code Pro typefaces, fetched at build time by
+   `next/font`, are licensed under the SIL Open Font License 1.1 by their
+   respective authors.
+
+Origin
+------
+
+This project started in January 2025 from the Magic Portfolio template by the
+Once UI team (https://github.com/once-ui-system/magic-portfolio), licensed
+CC BY-SA 4.0. That template's code was removed over the course of the 2026
+rebuild — the design system, components, configuration, styles and content
+model in this repository were all written from scratch — and no file from it
+remains in the current tree. Earlier commits in this repository's history do
+still contain it, and this notice is the attribution for that.

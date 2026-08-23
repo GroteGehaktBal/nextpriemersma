@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
-import { getPosts } from '@/app/utils/utils';
+import { getCaseStudies, getCaseStudy } from '@/content/case-studies';
 import { getContent } from '@/content';
 import { routing } from '@/i18n/routing';
 import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
@@ -23,27 +23,22 @@ interface WorkParams {
  * carried separate copies of the same claim, and they had already drifted.
  */
 
-/** Reads one project's MDX file, or undefined when the slug has none. */
-function getPost(locale: string, slug: string) {
-  return getPosts('work/projects', locale).find((post) => post.slug === slug);
-}
-
 export function generateStaticParams(): { slug: string; locale: string }[] {
   return routing.locales.flatMap((locale) =>
-    getPosts('work/projects', locale).map((post) => ({ slug: post.slug, locale }))
+    getCaseStudies(locale).map((study) => ({ slug: study.slug, locale }))
   );
 }
 
 export async function generateMetadata(props: WorkParams) {
   const { slug, locale } = await props.params;
-  const post = getPost(locale, slug);
+  const study = getCaseStudy(locale, slug);
 
-  if (!post) return {};
+  if (!study) return {};
 
   const { projects } = getContent(locale);
   const project = projects.find((entry) => entry.slug === slug);
-  const title = project?.title ?? post.metadata.title;
-  const description = project?.summary ?? post.metadata.summary;
+  const title = project?.title ?? study.title;
+  const description = project?.summary ?? study.summary;
 
   return {
     title,
@@ -53,7 +48,7 @@ export async function generateMetadata(props: WorkParams) {
       title,
       description,
       type: 'article',
-      publishedTime: post.metadata.publishedAt,
+      publishedTime: study.publishedAt,
       url: localeUrl(locale, `/work/${slug}`),
       locale: locale === 'nl' ? 'nl_NL' : 'en_US',
       images: [OG_IMAGE],
@@ -66,19 +61,19 @@ export default async function Project(props: WorkParams) {
   const { slug, locale } = await props.params;
   setRequestLocale(locale);
 
-  const post = getPost(locale, slug);
-  if (!post) notFound();
+  const study = getCaseStudy(locale, slug);
+  if (!study) notFound();
 
   const content = getContent(locale);
   const project = content.projects.find((entry) => entry.slug === slug);
-  const title = project?.title ?? post.metadata.title;
+  const title = project?.title ?? study.title;
 
   /*
    * Everyone on the project except its owner: this is Peter's site, so his own
    * name above his own case study is noise. Collaborators are named because they
    * did the work with him.
    */
-  const credits: Credit[] = (post.metadata.team ?? [])
+  const credits: Credit[] = (study.collaborators ?? [])
     .filter((member) => member.name !== content.profile.name)
     .map((member) => ({ name: member.name, url: member.linkedIn }));
 
@@ -92,8 +87,8 @@ export default async function Project(props: WorkParams) {
             '@context': 'https://schema.org',
             '@type': 'Article',
             headline: title,
-            description: project?.summary ?? post.metadata.summary,
-            datePublished: post.metadata.publishedAt,
+            description: project?.summary ?? study.summary,
+            datePublished: study.publishedAt,
             inLanguage: locale,
             url: localeUrl(locale, `/work/${slug}`),
             author: { '@type': 'Person', name: content.profile.name, url: localeUrl(locale, '/about') },
@@ -112,7 +107,7 @@ export default async function Project(props: WorkParams) {
 
       <section className={`${styles.container} ${styles.caseBody}`}>
         <div className="reveal">
-          <Prose source={post.content} />
+          <Prose source={study.body} />
         </div>
       </section>
 
