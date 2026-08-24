@@ -34,7 +34,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Matches the Node version in the Cloudflare Pages build image, and the
       # one `--experimental-strip-types` needs to run the `.ts` files directly.
