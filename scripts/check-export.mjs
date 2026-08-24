@@ -171,6 +171,14 @@ const LOADS = [
 
 /** Whether a URL a page loads would survive `default-src 'self'`. */
 function sameOrigin(url) {
+  /*
+   * A protocol-relative URL has no scheme and is not relative: `//evil.example/x.js`
+   * loads from evil.example over whatever scheme the page used. It has to be
+   * matched before the scheme test, which would otherwise call it relative and
+   * wave through exactly the load this check exists to catch.
+   */
+  if (url.startsWith('//')) return url.startsWith(`//${new URL(ORIGIN).host}/`);
+
   if (!/^[a-z][a-z0-9+.-]*:/i.test(url)) return true; // relative
   return url.startsWith(`${ORIGIN}/`) || url === ORIGIN;
 }

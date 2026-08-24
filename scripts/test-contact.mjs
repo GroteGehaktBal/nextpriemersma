@@ -257,6 +257,51 @@ test('a body larger than the form could produce is refused before it is read', a
   assert.equal(result.status, 413);
 });
 
+test('a Content-Length that is not a byte count does not slip past the size check', async () => {
+  // Each of these parses to Infinity or NaN. A guard that only refuses a
+  // *finite* oversized length waves all of them through to the body.
+  for (const header of ['1e999', 'abc', '9999999999999999999999999999999999e300', '-1', '1.5']) {
+    const { result, calls } = await withFetch(new Response('{}', { status: 200 }), () =>
+      onRequestPost({
+        request: new Request('https://priemersma.nl/api/contact', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'content-length': header,
+          },
+          body: 'name=Jan&email=jan%40example.com&message=hi&locale=nl',
+        }),
+        env: ENV,
+      })
+    );
+
+    assert.equal(calls.length, 0, `Content-Length: ${header} should not reach the mail provider`);
+    assert.ok(
+      result.status === 400 || result.status === 413,
+      `Content-Length: ${header} should be refused, got ${result.status}`
+    );
+  }
+});
+
+test('an ordinary Content-Length is still let through', async () => {
+  const { result, calls } = await withFetch(new Response('{}', { status: 200 }), () =>
+    onRequestPost({
+      request: new Request('https://priemersma.nl/api/contact', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          'content-length': '52',
+        },
+        body: 'name=Jan&email=jan%40example.com&message=hi&locale=nl',
+      }),
+      env: ENV,
+    })
+  );
+
+  assert.equal(calls.length, 1);
+  assert.equal(result.headers.get('location'), '/nl/contact/thanks');
+});
+
 /* ---------------------------------------------------------------------------
  * What the submitted text cannot become.
  * ------------------------------------------------------------------------ */

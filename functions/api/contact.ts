@@ -87,10 +87,23 @@ export async function onRequestPost(context: {
    * The declared length, checked before the body is read. A chunked request
    * declares none, which is why the field limits still do the real work — this
    * is the cheap refusal for the obvious case, not the only bound.
+   *
+   * Anything present that is not a plain byte count is refused rather than
+   * skipped. `Number('1e999')` is `Infinity` and `Number('abc')` is `NaN`, and
+   * a guard written as "refuse when it is finite and too large" lets both of
+   * those straight through to the body it was meant to keep unread.
    */
-  const declared = Number(request.headers.get('content-length') ?? '0');
-  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
-    return refuse(413, 'That is larger than this form accepts.');
+  const declared = request.headers.get('content-length');
+  if (declared !== null) {
+    const size = Number(declared);
+
+    if (!Number.isInteger(size) || size < 0) {
+      return refuse(400, 'Malformed Content-Length.');
+    }
+
+    if (size > MAX_BODY_BYTES) {
+      return refuse(413, 'That is larger than this form accepts.');
+    }
   }
 
   /*
