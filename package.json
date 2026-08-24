@@ -8,13 +8,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "build:static": "next build",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "size": "node scripts/size-budget.mjs",
-    "build:static": "STATIC_EXPORT=1 next build",
     "check:export": "node scripts/check-export.mjs",
     "serve:static": "node --experimental-strip-types scripts/serve-export.mjs",
+    "smoke": "node --experimental-strip-types scripts/smoke.mjs",
     "test": "node --experimental-strip-types scripts/test-contact.mjs"
   },
   "dependencies": {

@@ -115,9 +115,9 @@ export function ContactForm({
 /**
  * What the contact page shows when no endpoint is configured.
  *
- * The site is on Vercel until it is not, and there the form has nowhere to post.
- * Rather than render one that fails, the page offers the address it would have
- * mailed to.
+ * A build without `CONTACT_ENDPOINT` has nowhere for the form to post — a plain
+ * `npm run dev`, mostly, where no Function is running. Rather than render one
+ * that fails, the page offers the address it would have mailed to.
  */
 export function ContactDirect({ content }: { content: Content }) {
   const { profile } = content;

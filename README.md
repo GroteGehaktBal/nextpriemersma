@@ -24,37 +24,45 @@ npm run dev        # http://localhost:3000/en
 | Script | What it does |
 | --- | --- |
 | `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run start` | Serve the production build |
+| `npm run build` | Static export to `out/` — the only build there is |
+| `npm run build:static` | The same command, under the name the Pages project calls it |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript, no emit |
-| `npm test` | Tests for the contact endpoint |
+| `npm test` | Unit tests for the contact endpoint |
 | `npm run size` | Size budget, against the last build |
-| `npm run build:static` | Static export to `out/`, for Cloudflare Pages |
-| `npm run check:export` | Verifies that export: pages, links, redirects |
-| `npm run serve:static` | Serves `out/` the way Cloudflare Pages would |
+| `npm run check:export` | Reads the export as files: pages, links, redirects, headers |
+| `npm run smoke` | Reads it as a site: serves it as Cloudflare does, and submits the form |
+| `npm run serve:static` | The same server, left running, for looking at it yourself |
 
-CI runs typecheck, lint, build, the size budget, the static export and its check,
-and `npm audit` on every push and pull request.
+CI runs all of them on every push and pull request, plus `npm audit`.
 
 ## Hosting
 
-The site is deployed on Vercel and builds equally well as a static export, which
-is what Cloudflare Pages will serve. The difference between the two is one file:
-`src/proxy.ts` negotiates the locale for an unprefixed URL on Vercel, and
-`public/_redirects` does the same job as static rules on Cloudflare. Both are
-built in CI, and `npm run serve:static` runs the export locally with Cloudflare's
-own path resolution and redirect handling, so the move can be rehearsed before it
-happens.
+Cloudflare Pages, building this repository directly from Git. There is one build
+and it produces a directory of plain files:
 
-[`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md) is the step-by-step for that move.
+- **Static assets** are unlimited and free, and everything except `/api/*` is one.
+- **`functions/api/contact.ts`** is a Pages Function, the only code that runs per
+  request. It counts against the Workers free allowance of 100,000 requests a
+  day, which a contact form does not approach.
+- **`public/_redirects`** and **`public/_headers`** are copied into the export and
+  read by Cloudflare at the edge — locale prefixes and retired URLs in the first,
+  the Content-Security-Policy and cache rules in the second.
+
+Because Cloudflare builds from Git on its own, CI is not a gate in front of the
+deploy; it is what has to catch a problem first. So it builds with the same
+command and the same `CONTACT_ENDPOINT` the Pages project uses, and `npm run
+smoke` serves the result with Cloudflare's own path resolution, redirect rules
+and headers before anything is merged.
+
+[`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md) is how the project is configured and
+what to do when something about it changes.
 
 ## The contact form
 
 `/contact` renders a form when `CONTACT_ENDPOINT` is set, and the email address
-when it is not. That is not a feature flag so much as a fact about where the site
-is hosted: the endpoint is a Cloudflare Pages Function in `functions/api/`, and
-on Vercel it does not exist. A form posting into a 404 is worse than no form.
+when it is not — the second being what a bare `npm run dev` gets, since no
+Function is running there. A form posting into a 404 is worse than no form.
 
 It is a plain `<form method="post">`. The Function validates the submission,
 hands it to [Resend](https://resend.com), and answers with a redirect — to a
@@ -67,9 +75,10 @@ honeypot field, hidden off-screen rather than with `type="hidden"`, catches the
 bots that fill in everything they can see; they are told the message went
 through, which teaches them nothing.
 
-`npm test` exercises all of it — including the paths that matter most, where the
-provider rejects the mail or the network fails, and the form must not claim
-success. Setup is in [`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md).
+Everything it refuses, and why, is in [`SECURITY.md`](SECURITY.md). `npm test`
+covers the logic and `npm run smoke` covers the endpoint — including the paths
+that matter most, where the provider rejects the mail or the network fails and
+the form must not claim success.
 
 ## How it is put together
 
@@ -132,8 +141,11 @@ Every locale is prefixed: `/en/about`, `/nl/about`. The default locale is
 prefixed too, deliberately — without it, one URL could serve either language
 depending on a cookie while its own canonical tag claimed otherwise.
 
-`src/proxy.ts` redirects an unprefixed URL to the language the visitor's browser
-asks for, which is what keeps the site's older `/about`-style links working.
+`public/_redirects` sends an unprefixed URL to English, which is what keeps the
+site's older `/about`-style links working. A static host cannot read
+`Accept-Language`, so that is a fixed choice rather than a negotiated one;
+anyone who wants Dutch is one click away in the header, and every link that names
+a language keeps working.
 
 ## The link preview image
 

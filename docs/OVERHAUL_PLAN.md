@@ -672,16 +672,31 @@ WCAG 2.1 AA. Lint, typecheck and `npm audit` are clean.
 
 **Merged** into `main` on 23 August 2026 as #21, and live.
 
-**Since then**, on `claude/cloudflare-and-contact-form`: the static export works
-end to end and is checked in CI (§9), so the Cloudflare migration is now a
-hosting change and nothing else.
+**Moved.** The site is on Cloudflare Pages as of 23 August 2026, with the contact
+form live and delivering through Resend. §9's argument is settled rather than
+pending: the free plan permits commercial use, static requests are unmetered, and
+the one piece of runtime code is a Pages Function inside the Workers free
+allowance.
+
+Everything that existed only for Vercel is gone with it — `src/proxy.ts`, the
+`redirects()` block in `next.config.mjs`, and the `STATIC_EXPORT` flag that made
+the export optional. There is one build now, and it is the one that ships, which
+is what closed the gap between what CI checked and what visitors got.
+
+**Hardened since**, and covered in [`SECURITY.md`](../SECURITY.md): the contact
+endpoint refuses a cross-site post, an oversized body and a body that is not a
+form; a submitted name can no longer open a second line in a mail header, and an
+address can no longer hide a second address in a display name. `public/_headers`
+adds a Content-Security-Policy, HSTS and the rest, and `npm run check:export`
+fails the build if a page ever starts loading something the policy forbids.
+`npm run smoke` serves the export the way Cloudflare does and asserts all of it.
 
 **Outstanding, in order:**
 
-1. **The move itself**: point Cloudflare Pages at the repository with
-   `npm run build:static` and `out/`, check the preview, then move DNS.
-   [`docs/CLOUDFLARE.md`](CLOUDFLARE.md) has the steps, including the accounts
-   and DNS records that cannot be done from here.
+1. **The rate limiting rule.** The only piece of this that is a dashboard click
+   rather than code, and the one with a real number behind it: Resend's free
+   plan allows 100 emails a day, which a script can spend in under a minute.
+   [`docs/CLOUDFLARE.md`](CLOUDFLARE.md) §4 has the settings.
 2. **Font payload.** 68.8 KB gzipped for Inter and Source Code Pro is now the
    single largest asset on a page. Subsetting, or dropping to one weight of the
    mono face, is the remaining win.

@@ -1,10 +1,13 @@
 # Redirects for Cloudflare Pages.
 #
-# A static export has no proxy, and `src/proxy.ts` is doing two jobs that have to
-# survive the move: sending a visitor from an unprefixed URL to a language, and
-# keeping the URLs this site published before the 2026 rebuild working. Every one
-# of those is a line below. `npm run check:export` fails if any destination here
-# was never built.
+# A static export has no server to run `redirects()` in `next.config.mjs`, so
+# every rule the site needs is a line in this file, read by Cloudflare at the
+# edge. There are two jobs here: sending a visitor from an unprefixed URL to a
+# language, and keeping the URLs this site published before the 2026 rebuild
+# working.
+#
+# `npm run check:export` fails if any destination below was never built, and
+# `npm run smoke` fails if a rule stops firing.
 #
 # Format: <from> <to> <status>. First match wins, so the specific rules come
 # before the catch-alls.
