@@ -38,7 +38,7 @@ jobs:
 
       # Matches the Node version in the Cloudflare Pages build image, and the
       # one `--experimental-strip-types` needs to run the `.ts` files directly.
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
