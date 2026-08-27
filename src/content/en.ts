@@ -20,6 +20,7 @@ import type {
 
 const ui: Ui = {
   nav: {
+    label: 'Main',
     work: 'Work',
     capabilities: 'Capabilities',
     background: 'Background',
@@ -90,10 +91,13 @@ const profile: Profile = {
   },
   subline:
     'Network & Security Engineering student at Hanze University, co-owner of pyxels, and freelance at Riemersma ICT. CCNA-certified, and I spent eight months keeping Google’s Eemshaven data centre running.',
+  metaDescription:
+    'Network and security engineer in Friesland. Cisco CCNA, eight months in Google’s Eemshaven data centre, co-owner of pyxels, freelance at Riemersma ICT.',
   availability: 'Open to freelance and smart-home work',
   email: 'peter@riemersmaict.nl',
   github: 'https://github.com/grotegehaktbal',
   linkedin: 'https://www.linkedin.com/in/peter-riemersma/',
+  address: { locality: 'Burum', region: 'Friesland', country: 'NL' },
 };
 
 const facts: Fact[] = [
@@ -173,6 +177,14 @@ const capabilities: Capability[] = [
 ];
 
 const timeline: TimelineEntry[] = [
+  {
+    period: 'Sep 2026 — Feb 2027',
+    role: 'Network & Security Engineering, internship',
+    organisation: 'OnlyWow — Kollum',
+    description:
+      'Six months on the networks and infrastructure behind a Frisian e-commerce group that ships across Europe.',
+    current: true,
+  },
   {
     period: '2024 — now',
     role: 'Co-owner',

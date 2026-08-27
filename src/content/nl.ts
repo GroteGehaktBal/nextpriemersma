@@ -24,6 +24,7 @@ import type {
 
 const ui: Ui = {
   nav: {
+    label: 'Hoofdnavigatie',
     work: 'Werk',
     capabilities: 'Vakgebieden',
     background: 'Achtergrond',
@@ -93,10 +94,13 @@ const profile: Profile = {
   },
   subline:
     'Student Network & Security Engineering aan de Hanzehogeschool, mede-eigenaar van pyxels en freelancer bij Riemersma ICT. CCNA-gecertificeerd, en acht maanden lang hield ik het datacenter van Google in de Eemshaven draaiende.',
+  metaDescription:
+    'Netwerk- en securityengineer in Friesland. Cisco CCNA, acht maanden bij Google in de Eemshaven, mede-eigenaar van pyxels, freelance bij Riemersma ICT.',
   availability: 'Open voor freelance- en domoticaopdrachten',
   email: 'peter@riemersmaict.nl',
   github: 'https://github.com/grotegehaktbal',
   linkedin: 'https://www.linkedin.com/in/peter-riemersma/',
+  address: { locality: 'Burum', region: 'Friesland', country: 'NL' },
 };
 
 const facts: Fact[] = [
@@ -176,6 +180,14 @@ const capabilities: Capability[] = [
 ];
 
 const timeline: TimelineEntry[] = [
+  {
+    period: 'sep 2026 — feb 2027',
+    role: 'Network & Security Engineering, stage',
+    organisation: 'OnlyWow — Kollum',
+    description:
+      'Zes maanden aan de netwerken en infrastructuur achter een Friese e-commercegroep die door heel Europa levert.',
+    current: true,
+  },
   {
     period: '2024 — heden',
     role: 'Mede-eigenaar',
