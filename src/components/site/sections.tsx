@@ -71,7 +71,10 @@ export function Hero({ content, locale }: { content: Content; locale: string }) 
           {ui.actions.seeWork}
           <ArrowRight className={styles.buttonArrow} />
         </a>
-        <a className={`${styles.button} ${styles.buttonSecondary}`} href={`mailto:${profile.email}`}>
+        <a
+          className={`${styles.button} ${styles.buttonSecondary}`}
+          href={localePath(locale, '/contact')}
+        >
           <Mail />
           {ui.actions.getInTouch}
         </a>
@@ -233,8 +236,19 @@ export function Certifications({ certifications }: { certifications: Certificati
   );
 }
 
-export function ContactCta({ content }: { content: Content }) {
-  const { ui, profile } = content;
+/**
+ * The closing call to action, on every page.
+ *
+ * It used to be a `mailto:` showing the address. That asks the reader to have a
+ * mail client configured, to switch to it, and to write the first line
+ * themselves — three chances to not bother, and on a phone the first one alone
+ * loses most people. The form asks for a name, an address and a message, and it
+ * is one tap away.
+ *
+ * The address is still on `/contact`, beside the form, for anyone who prefers it.
+ */
+export function ContactCta({ content, locale }: { content: Content; locale: string }) {
+  const { ui } = content;
 
   return (
     <section id="contact" className={`${styles.container} ${styles.section}`}>
@@ -242,9 +256,12 @@ export function ContactCta({ content }: { content: Content }) {
         <span className={styles.sectionIndex}>{ui.sections.contact.index}</span>
         <h2 className={styles.contactTitle}>{ui.sections.contact.title}</h2>
         <p className={styles.contactText}>{ui.sections.contact.text}</p>
-        <a className={`${styles.button} ${styles.buttonPrimary}`} href={`mailto:${profile.email}`}>
+        <a
+          className={`${styles.button} ${styles.buttonPrimary}`}
+          href={localePath(locale, '/contact')}
+        >
           <Mail />
-          {profile.email}
+          {ui.actions.getInTouch}
         </a>
       </div>
     </section>

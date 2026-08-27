@@ -3,8 +3,9 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { getCaseStudies, getCaseStudy } from '@/content/case-studies';
 import { getContent } from '@/content';
+import { metaDescription } from '@/lib/seo.ts';
 import { routing } from '@/i18n/routing';
-import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, ORIGIN, localeAlternates, localeUrl } from '@/i18n/urls';
 import { CaseStudyFooter, CaseStudyHeader, ContactCta, type Credit } from '@/components/site/sections';
 import { Prose } from '@/components/site/Prose';
 import styles from '@/components/site/site.module.css';
@@ -38,7 +39,9 @@ export async function generateMetadata(props: WorkParams) {
   const { projects } = getContent(locale);
   const project = projects.find((entry) => entry.slug === slug);
   const title = project?.title ?? study.title;
-  const description = project?.summary ?? study.summary;
+  // The summary is written for the card and the page, where it can run long.
+  // A search result cuts it mid-word; this cuts it where a reader would.
+  const description = metaDescription(project?.summary ?? study.summary);
 
   return {
     title,
@@ -91,7 +94,12 @@ export default async function Project(props: WorkParams) {
             datePublished: study.publishedAt,
             inLanguage: locale,
             url: localeUrl(locale, `/work/${slug}`),
-            author: { '@type': 'Person', name: content.profile.name, url: localeUrl(locale, '/about') },
+            author: {
+              '@type': 'Person',
+              '@id': `${ORIGIN}/#peter`,
+              name: content.profile.name,
+              url: localeUrl(locale, '/about'),
+            },
             about: project?.stack,
           }),
         }}
@@ -113,7 +121,7 @@ export default async function Project(props: WorkParams) {
 
       <CaseStudyFooter content={content} locale={locale} />
 
-      <ContactCta content={content} />
+      <ContactCta content={content} locale={locale} />
     </>
   );
 }

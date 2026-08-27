@@ -8,7 +8,7 @@ import {
   SectionHead,
   Timeline,
 } from '@/components/site/sections';
-import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, ORIGIN, localeAlternates, localeUrl } from '@/i18n/urls';
 import styles from '@/components/site/site.module.css';
 
 /**
@@ -54,9 +54,12 @@ export default async function About(props: { params: Promise<{ locale: string }>
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Person',
+            // The same identifier the home page uses, so this is more of what is
+            // known about one person rather than a second person with his name.
+            '@id': `${ORIGIN}/#peter`,
             name: profile.name,
             jobTitle: profile.role,
-            description: profile.subline,
+            description: profile.metaDescription,
             url: localeUrl(locale, '/about'),
             sameAs: [profile.github, profile.linkedin],
             alumniOf: education.map((e) => ({ '@type': 'EducationalOrganization', name: e.organisation })),
@@ -101,7 +104,7 @@ export default async function About(props: { params: Promise<{ locale: string }>
         <Certifications certifications={certifications} />
       </section>
 
-      <ContactCta content={content} />
+      <ContactCta content={content} locale={locale} />
     </>
   );
 }

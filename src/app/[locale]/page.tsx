@@ -2,7 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { getContent } from '@/content';
 import { ContactCta, Hero, ProjectList, SectionHead } from '@/components/site/sections';
-import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, ORIGIN, localeAlternates, localeUrl } from '@/i18n/urls';
 import { routing } from '@/i18n/routing';
 import styles from '@/components/site/site.module.css';
 
@@ -21,11 +21,11 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 
   return {
     title,
-    description: profile.subline,
+    description: profile.metaDescription,
     alternates: localeAlternates(locale, ''),
     openGraph: {
       title,
-      description: profile.subline,
+      description: profile.metaDescription,
       type: 'website',
       locale: locale === 'nl' ? 'nl_NL' : 'en_US',
       url: localeUrl(locale, ''),
@@ -47,26 +47,60 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
   setRequestLocale(locale);
 
   const content = getContent(locale);
-  const { ui, profile, projects } = content;
+  const { ui, profile, projects, capabilities } = content;
+
+  /*
+   * What the page says about itself in a form a search engine can act on.
+   *
+   * `ProfilePage` wrapping a `Person` is the shape Google documents for a page
+   * that is about one person, and it is worth more here than the bare `Person`
+   * that was here before: it says which entity the page is *about* rather than
+   * merely mentioning one.
+   *
+   * The `@id` is the point of the whole thing. Both language versions name the
+   * same identifier, so the two pages describe one person in two languages
+   * instead of two people who happen to share a name — which is the same
+   * confusion `hreflang` clears up for the pages themselves.
+   *
+   * Everything below is checkable. Nothing is asserted that the site does not
+   * also say in prose.
+   */
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: localeUrl(locale, ''),
+    inLanguage: locale,
+    mainEntity: {
+      '@type': 'Person',
+      '@id': `${ORIGIN}/#peter`,
+      name: profile.name,
+      jobTitle: profile.role,
+      description: profile.metaDescription,
+      email: `mailto:${profile.email}`,
+      url: localeUrl(locale, ''),
+      image: OG_IMAGE.url,
+      sameAs: [profile.github, profile.linkedin],
+      knowsLanguage: ['nl', 'en'],
+      knowsAbout: capabilities.flatMap((capability) => capability.keywords),
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: profile.address.locality,
+        addressRegion: profile.address.region,
+        addressCountry: profile.address.country,
+      },
+      worksFor: [
+        { '@type': 'Organization', name: 'pyxels', url: 'https://www.pyxels.eu' },
+        { '@type': 'Organization', name: 'Riemersma ICT' },
+      ],
+    },
+  };
 
   return (
     <>
       <script
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Person',
-            name: profile.name,
-            jobTitle: profile.role,
-            description: profile.subline,
-            email: `mailto:${profile.email}`,
-            url: localeUrl(locale, ''),
-            sameAs: [profile.github, profile.linkedin],
-            knowsLanguage: ['nl', 'en'],
-          }),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
       <Hero content={content} locale={locale} />
@@ -81,7 +115,7 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
         <ProjectList projects={projects.slice(0, 2)} locale={locale} featureCount={2} />
       </section>
 
-      <ContactCta content={content} />
+      <ContactCta content={content} locale={locale} />
     </>
   );
 }

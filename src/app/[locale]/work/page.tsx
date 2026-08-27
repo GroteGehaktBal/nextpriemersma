@@ -44,7 +44,7 @@ export default async function Work(props: { params: Promise<{ locale: string }> 
         <ProjectList projects={projects} locale={locale} featureCount={2} headingLevel="h2" />
       </section>
 
-      <ContactCta content={content} />
+      <ContactCta content={content} locale={locale} />
     </>
   );
 }
