@@ -13,15 +13,30 @@
  * Header
  * ------------------------------------------------------------------------ */
 
+/*
+ * Two rows on a phone, one row from 48rem up.
+ *
+ * The nav used to be `display: none` below 48rem with nothing in its place — no
+ * menu button, no drawer, nothing. That did not hide a menu behind a tap; it
+ * removed the navigation altogether, so on a phone held upright the only way to
+ * reach Work, Background or Contact was to turn the phone sideways and cross
+ * 768px. Every visitor on a phone saw a site with no way through it.
+ *
+ * A hamburger is the usual answer and it costs JavaScript, or a checkbox
+ * pretending to be one. Three short links do not need either: they fit on a row
+ * of their own at 320px with room to spare, which is a menu that is already
+ * open.
+ */
 .header {
   position: sticky;
   top: 0;
   z-index: 10;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--gutter);
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--gutter);
   background-color: var(--overlay);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -49,7 +64,7 @@
 }
 
 .nav {
-  display: none;
+  display: flex;
   align-items: center;
   gap: var(--space-5);
   font-family: var(--font-mono);
@@ -57,11 +72,18 @@
   letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
   color: var(--text-muted);
+  /*
+   * Ordered after the language switch and given the full width, so it wraps to
+   * a row of its own and leaves the wordmark and the switch on the first.
+   */
+  order: 1;
+  width: 100%;
 }
 
 .navLink {
   position: relative;
-  padding-block: var(--space-1);
+  /* A finger, not a cursor: the row of links is the tap target on a phone. */
+  padding-block: var(--space-2);
   transition: color var(--duration-fast) var(--ease-out);
 }
 
@@ -118,8 +140,19 @@
 }
 
 @media (min-width: 48rem) {
+  .header {
+    flex-wrap: nowrap;
+    padding-block: var(--space-4);
+  }
+
+  /* Back to one row, between the wordmark and the language switch. */
   .nav {
-    display: flex;
+    order: 0;
+    width: auto;
+  }
+
+  .navLink {
+    padding-block: var(--space-1);
   }
 }
 
@@ -1113,9 +1146,10 @@
   /*
    * Clears the sticky header. Jumping to `#error` scrolls the element to the top
    * of the viewport, which is exactly where the header is — without this, the
-   * message a visitor was sent here to read opens underneath it.
+   * message a visitor was sent here to read opens underneath it, which on a
+   * phone is most of it.
    */
-  scroll-margin-top: 6rem;
+  scroll-margin-top: var(--header-clearance);
 }
 
 .formError:target {

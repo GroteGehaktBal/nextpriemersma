@@ -28,7 +28,7 @@ export function Header({ content, locale }: { content: Content; locale: string }
         {profile.name}
       </a>
 
-      <nav className={styles.nav} aria-label={ui.nav.work}>
+      <nav className={styles.nav} aria-label={ui.nav.label}>
         {nav.map((item) => (
           <a key={item.href} className={styles.navLink} href={item.href}>
             {item.label}
