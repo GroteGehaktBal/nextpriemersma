@@ -178,11 +178,11 @@ const capabilities: Capability[] = [
 
 const timeline: TimelineEntry[] = [
   {
-    period: 'Sep 2026 — Feb 2027',
-    role: 'Network & Security Engineering, internship',
+    period: '2026 — 2027',
+    role: 'AI infrastructure, internship',
     organisation: 'OnlyWow — Kollum',
     description:
-      'Six months on the networks and infrastructure behind a Frisian e-commerce group that ships across Europe.',
+      'Replacing external cloud AI with self-hosted and European models that keep company data inside the GDPR — comparative research across code and image generation, then a proof of concept built for around thirty concurrent users.',
     current: true,
   },
   {

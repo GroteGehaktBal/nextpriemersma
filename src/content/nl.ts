@@ -181,11 +181,11 @@ const capabilities: Capability[] = [
 
 const timeline: TimelineEntry[] = [
   {
-    period: 'sep 2026 — feb 2027',
-    role: 'Network & Security Engineering, stage',
+    period: '2026 — 2027',
+    role: 'AI-infrastructuur, stage',
     organisation: 'OnlyWow — Kollum',
     description:
-      'Zes maanden aan de netwerken en infrastructuur achter een Friese e-commercegroep die door heel Europa levert.',
+      'Externe cloud-AI vervangen door lokaal gehoste en Europese modellen die bedrijfsgevoelige data binnen de AVG houden — vergelijkend onderzoek naar code- en beeldgeneratie, en daarna een proof of concept voor zo’n dertig gelijktijdige gebruikers.',
     current: true,
   },
   {
