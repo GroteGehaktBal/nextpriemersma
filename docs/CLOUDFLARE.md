@@ -62,13 +62,12 @@ Project → **Settings** → **Builds** → **Branch control**:
 | Production branch | `main` |
 | Preview branches | All non-production branches |
 
-If a pull request shows "This branch has not been deployed", one of three things
-is true, in the order worth checking: preview branches are set to None or to a
-custom list this branch is not on; automatic deployments are off for the branch;
-or the Cloudflare Pages GitHub App has lost access to the repository, in which
-case it still builds but stops reporting. Pages reports as a GitHub *deployment*
-rather than a check, so it appears in the Deployments panel on the pull request
-and not beside CI.
+"This branch has not been deployed" on a pull request is not the signal it looks
+like — see *Reporting on a pull request* below. If a branch genuinely is not
+being built, it is one of three things, in the order worth checking: preview
+branches are set to None or to a custom list this branch is not on; automatic
+deployments are off for the branch; or the Cloudflare Pages GitHub App has lost
+access to the repository, in which case it still builds but stops reporting.
 
 Two things about previews are specific to this site.
 
@@ -88,22 +87,32 @@ anything is served.
 ### The `*.pages.dev` address
 
 Preview deployments are given `X-Robots-Tag: noindex` by Cloudflare
-automatically. **The project's own production `*.pages.dev` address is not**, and
-it serves the same pages as `priemersma.nl` — the same duplicate-content problem
+automatically. The project's own production `*.pages.dev` address is not, and it
+serves the same pages as `priemersma.nl` — the same duplicate-content problem
 `riemersmaict.nl` had, from a domain nobody chose to publish.
 
-Every page's canonical tag already names `priemersma.nl`, which is most of the
-answer. Closing it properly is a host-scoped rule in `public/_headers`, above the
-site-wide block:
+`public/_headers` closes it, and needs no configuring:
 
 ```
 https://:project.pages.dev/*
   X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
 ```
 
-Replace `:project` with the Pages project's name. Scope it to that hostname and
-nothing else: the same header without a host would take the real site out of
-Google.
+`:project` and `:version` are placeholders Cloudflare fills from the request's
+hostname — not names to substitute — so these match `<project>.pages.dev` and
+`<hash>.<project>.pages.dev` and nothing else. The scoping is the point: the same
+header without a host would take the real site out of Google.
+
+### Reporting on a pull request
+
+Pages reports as a **check**, beside CI, named "Cloudflare Pages". It does not
+create GitHub *deployments*, so the repository's Deployments page and the
+"Environments" listed there stay empty of it — anything shown there is left over
+from a host that did create them, and can be deleted under Settings →
+Environments.
 
 ## 2. Environment variables
 
