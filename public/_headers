@@ -62,3 +62,29 @@
 # crawlers are not refetching it, short enough that replacing it takes effect.
 /og.png
   Cache-Control: public, max-age=86400
+
+# ---------------------------------------------------------------------------
+# Keep the site's other addresses out of the index.
+#
+# A Pages project is always reachable at `<project>.pages.dev` as well as at its
+# custom domain, and that address serves these same pages — the duplicate-content
+# problem `riemersmaict.nl` had, from a hostname nobody chose to publish. Every
+# canonical tag here names priemersma.nl, which is most of the answer; this is
+# the rest of it.
+#
+# The two rules below are host-scoped, which is the whole point: `:project` and
+# `:version` are placeholders Cloudflare fills from the request's hostname, so
+# these match `<project>.pages.dev` and `<hash>.<project>.pages.dev` and nothing
+# else. The real domain never matches either pattern and is untouched — a
+# `noindex` that leaked onto it would take the site out of Google, so the scoping
+# is the safety-critical part rather than a detail.
+#
+# Cloudflare already sends `noindex` on preview deployments; the second rule
+# costs a line and stops that being something to remember.
+# ---------------------------------------------------------------------------
+
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
