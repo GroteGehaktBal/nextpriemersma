@@ -24,6 +24,7 @@ import type {
 
 const ui: Ui = {
   nav: {
+    label: 'Hoofdnavigatie',
     work: 'Werk',
     capabilities: 'Vakgebieden',
     background: 'Achtergrond',
@@ -93,10 +94,13 @@ const profile: Profile = {
   },
   subline:
     'Student Network & Security Engineering aan de Hanzehogeschool, mede-eigenaar van pyxels en freelancer bij Riemersma ICT. CCNA-gecertificeerd, en acht maanden lang hield ik het datacenter van Google in de Eemshaven draaiende.',
+  metaDescription:
+    'Netwerk- en securityengineer in Friesland. Cisco CCNA, acht maanden bij Google in de Eemshaven, mede-eigenaar van pyxels, freelance bij Riemersma ICT.',
   availability: 'Open voor freelance- en domoticaopdrachten',
   email: 'peter@riemersmaict.nl',
   github: 'https://github.com/grotegehaktbal',
   linkedin: 'https://www.linkedin.com/in/peter-riemersma/',
+  address: { locality: 'Burum', region: 'Friesland', country: 'NL' },
 };
 
 const facts: Fact[] = [
@@ -177,12 +181,21 @@ const capabilities: Capability[] = [
 
 const timeline: TimelineEntry[] = [
   {
+    period: '2026 — 2027',
+    role: 'AI-infrastructuur, stage',
+    organisation: 'OnlyWow — Kollum',
+    description:
+      'Externe cloud-AI vervangen door lokaal gehoste en Europese modellen die bedrijfsgevoelige data binnen de AVG houden — vergelijkend onderzoek naar code- en beeldgeneratie, en daarna een proof of concept voor zo’n dertig gelijktijdige gebruikers.',
+    current: true,
+  },
+  {
     period: '2024 — heden',
     role: 'Mede-eigenaar',
     organisation: 'pyxels',
     description:
       'Veilige high-speed netwerken met 10GbE en Wi-Fi 7, en complete domotica-installaties voor verlichting, klimaatbeheersing en beveiliging.',
     current: true,
+    url: 'https://www.pyxels.eu',
   },
   {
     period: '2023 — heden',

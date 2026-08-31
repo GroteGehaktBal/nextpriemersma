@@ -212,6 +212,51 @@ for (const [url, source] of foreign) {
   problems.push(`${source} loads ${url} from another origin, which the CSP blocks`);
 }
 
+// 5. Every meta description, against what a search result will show of it.
+//
+// Google cuts these around 155 characters and it cuts mid-word. A description
+// written past that does not get a longer result, it gets a result that ends in
+// the middle of a sentence — which is what this site's own listing did. The
+// limit is checked here rather than trusted, because the text lives in four
+// places (two locales, the content model and the case studies) and only the
+// built page knows what all of it came to.
+const DESCRIPTION_LIMIT = 155;
+
+/** Undoes the entity encoding, so this counts characters rather than markup. */
+function decodeEntities(value) {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, digits) => String.fromCodePoint(Number(digits)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    // Last, so a literal "&amp;lt;" does not decode twice into a "<".
+    .replace(/&amp;/g, '&');
+}
+
+for (const page of pages) {
+  const html = await readFile(page, 'utf-8');
+  const match = /<meta name="description" content="([^"]*)"/.exec(html);
+  const relative = path.relative(OUT, page);
+
+  if (match === null) {
+    // The two not-found pages Next emits are the ones nobody searches for.
+    if (!['404.html', '_not-found.html'].includes(relative)) {
+      problems.push(`${relative} has no meta description`);
+    }
+    continue;
+  }
+
+  const description = decodeEntities(match[1]);
+  if (description.length > DESCRIPTION_LIMIT) {
+    problems.push(
+      `${relative} has a ${description.length}-character description; ` +
+        `a search result shows about ${DESCRIPTION_LIMIT}`
+    );
+  }
+}
+
 console.log(
   `checked ${pages.length} pages, ${links.size} internal links, ` +
     `${redirects.length} redirect rules, and every resource they load`

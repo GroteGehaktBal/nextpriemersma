@@ -38,7 +38,7 @@
   letter-spacing: var(--tracking-heading);
   text-wrap: balance;
   /* Headings carry ids, so they are link targets — and the header is sticky. */
-  scroll-margin-top: 6rem;
+  scroll-margin-top: var(--header-clearance);
 }
 
 .prose > h2 {

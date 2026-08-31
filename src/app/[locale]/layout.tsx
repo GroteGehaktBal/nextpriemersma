@@ -48,12 +48,12 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 
   return {
     metadataBase: new URL(ORIGIN),
-    title: { default: profile.name, template: `%s` },
-    description: profile.subline,
+    title: { default: `${profile.name} — ${profile.role}`, template: `%s` },
+    description: profile.metaDescription,
     alternates: localeAlternates(locale),
     openGraph: {
-      title: profile.name,
-      description: profile.subline,
+      title: `${profile.name} — ${profile.role}`,
+      description: profile.metaDescription,
       url: ORIGIN,
       siteName: profile.name,
       locale: locale === 'nl' ? 'nl_NL' : 'en_US',

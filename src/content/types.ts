@@ -54,6 +54,14 @@ export interface TimelineEntry {
   /** Marks the entry as ongoing, which renders a live status dot. */
   current?: boolean;
   /**
+   * The organisation's own site, for the structured data rather than the page.
+   *
+   * A name alone leaves a search engine to guess which pyxels is meant; a URL
+   * does not. Only worth setting on the entries `current` marks, since those are
+   * the ones that become `worksFor`.
+   */
+  url?: string;
+  /**
    * Secondary entries are real and worth listing, but they are not what the
    * reader is here for. They render in a quieter, more compact treatment so the
    * engineering roles above them keep the weight.
@@ -80,7 +88,14 @@ export interface Certification {
  * half-translated page. If a string is visible, it belongs here.
  */
 export interface Ui {
-  nav: { work: string; capabilities: string; background: string; contact: string };
+  nav: {
+    /** Names the `<nav>` itself for a screen reader, which reads landmarks by label. */
+    label: string;
+    work: string;
+    capabilities: string;
+    background: string;
+    contact: string;
+  };
   actions: { seeWork: string; getInTouch: string };
   sections: {
     work: SectionCopy;
@@ -167,8 +182,19 @@ export interface Profile {
    */
   headline: { lead: string; accent: string };
   subline: string;
+  /**
+   * The two lines under the title in a search result, and nothing else.
+   *
+   * Separate from `subline` because they are written for different readers.
+   * `subline` sits under the headline on a page someone has already opened and
+   * can run as long as it reads well; this one has 155 characters before Google
+   * cuts it mid-word, and is what decides whether the page gets opened at all.
+   */
+  metaDescription: string;
   availability: string;
   email: string;
   github: string;
   linkedin: string;
+  /** Where the work is done, for the structured data rather than the page. */
+  address: { locality: string; region: string; country: string };
 }

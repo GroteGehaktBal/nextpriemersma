@@ -48,6 +48,63 @@ uses. If Cloudflare ever changes that default, the build will fail on syntax
 rather than quietly run on the wrong version — the fix is an environment variable
 `NODE_VERSION` = `22` on the project, not a change in this repository.
 
+### Production and previews
+
+Pages does this natively and by default: the **production branch** is deployed to
+the real domain, and every other branch gets its own **preview deployment** at a
+`*.pages.dev` URL. There is nothing to build and nothing in this repository that
+controls it.
+
+Project → **Settings** → **Builds** → **Branch control**:
+
+| Setting | Value |
+| --- | --- |
+| Production branch | `main` |
+| Preview branches | All non-production branches |
+
+If a pull request shows "This branch has not been deployed", one of three things
+is true, in the order worth checking: preview branches are set to None or to a
+custom list this branch is not on; automatic deployments are off for the branch;
+or the Cloudflare Pages GitHub App has lost access to the repository, in which
+case it still builds but stops reporting. Pages reports as a GitHub *deployment*
+rather than a check, so it appears in the Deployments panel on the pull request
+and not beside CI.
+
+Two things about previews are specific to this site.
+
+**The environment variables have to exist for Preview too** — see §2. Without
+`CONTACT_ENDPOINT` a preview renders the email address where production renders
+the form, which makes it a preview of a different site.
+
+**The rate limiting rule in §4 does not cover a preview.** It is a rule on the
+`priemersma.nl` zone, and `*.pages.dev` is not in that zone — so a preview with a
+working `RESEND_API_KEY` is a contact form with nothing in front of it, able to
+spend the same 100 mails a day the real one draws on. Either leave
+`RESEND_API_KEY` out of the Preview environment, which lets a preview render and
+validate the form but not send, or put previews behind **Cloudflare Access**
+(Settings → General → Access policy), which is free and asks for a login before
+anything is served.
+
+### The `*.pages.dev` address
+
+Preview deployments are given `X-Robots-Tag: noindex` by Cloudflare
+automatically. **The project's own production `*.pages.dev` address is not**, and
+it serves the same pages as `priemersma.nl` — the same duplicate-content problem
+`riemersmaict.nl` had, from a domain nobody chose to publish.
+
+Every page's canonical tag already names `priemersma.nl`, which is most of the
+answer. Closing it properly is a host-scoped rule in `public/_headers`, above the
+site-wide block:
+
+```
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+```
+
+Replace `:project` with the Pages project's name. Scope it to that hostname and
+nothing else: the same header without a host would take the real site out of
+Google.
+
 ## 2. Environment variables
 
 Project → **Settings** → **Environment variables**, for both Production and

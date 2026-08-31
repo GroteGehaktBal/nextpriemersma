@@ -9,6 +9,7 @@ import {
   Timeline,
 } from '@/components/site/sections';
 import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { personSchema } from '@/lib/seo';
 import styles from '@/components/site/site.module.css';
 
 /**
@@ -51,18 +52,12 @@ export default async function About(props: { params: Promise<{ locale: string }>
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
+          // The same builder, and so the same `@id`, as the home page. This page
+          // used to assemble its own and the two had already drifted: both
+          // claimed to describe one person and then listed different employers.
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'Person',
-            name: profile.name,
-            jobTitle: profile.role,
-            description: profile.subline,
-            url: localeUrl(locale, '/about'),
-            sameAs: [profile.github, profile.linkedin],
-            alumniOf: education.map((e) => ({ '@type': 'EducationalOrganization', name: e.organisation })),
-            worksFor: timeline
-              .filter((e) => e.current)
-              .map((e) => ({ '@type': 'Organization', name: e.organisation })),
+            ...personSchema(content, localeUrl(locale, '/about')),
           }),
         }}
       />
@@ -101,7 +96,7 @@ export default async function About(props: { params: Promise<{ locale: string }>
         <Certifications certifications={certifications} />
       </section>
 
-      <ContactCta content={content} />
+      <ContactCta content={content} locale={locale} />
     </>
   );
 }

@@ -20,6 +20,7 @@ import type {
 
 const ui: Ui = {
   nav: {
+    label: 'Main',
     work: 'Work',
     capabilities: 'Capabilities',
     background: 'Background',
@@ -90,10 +91,13 @@ const profile: Profile = {
   },
   subline:
     'Network & Security Engineering student at Hanze University, co-owner of pyxels, and freelance at Riemersma ICT. CCNA-certified, and I spent eight months keeping Google’s Eemshaven data centre running.',
+  metaDescription:
+    'Network and security engineer in Friesland. Cisco CCNA, eight months in Google’s Eemshaven data centre, co-owner of pyxels, freelance at Riemersma ICT.',
   availability: 'Open to freelance and smart-home work',
   email: 'peter@riemersmaict.nl',
   github: 'https://github.com/grotegehaktbal',
   linkedin: 'https://www.linkedin.com/in/peter-riemersma/',
+  address: { locality: 'Burum', region: 'Friesland', country: 'NL' },
 };
 
 const facts: Fact[] = [
@@ -174,12 +178,21 @@ const capabilities: Capability[] = [
 
 const timeline: TimelineEntry[] = [
   {
+    period: '2026 — 2027',
+    role: 'AI infrastructure, internship',
+    organisation: 'OnlyWow — Kollum',
+    description:
+      'Replacing external cloud AI with self-hosted and European models that keep company data inside the GDPR — comparative research across code and image generation, then a proof of concept built for around thirty concurrent users.',
+    current: true,
+  },
+  {
     period: '2024 — now',
     role: 'Co-owner',
     organisation: 'pyxels',
     description:
       'Secure high-speed networks with 10GbE and Wi-Fi 7, and complete smart-home installations covering lighting, climate control and security.',
     current: true,
+    url: 'https://www.pyxels.eu',
   },
   {
     period: '2023 — now',

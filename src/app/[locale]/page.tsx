@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { getContent } from '@/content';
 import { ContactCta, Hero, ProjectList, SectionHead } from '@/components/site/sections';
 import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { personSchema } from '@/lib/seo';
 import { routing } from '@/i18n/routing';
 import styles from '@/components/site/site.module.css';
 
@@ -21,11 +22,11 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 
   return {
     title,
-    description: profile.subline,
+    description: profile.metaDescription,
     alternates: localeAlternates(locale, ''),
     openGraph: {
       title,
-      description: profile.subline,
+      description: profile.metaDescription,
       type: 'website',
       locale: locale === 'nl' ? 'nl_NL' : 'en_US',
       url: localeUrl(locale, ''),
@@ -47,26 +48,31 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
   setRequestLocale(locale);
 
   const content = getContent(locale);
-  const { ui, profile, projects } = content;
+  const { ui, projects } = content;
+
+  /*
+   * `ProfilePage` wrapping a `Person` is the shape Google documents for a page
+   * that is about one person, and it says more than the bare `Person` that was
+   * here before: which entity the page is *about*, rather than one it mentions.
+   *
+   * The person themselves is built by `personSchema`, which the about page also
+   * uses — they share an `@id`, and an identifier claiming two pages describe
+   * one person is worth less than nothing if the two then disagree.
+   */
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: localeUrl(locale, ''),
+    inLanguage: locale,
+    mainEntity: personSchema(content, localeUrl(locale, '')),
+  };
 
   return (
     <>
       <script
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Person',
-            name: profile.name,
-            jobTitle: profile.role,
-            description: profile.subline,
-            email: `mailto:${profile.email}`,
-            url: localeUrl(locale, ''),
-            sameAs: [profile.github, profile.linkedin],
-            knowsLanguage: ['nl', 'en'],
-          }),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
       <Hero content={content} locale={locale} />
@@ -81,7 +87,7 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
         <ProjectList projects={projects.slice(0, 2)} locale={locale} featureCount={2} />
       </section>
 
-      <ContactCta content={content} />
+      <ContactCta content={content} locale={locale} />
     </>
   );
 }
