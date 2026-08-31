@@ -195,6 +195,7 @@ const timeline: TimelineEntry[] = [
     description:
       'Veilige high-speed netwerken met 10GbE en Wi-Fi 7, en complete domotica-installaties voor verlichting, klimaatbeheersing en beveiliging.',
     current: true,
+    url: 'https://www.pyxels.eu',
   },
   {
     period: '2023 — heden',

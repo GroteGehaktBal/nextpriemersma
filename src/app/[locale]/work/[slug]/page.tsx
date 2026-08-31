@@ -3,9 +3,9 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { getCaseStudies, getCaseStudy } from '@/content/case-studies';
 import { getContent } from '@/content';
-import { metaDescription } from '@/lib/seo.ts';
+import { PERSON_ID, metaDescription } from '@/lib/seo';
 import { routing } from '@/i18n/routing';
-import { OG_IMAGE, ORIGIN, localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
 import { CaseStudyFooter, CaseStudyHeader, ContactCta, type Credit } from '@/components/site/sections';
 import { Prose } from '@/components/site/Prose';
 import styles from '@/components/site/site.module.css';
@@ -96,7 +96,7 @@ export default async function Project(props: WorkParams) {
             url: localeUrl(locale, `/work/${slug}`),
             author: {
               '@type': 'Person',
-              '@id': `${ORIGIN}/#peter`,
+              '@id': PERSON_ID,
               name: content.profile.name,
               url: localeUrl(locale, '/about'),
             },

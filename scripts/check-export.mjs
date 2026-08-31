@@ -228,8 +228,10 @@ function decodeEntities(value) {
     .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
     .replace(/&#(\d+);/g, (_, digits) => String.fromCodePoint(Number(digits)))
     .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    // Last, so a literal "&amp;lt;" does not decode twice into a "<".
     .replace(/&amp;/g, '&');
 }
 

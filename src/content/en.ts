@@ -192,6 +192,7 @@ const timeline: TimelineEntry[] = [
     description:
       'Secure high-speed networks with 10GbE and Wi-Fi 7, and complete smart-home installations covering lighting, climate control and security.',
     current: true,
+    url: 'https://www.pyxels.eu',
   },
   {
     period: '2023 — now',

@@ -2,7 +2,8 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { getContent } from '@/content';
 import { ContactCta, Hero, ProjectList, SectionHead } from '@/components/site/sections';
-import { OG_IMAGE, ORIGIN, localeAlternates, localeUrl } from '@/i18n/urls';
+import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
+import { personSchema } from '@/lib/seo';
 import { routing } from '@/i18n/routing';
 import styles from '@/components/site/site.module.css';
 
@@ -47,52 +48,23 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
   setRequestLocale(locale);
 
   const content = getContent(locale);
-  const { ui, profile, projects, capabilities } = content;
+  const { ui, projects } = content;
 
   /*
-   * What the page says about itself in a form a search engine can act on.
-   *
    * `ProfilePage` wrapping a `Person` is the shape Google documents for a page
-   * that is about one person, and it is worth more here than the bare `Person`
-   * that was here before: it says which entity the page is *about* rather than
-   * merely mentioning one.
+   * that is about one person, and it says more than the bare `Person` that was
+   * here before: which entity the page is *about*, rather than one it mentions.
    *
-   * The `@id` is the point of the whole thing. Both language versions name the
-   * same identifier, so the two pages describe one person in two languages
-   * instead of two people who happen to share a name — which is the same
-   * confusion `hreflang` clears up for the pages themselves.
-   *
-   * Everything below is checkable. Nothing is asserted that the site does not
-   * also say in prose.
+   * The person themselves is built by `personSchema`, which the about page also
+   * uses — they share an `@id`, and an identifier claiming two pages describe
+   * one person is worth less than nothing if the two then disagree.
    */
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
     url: localeUrl(locale, ''),
     inLanguage: locale,
-    mainEntity: {
-      '@type': 'Person',
-      '@id': `${ORIGIN}/#peter`,
-      name: profile.name,
-      jobTitle: profile.role,
-      description: profile.metaDescription,
-      email: `mailto:${profile.email}`,
-      url: localeUrl(locale, ''),
-      image: OG_IMAGE.url,
-      sameAs: [profile.github, profile.linkedin],
-      knowsLanguage: ['nl', 'en'],
-      knowsAbout: capabilities.flatMap((capability) => capability.keywords),
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: profile.address.locality,
-        addressRegion: profile.address.region,
-        addressCountry: profile.address.country,
-      },
-      worksFor: [
-        { '@type': 'Organization', name: 'pyxels', url: 'https://www.pyxels.eu' },
-        { '@type': 'Organization', name: 'Riemersma ICT' },
-      ],
-    },
+    mainEntity: personSchema(content, localeUrl(locale, '')),
   };
 
   return (

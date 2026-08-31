@@ -54,6 +54,14 @@ export interface TimelineEntry {
   /** Marks the entry as ongoing, which renders a live status dot. */
   current?: boolean;
   /**
+   * The organisation's own site, for the structured data rather than the page.
+   *
+   * A name alone leaves a search engine to guess which pyxels is meant; a URL
+   * does not. Only worth setting on the entries `current` marks, since those are
+   * the ones that become `worksFor`.
+   */
+  url?: string;
+  /**
    * Secondary entries are real and worth listing, but they are not what the
    * reader is here for. They render in a quieter, more compact treatment so the
    * engineering roles above them keep the weight.
