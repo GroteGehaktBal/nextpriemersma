@@ -18,7 +18,10 @@
  *  - A miss serves `404.html` with a 404 status, rather than a bare error.
  *  - `_headers` at the output root: rules in order, later ones winning for a
  *    header of the same name, so the Content-Security-Policy can be seen failing
- *    here rather than in production.
+ *    here rather than in production. A rule written as a full URL is scoped to
+ *    that hostname and matched against the request's `Host`, which is how the
+ *    `noindex` on the `*.pages.dev` addresses can be shown to stay off the real
+ *    domain — `curl -H 'Host: priemersma.nl' localhost:4000/en`.
  *  - `/api/contact` runs the Pages Function, so the contact form can be
  *    submitted here exactly as it will be in production.
  *
@@ -116,14 +119,50 @@ async function loadHeaders() {
   return rules;
 }
 
-/** Every header rule matching a path, merged in order — the last one wins. */
-function headersFor(rules, pathname) {
+/**
+ * Splits a rule's left-hand side into the host it is scoped to and the path.
+ *
+ * Most rules are a bare path and apply to every hostname. A rule can also be a
+ * full URL, which scopes it to one host — `public/_headers` uses that to keep
+ * `X-Robots-Tag: noindex` on the `*.pages.dev` addresses and off the real domain.
+ * Getting that wrong in the direction that leaks would take the site out of
+ * Google, so the local server has to be able to tell the two apart rather than
+ * silently ignoring the ones it does not understand.
+ */
+function splitRule(from) {
+  const url = /^https?:\/\/([^/]+)(\/.*)?$/i.exec(from);
+  return url === null ? { host: null, path: from } : { host: url[1], path: url[2] ?? '/*' };
+}
+
+/**
+ * Whether a hostname matches a rule's host pattern.
+ *
+ * Cloudflare fills `:placeholder` segments from the request, so
+ * `:project.pages.dev` matches `nextpriemersma.pages.dev` — one label each, and
+ * a placeholder never spans a dot. That is what keeps these rules off
+ * `priemersma.nl`, which has the wrong number of labels to match at all.
+ */
+function hostMatches(pattern, host) {
+  const wanted = pattern.toLowerCase().split('.');
+  // The port is not part of the hostname a rule is written against.
+  const actual = host.toLowerCase().replace(/:\d+$/, '').split('.');
+
+  if (wanted.length !== actual.length) return false;
+
+  return wanted.every(
+    (label, index) => (label.startsWith(':') ? actual[index] !== '' : label === actual[index])
+  );
+}
+
+/** Every header rule matching a request, merged in order — the last one wins. */
+function headersFor(rules, pathname, host = '') {
   const merged = {};
 
   for (const rule of rules) {
-    const matches = rule.from.endsWith('*')
-      ? pathname.startsWith(rule.from.slice(0, -1))
-      : rule.from === pathname;
+    const { host: pattern, path } = splitRule(rule.from);
+    if (pattern !== null && !hostMatches(pattern, host)) continue;
+
+    const matches = path.endsWith('*') ? pathname.startsWith(path.slice(0, -1)) : path === pathname;
 
     if (matches) Object.assign(merged, rule.headers);
   }
@@ -232,7 +271,7 @@ createServer(async (request, response) => {
 
   response.writeHead(found ? 200 : 404, {
     'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream',
-    ...headersFor(headerRules, pathname),
+    ...headersFor(headerRules, pathname, request.headers.host ?? ''),
   });
   createReadStream(file).pipe(response);
 }).listen(PORT, () => {
