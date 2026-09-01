@@ -106,6 +106,20 @@ hostname — not names to substitute — so these match `<project>.pages.dev` an
 `<hash>.<project>.pages.dev` and nothing else. The scoping is the point: the same
 header without a host would take the real site out of Google.
 
+Which is why it is asserted rather than trusted. `npm run smoke` checks both
+directions — the `pages.dev` hostnames carry `noindex`, `priemersma.nl` and
+`www.priemersma.nl` do not and still carry the security headers — and
+`npm run serve:static` will show you the same thing by hand:
+
+```bash
+curl -sI -H 'Host: nextpriemersma.pages.dev' localhost:4000/en | grep -i robots
+curl -sI -H 'Host: priemersma.nl'            localhost:4000/en | grep -i robots
+```
+
+Only one of those two directions is recoverable. Missing the `noindex` costs
+some duplicate content; a `noindex` that reaches the real domain takes the site
+out of Google, and by the time anyone notices it has been out for a while.
+
 ### Reporting on a pull request
 
 Pages reports as a **check**, beside CI, named "Cloudflare Pages". It does not

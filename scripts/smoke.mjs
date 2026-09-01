@@ -19,6 +19,7 @@
  */
 
 import { spawn } from 'node:child_process';
+import { request as httpRequest } from 'node:http';
 import process from 'node:process';
 
 const PORT = Number(process.env.SMOKE_PORT ?? 4173);
@@ -53,6 +54,27 @@ async function ready() {
   }
 
   throw new Error(`the export server never came up on ${PORT}`);
+}
+
+/**
+ * The response headers for a request arriving at a given hostname.
+ *
+ * `fetch` will not do this: `Host` is a forbidden header name, and undici drops
+ * it silently rather than failing — which would make every assertion below pass
+ * for the wrong reason. `node:http` sends what it is given.
+ */
+function headersAt(host, pathname) {
+  return new Promise((resolve, reject) => {
+    const call = httpRequest(
+      { host: 'localhost', port: PORT, path: pathname, method: 'GET', headers: { host } },
+      (response) => {
+        response.resume();
+        resolve(response.headers);
+      }
+    );
+    call.on('error', reject);
+    call.end();
+  });
 }
 
 /** A form submission, as a browser makes one. */
@@ -114,6 +136,29 @@ try {
     "the policy still refuses other origins",
     (headers.get('content-security-policy') ?? '').includes("default-src 'self'")
   );
+
+  /*
+   * `X-Robots-Tag: noindex` on the right hostnames and no others.
+   *
+   * Both directions are asserted because only one of them is recoverable. The
+   * `*.pages.dev` copies going unnoindexed costs some duplicate content; the
+   * same header reaching priemersma.nl takes the site out of Google, and by the
+   * time anyone notices it has been out for a while.
+   */
+  for (const host of ['nextpriemersma.pages.dev', '4a2b1c.nextpriemersma.pages.dev']) {
+    const at = await headersAt(host, '/en');
+    check(`${host} is told not to index`, at['x-robots-tag'] === 'noindex', `got ${at['x-robots-tag']}`);
+  }
+
+  for (const host of ['priemersma.nl', 'www.priemersma.nl']) {
+    const at = await headersAt(host, '/en');
+    check(
+      `${host} is NOT told not to index`,
+      at['x-robots-tag'] === undefined,
+      `got ${at['x-robots-tag']}`
+    );
+    check(`${host} still gets the security headers`, at['content-security-policy'] !== undefined);
+  }
 
   // The contact form, all the way through.
   const sent = await submit(
