@@ -37,6 +37,7 @@ const server = spawn(
       CONTACT_TO: 'smoke@example.com',
       CONTACT_FROM: 'Smoke <smoke@example.com>',
       RESEND_API_KEY: 'not-a-real-key',
+      TURNSTILE_SECRET_KEY: 'not-a-real-secret',
     },
     stdio: ['ignore', 'pipe', 'inherit'],
   }
@@ -162,7 +163,13 @@ try {
 
   // The contact form, all the way through.
   const sent = await submit(
-    { name: 'Jan Jansen', email: 'jan@example.com', message: 'Hallo Peter', locale: 'nl' },
+    {
+      name: 'Jan Jansen',
+      email: 'jan@example.com',
+      message: 'Hallo Peter',
+      locale: 'nl',
+      'cf-turnstile-response': 'smoke-turnstile-token',
+    },
     { origin: BASE }
   );
   check(
@@ -175,7 +182,13 @@ try {
   check('and the page it confirms on exists', confirmation.status === 200, `got ${confirmation.status}`);
 
   const rejected = await submit(
-    { name: 'Jan', email: 'not-an-address', message: 'x', locale: 'en' },
+    {
+      name: 'Jan',
+      email: 'not-an-address',
+      message: 'x',
+      locale: 'en',
+      'cf-turnstile-response': 'smoke-turnstile-token',
+    },
     { origin: BASE }
   );
   check(
@@ -185,7 +198,13 @@ try {
   );
 
   const foreign = await submit(
-    { name: 'Bot', email: 'bot@evil.example', message: 'spam', locale: 'nl' },
+    {
+      name: 'Bot',
+      email: 'bot@evil.example',
+      message: 'spam',
+      locale: 'nl',
+      'cf-turnstile-response': 'smoke-turnstile-token',
+    },
     { origin: 'https://evil.example' }
   );
   check('a submission from another site is refused', foreign.status === 403, `got ${foreign.status}`);

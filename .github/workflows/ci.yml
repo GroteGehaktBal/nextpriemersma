@@ -29,6 +29,9 @@ concurrency:
 env:
   # What the Pages project sets, so the export CI checks is the export it serves.
   CONTACT_ENDPOINT: /api/contact
+  # Cloudflare's documented always-pass test key; it cannot validate against a
+  # production secret and is safe to expose in build logs and artifacts.
+  TURNSTILE_SITE_KEY: 1x00000000000000000000AA
 
 jobs:
   check:

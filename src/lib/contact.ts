@@ -4,9 +4,8 @@
  * Nothing here touches Node, Cloudflare or the DOM: it takes a `FormData` and
  * returns either a validated submission or the reason it was rejected, and it
  * builds the request that sends the mail. The Cloudflare Pages Function in
- * `functions/api/contact.ts` is the only thing that knows where it runs, and it
- * is twenty lines long because everything that can be tested without a server
- * lives here instead.
+ * `functions/api/contact.ts` is the only thing that knows where it runs; all
+ * logic that can be tested without a server lives here instead.
  */
 
 /** Fields the form posts. */
@@ -30,6 +29,15 @@ export type ParseResult =
  */
 export const HONEYPOT_FIELD = 'website';
 
+/** Turnstile adds this hidden field to the form after a challenge succeeds. */
+export const TURNSTILE_RESPONSE_FIELD = 'cf-turnstile-response';
+
+/** Bound to this form and checked again in the Siteverify response. */
+export const TURNSTILE_ACTION = 'contact';
+
+/** Cloudflare documents 2,048 characters as the largest possible token. */
+const MAX_TURNSTILE_TOKEN_LENGTH = 2048;
+
 /** Upper bounds, so a submission cannot be used to post a novel through the API. */
 const LIMITS = { name: 100, email: 200, message: 4000 };
 
@@ -43,6 +51,45 @@ const LIMITS = { name: 100, email: 200, message: 4000 };
  * turns that from work into a refusal.
  */
 export const MAX_BODY_BYTES = 64 * 1024;
+
+/**
+ * Returns a plausible Turnstile token without treating arbitrary form values as
+ * strings. Authenticity is established later by Cloudflare's Siteverify API.
+ */
+export function turnstileToken(form: FormData): string | null {
+  const value = form.get(TURNSTILE_RESPONSE_FIELD);
+
+  return typeof value === 'string' && value.length > 0 && value.length <= MAX_TURNSTILE_TOKEN_LENGTH
+    ? value
+    : null;
+}
+
+/** Builds the server-to-server verification call without exposing the secret. */
+export function buildTurnstileRequest(token: string, secret: string, remoteIp?: string): Request {
+  const body = new URLSearchParams({ secret, response: token });
+  if (remoteIp) body.set('remoteip', remoteIp);
+
+  return new Request('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+}
+
+/**
+ * Requires more than Siteverify's `success` bit: a token issued for another
+ * action or hostname is not valid for this form, even if Cloudflare signed it.
+ */
+export function isValidTurnstileResponse(value: unknown, expectedHostname: string): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+
+  const response = value as Record<string, unknown>;
+  return (
+    response.success === true &&
+    response.action === TURNSTILE_ACTION &&
+    response.hostname === expectedHostname
+  );
+}
 
 /**
  * Email validation, deliberately loose — with a short list of exceptions.

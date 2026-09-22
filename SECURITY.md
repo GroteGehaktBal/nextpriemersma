@@ -17,21 +17,22 @@ long as it takes to write.
 Almost nothing, and that is the design rather than a happy accident.
 
 The site is a directory of static files on Cloudflare Pages. There is no
-database, no session, no account, no cookie, no analytics and no third-party
-script — `npm run check:export` fails the build if a page starts loading anything
-from another origin, so that last one stays true without anyone having to
-remember it.
+database, no session, no account, no cookie and no analytics. Cloudflare
+Turnstile on the contact page is the single third-party runtime;
+`npm run check:export` fails the build if any other external resource appears or
+if the Content-Security-Policy stops matching it.
 
 That leaves exactly one piece of code that runs per request and takes input from
-strangers: **`functions/api/contact.ts`**, the contact form's endpoint. It is
-twenty lines, and everything below is about it.
+strangers: **`functions/api/contact.ts`**, the contact form's endpoint, and
+everything below is about it.
 
 ## The contact endpoint
 
 ### What reaches it
 
-A `POST` of three fields and a locale, from a plain `<form method="post">`. No
-JavaScript is involved on either side.
+A `POST` of three visible fields, a locale, a honeypot and a Turnstile token,
+from a native `<form method="post">`. Turnstile supplies the token; no custom
+client-side submission code is involved.
 
 ### What it refuses, and why
 
@@ -42,6 +43,7 @@ JavaScript is involved on either side.
 | A body that is not a form | `400` | `formData()` throws on one. Uncaught, that was a `500` from the runtime — not a hole in itself, but the shape of one. |
 | A filled honeypot | `303` to the confirmation | Told it worked, so a bot learns nothing about which field gave it away. Nothing is sent. |
 | A name or message that is empty or over its limit, or an address that cannot be one | `303` back to `#error` | |
+| A missing, invalid, expired, replayed or misplaced Turnstile token | `303` back to `#error` | Siteverify must approve it for the `contact` action and the hostname that received the form before Resend is called. |
 
 ### What it does to what it accepts
 
@@ -71,10 +73,10 @@ Nothing is logged on success.
 
 ### Secrets
 
-`RESEND_API_KEY` exists only as a **secret** environment variable on the
-Cloudflare Pages project. It is not in this repository, not in the build output,
-and not in any log line — it is read from `env` and put in an `Authorization`
-header, and nothing else touches it.
+`RESEND_API_KEY` and `TURNSTILE_SECRET_KEY` exist only as **secret** environment
+variables on the Cloudflare Pages project. They are not in this repository, not
+in the build output and not in any log line. The Turnstile site key is public by
+design and is embedded in the exported contact page.
 
 Nothing in this repository is a credential. `CONTACT_TO` and `CONTACT_FROM` are
 configuration and would be harmless in the open; they are project variables
@@ -106,16 +108,14 @@ midnight.
 RSC payload as inline `<script>` blocks whose content differs per page, so pinning
 them by hash would mean generating `_headers` per page on every build and breaking
 hydration whenever a hash drifted. What it does not weaken is the part that
-matters for a site with no user-generated HTML: `script-src 'self'` still refuses
-every *external* script, which is how a static site actually gets compromised — a
-dependency that decides to phone home.
+matters for a site with no user-generated HTML: `script-src` still refuses every
+external script except the exact Cloudflare origin needed by Turnstile.
 
-**The spam defence is a honeypot, not a CAPTCHA.** A honeypot stops the bots that
-fill in every field they can see, which is most of them, and costs a visitor
-nothing. A distributed flood from many addresses walks past both it and a per-IP
-rate limit; the answer to that is Turnstile, which is free and needs a script tag
-on a site that currently ships none. That is a real trade, worth making if the
-form is ever actually abused and not before.
+**Turnstile is a bot signal, not a proof that a sender is good.** It stops
+automated submissions that cannot obtain a valid token, while the honeypot and
+the zone-level rate limit remain useful independent layers. A determined human
+can still send an unwanted message, which is why the mail provider quota and
+rate-limit monitoring still matter.
 
 **An absent `Origin` header is trusted.** See the table above — this is a
 deliberate choice against breaking the form for real people, and it costs
@@ -126,8 +126,8 @@ nothing, because anyone who can omit the header can also post with `curl`.
 | | |
 | --- | --- |
 | `npm test` | The endpoint's logic: every refusal above, and the paths where the provider rejects the mail or the network fails and the form must not claim success. |
-| `npm run check:export` | That no page loads anything from another origin, and that `_headers` and `_redirects` are present and point somewhere real. |
-| `npm run smoke` | The endpoint through an actual server, with Cloudflare's own routing: a submission confirmed, a foreign one refused, a malformed one refused, the headers served. |
+| `npm run check:export` | That Turnstile is the only declared external load, its CSP allowances exist, and `_headers` and `_redirects` are present and point somewhere real. |
+| `npm run smoke` | The endpoint through an actual server, with Cloudflare's own routing: Turnstile checked, a submission confirmed, a foreign one refused, a malformed one refused, the headers served. |
 | `npm audit --audit-level=high` | Dependencies. There are six at runtime. |
 
 All four run in CI on every push and pull request.

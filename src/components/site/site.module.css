@@ -1045,8 +1045,8 @@
 /* ---------------------------------------------------------------------------
  * Contact page
  *
- * The form is a plain POST — no client component, no fetch, no state. What that
- * costs is the ability to re-render a page with an error message in it, and the
+ * The form is a native POST — no client component, fetch wrapper or state.
+ * What that costs is the ability to re-render a page with an error message, and the
  * `.formError` rule below is how that is paid for without JavaScript: the
  * endpoint redirects to `#error`, and `:target` reveals the message.
  * ------------------------------------------------------------------------ */

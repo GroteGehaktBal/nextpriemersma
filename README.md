@@ -60,20 +60,24 @@ what to do when something about it changes.
 
 ## The contact form
 
-`/contact` renders a form when `CONTACT_ENDPOINT` is set, and the email address
-when it is not — the second being what a bare `npm run dev` gets, since no
-Function is running there. A form posting into a 404 is worse than no form.
+`/contact` renders a form when `CONTACT_ENDPOINT` and `TURNSTILE_SITE_KEY` are
+set, and the email address when either is not — the second being what a bare
+`npm run dev` gets, since no Function is running there. A form posting into a
+404 or missing its bot check is worse than no form.
 
 It is a plain `<form method="post">`. The Function validates the submission,
 hands it to [Resend](https://resend.com), and answers with a redirect — to a
 confirmation page, or back to the form with `#error`, where CSS `:target` reveals
-the message. No JavaScript is involved at any point, and none is shipped.
+the message. The form itself stays a native POST; its only client-side JavaScript
+is Cloudflare Turnstile's challenge.
 
 The submitter's address goes in `reply_to` rather than `from`, so replying
 reaches them while the mail is still sent from a domain that passes SPF. A
 honeypot field, hidden off-screen rather than with `type="hidden"`, catches the
 bots that fill in everything they can see; they are told the message went
-through, which teaches them nothing.
+through, which teaches them nothing. Turnstile catches the more capable bots,
+and the Function validates every token server-side — including its action and
+hostname — before it calls the mail provider.
 
 Everything it refuses, and why, is in [`SECURITY.md`](SECURITY.md). `npm test`
 covers the logic and `npm run smoke` covers the endpoint — including the paths

@@ -17,10 +17,9 @@
  *     filesystem — a link to `/en/work/x` when the file is `en/work/x.html`.
  *  3. A redirect rule pointing at a page that no longer exists, which turns a
  *     recovered URL back into a 404 without anyone noticing.
- *  4. A page that starts loading something from another origin. `public/_headers`
- *     tells browsers that everything comes from this site; the moment that stops
- *     being true, the browser enforces the header rather than the intention, and
- *     the page breaks in production and nowhere else.
+ *  4. A page that starts loading an undeclared external resource. Turnstile is
+ *     the one intentional exception to same-origin; its exact script URL and
+ *     challenge-frame origin must agree with `public/_headers`.
  */
 
 import { access, readFile, readdir } from 'node:fs/promises';
@@ -161,6 +160,40 @@ if (policy === '') {
   problems.push("the Content-Security-Policy no longer says default-src 'self'");
 }
 
+function policySources(directive) {
+  const entry = policy
+    .split(';')
+    .map((part) => part.trim())
+    .find((part) => part === directive || part.startsWith(`${directive} `));
+
+  return entry?.split(/\s+/).slice(1) ?? [];
+}
+
+const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
+const TURNSTILE_SCRIPT = `${TURNSTILE_ORIGIN}/turnstile/v0/api.js`;
+
+if (!policySources('script-src').includes(TURNSTILE_ORIGIN)) {
+  problems.push(`the Content-Security-Policy does not allow the Turnstile script origin`);
+}
+if (!policySources('frame-src').includes(TURNSTILE_ORIGIN)) {
+  problems.push(`the Content-Security-Policy does not allow Turnstile's challenge frame`);
+}
+
+for (const locale of ['en', 'nl']) {
+  const contactPage = `${locale}/contact.html`;
+  const html = await readFile(path.join(OUT, contactPage), 'utf-8');
+
+  if (!html.includes(TURNSTILE_SCRIPT)) {
+    problems.push(`${contactPage} does not load the Turnstile script`);
+  }
+  if (!/class="cf-turnstile"[^>]+data-sitekey="[^"]+"/.test(html)) {
+    problems.push(`${contactPage} has no configured Turnstile widget`);
+  }
+  if (!html.includes(`data-action="contact"`)) {
+    problems.push(`${contactPage} does not bind its Turnstile token to the contact action`);
+  }
+}
+
 const LOADS = [
   /<script[^>]+src="([^"]+)"/g,
   /<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g,
@@ -209,7 +242,9 @@ for (const stylesheet of (await walk(OUT)).filter((file) => file.endsWith('.css'
 }
 
 for (const [url, source] of foreign) {
-  problems.push(`${source} loads ${url} from another origin, which the CSP blocks`);
+  if (url === TURNSTILE_SCRIPT && policySources('script-src').includes(TURNSTILE_ORIGIN)) continue;
+
+  problems.push(`${source} loads undeclared external resource ${url}`);
 }
 
 // 5. Every meta description, against what a search result will show of it.

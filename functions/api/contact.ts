@@ -5,10 +5,13 @@
  */
 import {
   buildMailRequest,
+  buildTurnstileRequest,
   isTrustedOrigin,
+  isValidTurnstileResponse,
   MAX_BODY_BYTES,
   parseSubmission,
   redirectTarget,
+  turnstileToken,
 } from '../../src/lib/contact.ts';
 
 /**
@@ -21,11 +24,12 @@ import {
  *
  * It is not a Next route handler on purpose. A route handler would have to run
  * on a server, and this site has none: adding one would end the static export
- * that everything else depends on. Twenty lines in a different directory is the
- * cheaper trade.
+ * that everything else depends on. A small Function in a different directory
+ * is the cheaper trade.
  *
- * The exchange is a plain form POST followed by a redirect, so it works with
- * JavaScript disabled and leaves nothing in the browser's history to re-submit.
+ * The exchange is a native form POST followed by a redirect, so no custom
+ * submission code is needed and a reload cannot re-send the form. Turnstile is
+ * the only part that requires browser JavaScript.
  *
  * Three things are refused before any of it counts as a submission: a post from
  * another origin, a body larger than the form could produce, and a body that is
@@ -39,12 +43,14 @@ import {
  *   RESEND_API_KEY   secret, from resend.com
  *   CONTACT_TO       where the mail goes
  *   CONTACT_FROM     a verified sender, e.g. "priemersma.nl <form@priemersma.nl>"
+ *   TURNSTILE_SECRET_KEY  secret from the Turnstile widget
  */
 
 interface Env {
   RESEND_API_KEY: string;
   CONTACT_TO: string;
   CONTACT_FROM: string;
+  TURNSTILE_SECRET_KEY: string;
 }
 
 const LOCALES = ['en', 'nl'] as const;
@@ -133,10 +139,38 @@ export async function onRequestPost(context: {
     return seeOther(redirectTarget(locale, parsed.reason === 'spam' ? 'sent' : 'error', LOCALES));
   }
 
-  const { RESEND_API_KEY, CONTACT_TO, CONTACT_FROM } = context.env;
+  const { RESEND_API_KEY, CONTACT_TO, CONTACT_FROM, TURNSTILE_SECRET_KEY } = context.env;
 
-  if (!RESEND_API_KEY || !CONTACT_TO || !CONTACT_FROM) {
+  if (!RESEND_API_KEY || !CONTACT_TO || !CONTACT_FROM || !TURNSTILE_SECRET_KEY) {
     console.error('contact form: the mail configuration is incomplete');
+    return seeOther(redirectTarget(locale, 'error', LOCALES));
+  }
+
+  const token = turnstileToken(form);
+  if (token === null) {
+    return seeOther(redirectTarget(locale, 'error', LOCALES));
+  }
+
+  try {
+    const verification = await fetch(
+      buildTurnstileRequest(
+        token,
+        TURNSTILE_SECRET_KEY,
+        request.headers.get('cf-connecting-ip') ?? undefined
+      )
+    );
+
+    if (!verification.ok) {
+      console.error(`contact form: Turnstile returned ${verification.status}`);
+      return seeOther(redirectTarget(locale, 'error', LOCALES));
+    }
+
+    const result: unknown = await verification.json();
+    if (!isValidTurnstileResponse(result, new URL(request.url).hostname)) {
+      return seeOther(redirectTarget(locale, 'error', LOCALES));
+    }
+  } catch (error) {
+    console.error('contact form: Turnstile validation failed', error);
     return seeOther(redirectTarget(locale, 'error', LOCALES));
   }
 
