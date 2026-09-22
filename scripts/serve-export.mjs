@@ -211,6 +211,20 @@ if (process.env.CONTACT_DRY_RUN === '1') {
 
   globalThis.fetch = async (input, init) => {
     const url = typeof input === 'string' ? input : input.url;
+    if (url === 'https://challenges.cloudflare.com/turnstile/v0/siteverify') {
+      const request = typeof input === 'string' ? new Request(input, init) : input;
+      const body = new URLSearchParams(await request.text());
+
+      return new Response(
+        JSON.stringify({
+          success: body.get('response') === 'smoke-turnstile-token',
+          hostname: 'localhost',
+          action: 'contact',
+          'error-codes': [],
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } }
+      );
+    }
     if (!url.startsWith('https://api.resend.com/')) return send(input, init);
 
     const request = typeof input === 'string' ? new Request(input, init) : input;

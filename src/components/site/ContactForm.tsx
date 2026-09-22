@@ -1,5 +1,7 @@
+import Script from 'next/script';
+
 import type { Content } from '@/content';
-import { HONEYPOT_FIELD } from '@/lib/contact';
+import { HONEYPOT_FIELD, TURNSTILE_ACTION } from '@/lib/contact';
 import { ArrowRight, Mail } from '@/components/ui/icons';
 
 import styles from './site.module.css';
@@ -9,8 +11,8 @@ import styles from './site.module.css';
  *
  * A server component that renders a plain `<form method="post">`. No React on
  * the client, no fetch, no state: the browser posts it, the Function replies
- * with a redirect, and the visitor lands on a confirmation page. That is the
- * whole interaction, and it works with JavaScript switched off.
+ * with a redirect, and the visitor lands on a confirmation page. Turnstile is
+ * the sole client-side enhancement and adds its token as another form field.
  *
  * Two details are doing more than they look:
  *
@@ -26,10 +28,12 @@ export function ContactForm({
   content,
   locale,
   endpoint,
+  turnstileSiteKey,
 }: {
   content: Content;
   locale: string;
   endpoint: string;
+  turnstileSiteKey: string;
 }) {
   const { contactPage } = content.ui;
 
@@ -103,11 +107,25 @@ export function ContactForm({
           />
         </div>
 
+        <div
+          className="cf-turnstile"
+          data-sitekey={turnstileSiteKey}
+          data-action={TURNSTILE_ACTION}
+          data-language={locale}
+          data-size="flexible"
+          data-theme="auto"
+        />
+
         <button className={`${styles.button} ${styles.buttonPrimary}`} type="submit">
           {contactPage.submit}
           <ArrowRight className={styles.buttonArrow} />
         </button>
       </form>
+
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        strategy="afterInteractive"
+      />
     </>
   );
 }
@@ -115,9 +133,10 @@ export function ContactForm({
 /**
  * What the contact page shows when no endpoint is configured.
  *
- * A build without `CONTACT_ENDPOINT` has nowhere for the form to post — a plain
- * `npm run dev`, mostly, where no Function is running. Rather than render one
- * that fails, the page offers the address it would have mailed to.
+ * A build without the complete public form configuration has nowhere safe for
+ * the form to post — a plain `npm run dev`, mostly, where no Function is
+ * running. Rather than render one that fails, the page offers the address it
+ * would have mailed to.
  */
 export function ContactDirect({ content }: { content: Content }) {
   const { profile } = content;

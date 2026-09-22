@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 
-import { CONTACT_ENDPOINT } from '@/config';
+import { CONTACT_ENDPOINT, TURNSTILE_SITE_KEY } from '@/config';
 import { getContent } from '@/content';
 import { OG_IMAGE, localeAlternates, localeUrl } from '@/i18n/urls';
 import { ContactDirect, ContactForm } from '@/components/site/ContactForm';
@@ -46,8 +46,13 @@ export default async function Contact(props: { params: Promise<{ locale: string 
 
       <div className={styles.contactLayout}>
         <div className={styles.contactMain}>
-          {CONTACT_ENDPOINT ? (
-            <ContactForm content={content} locale={locale} endpoint={CONTACT_ENDPOINT} />
+          {CONTACT_ENDPOINT && TURNSTILE_SITE_KEY ? (
+            <ContactForm
+              content={content}
+              locale={locale}
+              endpoint={CONTACT_ENDPOINT}
+              turnstileSiteKey={TURNSTILE_SITE_KEY}
+            />
           ) : (
             <ContactDirect content={content} />
           )}

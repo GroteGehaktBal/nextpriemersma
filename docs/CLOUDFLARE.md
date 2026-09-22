@@ -71,16 +71,17 @@ access to the repository, in which case it still builds but stops reporting.
 
 Two things about previews are specific to this site.
 
-**The environment variables have to exist for Preview too** — see §2. Without
-`CONTACT_ENDPOINT` a preview renders the email address where production renders
-the form, which makes it a preview of a different site.
+**The public environment variables have to exist for Preview too** — see §2.
+Without `CONTACT_ENDPOINT` or `TURNSTILE_SITE_KEY`, a preview renders the email
+address where production renders the form, which makes it a preview of a
+different site.
 
 **The rate limiting rule in §4 does not cover a preview.** It is a rule on the
 `priemersma.nl` zone, and `*.pages.dev` is not in that zone — so a preview with a
-working `RESEND_API_KEY` is a contact form with nothing in front of it, able to
-spend the same 100 mails a day the real one draws on. Either leave
-`RESEND_API_KEY` out of the Preview environment, which lets a preview render and
-validate the form but not send, or put previews behind **Cloudflare Access**
+working `RESEND_API_KEY` can spend the same 100 mails a day the real one draws
+on. Use Cloudflare's documented test Turnstile keys for Preview and leave
+`RESEND_API_KEY` out, which lets a preview render and validate the form but not
+send; or put previews behind **Cloudflare Access**
 (Settings → General → Access policy), which is free and asks for a login before
 anything is served.
 
@@ -139,14 +140,41 @@ Preview:
 | `CONTACT_TO` | where the messages should arrive | plain text |
 | `CONTACT_FROM` | `priemersma.nl <form@priemersma.nl>` | plain text |
 | `RESEND_API_KEY` | the key from step 3 | **secret** |
+| `TURNSTILE_SITE_KEY` | the site key from the `contact form` widget | plain text |
+| `TURNSTILE_SECRET_KEY` | the secret key from the same widget | **secret** |
 
-`RESEND_API_KEY` is a secret, not plain text. The difference is that a secret
-cannot be read back out of the dashboard afterwards — which is the point, and
-also means the only way to change it is to replace it.
+`RESEND_API_KEY` and `TURNSTILE_SECRET_KEY` are secrets, not plain text. The
+difference is that a secret cannot be read back out of the dashboard afterwards
+— which is the point, and also means the only way to change it is to replace it.
 
-`CONTACT_ENDPOINT` is read at build time and decides what the contact page
-renders: set, it renders the form; unset, it renders the email address instead.
-CI sets it too, so what CI checks is what the project builds.
+`CONTACT_ENDPOINT` and `TURNSTILE_SITE_KEY` are read at build time and decide
+what the contact page renders: when both are set it renders the protected form;
+when either is absent it renders the email address instead. CI sets both, so
+what CI checks is what the project builds. The site key is intentionally public;
+only the secret key must remain server-side.
+
+Create the widget in **Cloudflare dashboard → Turnstile → Add widget**:
+
+| Setting | Value |
+| --- | --- |
+| Widget name | `contact form` |
+| Hostnames | `priemersma.nl`, `www.priemersma.nl` |
+| Widget mode | Managed |
+
+The Function sends every submitted token to Siteverify and requires a successful
+answer for the `contact` action and the exact hostname that received the POST.
+A copied, expired or already-used token therefore cannot send mail.
+
+Preview hostnames change with every deployment and should not be added to the
+production widget. For Preview use Cloudflare's always-pass test pair:
+
+| Name | Preview value |
+| --- | --- |
+| `TURNSTILE_SITE_KEY` | `1x00000000000000000000AA` |
+| `TURNSTILE_SECRET_KEY` | `1x0000000000000000000000000000000AA` |
+
+Those keys only accept Cloudflare's dummy test token and cannot validate against
+a production secret. Do not set `RESEND_API_KEY` in Preview when using them.
 
 `CONTACT_FROM` must be at a domain Resend has verified. It cannot be the
 visitor's own address — that fails SPF and lands in spam — which is why their
@@ -177,7 +205,17 @@ v=DMARC1; p=none; rua=mailto:peter@riemersmaict.nl
 what is being sent in your name. Read those for a few weeks before tightening it
 to `quarantine`.
 
-## 4. Rate limiting the contact form
+## 4. Turnstile and rate limiting
+
+Turnstile is enforced in the Pages Function, not merely displayed in the page.
+It is free for personal and normal production use: the Free plan allows up to
+20 widgets and unlimited challenges. No paid Workers plan is needed.
+
+The off-screen honeypot remains the cheapest first check. A bot that fills it is
+discarded before a Turnstile API call; every otherwise valid submission must
+then pass Turnstile before Resend is contacted.
+
+### Rate limiting
 
 **This one is worth doing, and it is not done by anything in this repository.**
 
@@ -211,14 +249,11 @@ far below what a script needs to be worth writing. The free plan restricts which
 periods and durations are selectable, so take what the dashboard offers rather
 than matching this table exactly.
 
-### What this does not do
+### What the rate limit does not do
 
-A distributed flood from many addresses walks past a per-IP limit. The honest
-answer to that is [Turnstile](https://developers.cloudflare.com/turnstile/), which
-is free and unlimited — and which needs a script tag on the contact page. This
-site ships no JavaScript at all, so adding it is a real trade rather than a free
-win. It is the right next step if the form ever actually gets abused, and not
-before.
+A distributed flood from many addresses walks past a per-IP limit. Turnstile is
+the independent check for that case; the rate limit still helps contain repeated
+requests before they spend Function invocations.
 
 ## 5. Domains
 
@@ -257,7 +292,8 @@ looking at on the real domain is the part CI cannot have an opinion about:
 The whole of the rest can be rehearsed locally, without an account:
 
 ```bash
-npm run build && npm run smoke     # asserts it
+TURNSTILE_SITE_KEY=1x00000000000000000000AA CONTACT_ENDPOINT=/api/contact npm run build
+npm run smoke                      # asserts it
 npm run serve:static               # http://localhost:4000, to look at it
 ```
 

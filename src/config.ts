@@ -15,3 +15,13 @@
  * the variable set and serves the result the way Cloudflare will.
  */
 export const CONTACT_ENDPOINT = process.env.CONTACT_ENDPOINT ?? '';
+
+/**
+ * Public key for the Turnstile widget, embedded in the static contact page.
+ *
+ * Unlike the secret used by the Pages Function, a site key is meant to be
+ * visible in HTML. Keeping it in the Pages build environment still lets
+ * Production and Preview use different widgets without committing either
+ * deployment's configuration to the repository.
+ */
+export const TURNSTILE_SITE_KEY = process.env.TURNSTILE_SITE_KEY ?? '';
