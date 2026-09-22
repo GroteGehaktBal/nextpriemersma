@@ -141,8 +141,8 @@ export async function onRequestPost(context: {
 
   const { RESEND_API_KEY, CONTACT_TO, CONTACT_FROM, TURNSTILE_SECRET_KEY } = context.env;
 
-  if (!RESEND_API_KEY || !CONTACT_TO || !CONTACT_FROM || !TURNSTILE_SECRET_KEY) {
-    console.error('contact form: the mail configuration is incomplete');
+  if (!TURNSTILE_SECRET_KEY) {
+    console.error('contact form: the Turnstile configuration is incomplete');
     return seeOther(redirectTarget(locale, 'error', LOCALES));
   }
 
@@ -171,6 +171,13 @@ export async function onRequestPost(context: {
     }
   } catch (error) {
     console.error('contact form: Turnstile validation failed', error);
+    return seeOther(redirectTarget(locale, 'error', LOCALES));
+  }
+
+  // Preview uses Cloudflare's test Turnstile keys but intentionally has no
+  // Resend credential. Validate the submission first, then stop before mail.
+  if (!RESEND_API_KEY || !CONTACT_TO || !CONTACT_FROM) {
+    console.error('contact form: the mail configuration is incomplete');
     return seeOther(redirectTarget(locale, 'error', LOCALES));
   }
 

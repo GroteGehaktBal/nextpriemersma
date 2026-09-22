@@ -53,7 +53,12 @@ function post(fields, headers, { includeTurnstile = true } = {}) {
 }
 
 /** Replaces `fetch` for one call and records what the Function tried to send. */
-async function withFetch(mailResponse, run, turnstileResponse = TURNSTILE_SUCCESS) {
+async function withFetch(
+  mailResponse,
+  run,
+  turnstileResponse = TURNSTILE_SUCCESS,
+  turnstileStatus = 200
+) {
   const original = globalThis.fetch;
   const calls = [];
 
@@ -61,7 +66,7 @@ async function withFetch(mailResponse, run, turnstileResponse = TURNSTILE_SUCCES
     calls.push(request);
     if (request.url === 'https://challenges.cloudflare.com/turnstile/v0/siteverify') {
       return new Response(JSON.stringify(turnstileResponse), {
-        status: 200,
+        status: turnstileStatus,
         headers: { 'content-type': 'application/json' },
       });
     }
@@ -166,6 +171,18 @@ test('a failed, misplaced, or malformed Turnstile result sends no mail', async (
   }
 });
 
+test('an HTTP failure from Turnstile sends no mail', async () => {
+  const { result, calls } = await withFetch(
+    new Response('{}', { status: 200 }),
+    () => onRequestPost({ ...post({ ...VALID, locale: 'nl' }), env: ENV }),
+    { success: false },
+    503
+  );
+
+  assert.equal(calls.length, 1, 'only Siteverify is called');
+  assert.equal(result.headers.get('location'), '/nl/contact#error');
+});
+
 test('the visitor IP is included in the Turnstile verification', async () => {
   const { calls } = await withFetch(new Response('{}', { status: 200 }), () =>
     onRequestPost({
@@ -205,9 +222,21 @@ test('addresses that are unusual but real are accepted', () => {
   }
 });
 
-test('missing configuration fails visibly rather than pretending to send', async () => {
+test('missing mail configuration validates Turnstile but sends no mail', async () => {
   const { result, calls } = await withFetch(new Response('{}', { status: 200 }), () =>
     onRequestPost({ ...post({ ...VALID, locale: 'en' }), env: { ...ENV, RESEND_API_KEY: '' } })
+  );
+
+  assert.equal(calls.length, 1, 'only Siteverify is called');
+  assert.equal(result.headers.get('location'), '/en/contact#error');
+});
+
+test('missing Turnstile configuration fails before any network call', async () => {
+  const { result, calls } = await withFetch(new Response('{}', { status: 200 }), () =>
+    onRequestPost({
+      ...post({ ...VALID, locale: 'en' }),
+      env: { ...ENV, TURNSTILE_SECRET_KEY: '' },
+    })
   );
 
   assert.equal(calls.length, 0);

@@ -183,6 +183,10 @@ for (const locale of ['en', 'nl']) {
   const contactPage = `${locale}/contact.html`;
   const html = await readFile(path.join(OUT, contactPage), 'utf-8');
 
+  // A missing public endpoint or site key intentionally renders the direct
+  // email fallback. Only a configured build promises a protected form.
+  if (!html.includes('<form')) continue;
+
   if (!html.includes(TURNSTILE_SCRIPT)) {
     problems.push(`${contactPage} does not load the Turnstile script`);
   }
